@@ -7,15 +7,11 @@
 
 #include "OMMoCoNode.h"
 
-static void process(uint8_t function, uint8_t ** pucFrame, unsigned short * pusLength) {
-
-
-}
 
 //declarative constructor easier to implement
-OMMoCoNode::OMMoCoNode() {} //(const SerialPort& inPort)
-   //: port (inPort)
-
+OMMoCoNode::OMMoCoNode(const ProgramControlBase& pc, const ProgramDataSetBase& pds)
+   : programControl(&pc), programDataSet(&pds)
+{}
 
 OMMoCoNode::~OMMoCoNode() {
 }
@@ -32,7 +28,7 @@ char OMMoCoNode::Init(uint8_t ucSlaveAddress, unsigned long ulBaudRate){
 	    else
 	    {
 	        ucMBAddress = ucSlaveAddress;
-	        eStatus = OMMoCoTransiver::Init( 0, ucMBAddress, ulBaudRate);
+	        eStatus = OMMoCoTransceiver::Init( 0, ucMBAddress, ulBaudRate);
 
 	        if( eStatus == OM_NOERR )
 	        {
@@ -78,7 +74,7 @@ char OMMoCoNode::Enable( void )
     if( eOMState == STATE_DISABLED )
     {
         /* Activate the protocol stack. */
-        StartTransiver();
+        StartTransceiver();
         eOMState = STATE_ENABLED;
     }
     else
@@ -97,7 +93,7 @@ char OMMoCoNode::Disable( void )
 
     if( eOMState == STATE_ENABLED )
     {
-        StopTransiver();
+        StopTransceiver();
         eOMState = STATE_DISABLED;
         eStatus = OM_NOERR;
     }
@@ -162,5 +158,27 @@ char OMMoCoNode::Poll( void )
         }
     }
     return OM_NOERR;
+}
+
+/**
+ *
+ * */
+void OMMoCoNode::process( uint8_t function, uint8_t ** pucFrame, unsigned short * pusLength )
+{
+   bool res;
+	if (function == OM_PROGRAM_CONTROL_CODE){
+	   uint8_t command = *pucFrame[0];
+       uint8_t* mailbox = pucFrame[1];
+	   res = programControl->dispatch(command, &mailbox);
+   } else if (function == OM_PROGRAM_DATA_SET_CODE) {
+	   uint8_t command = *pucFrame[0];
+	   uint8_t sub = *pucFrame[1];
+	   uint8_t* mailbox = pucFrame[3];
+	   res = programDataSet->dispatch(command, sub, &mailbox);
+   } else {
+
+   }
+
+
 }
 

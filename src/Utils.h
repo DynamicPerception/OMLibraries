@@ -3,10 +3,12 @@
  *
  *  Created on: 05.04.2012
  *      Author: perepelitsa
+ *      C99 int types recommended to use
  */
 
 #ifndef UTILS_H_
 #define UTILS_H_
+#include <inttypes.h>
 
 class Utils {
 public:

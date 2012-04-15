@@ -8,7 +8,15 @@
 #ifndef SERIALPORT_H_
 #define SERIALPORT_H_
 
-#define RTS_PIN         PB0
+#include <avr/pgmspace.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#include <inttypes.h>
+
+
+
+#define RTS_PIN         0
 #define RTS_DDR         DDRB
 #define RTS_PORT        PORTB
 

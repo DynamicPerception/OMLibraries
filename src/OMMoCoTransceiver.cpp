@@ -1,11 +1,11 @@
 /*
- * OMMoCoTransiver.cpp
+ * OMMoCoTransceiver.cpp
  *
  *  Created on: 05.04.2012
  *      Author: perepelitsa
  */
 
-#include "OMMoCoTransiver.h"
+#include "OMMoCoTransceiver.h"
 
 //ToDo implement 3 funcs
 static char PortTimersInit(unsigned short) {
@@ -22,16 +22,16 @@ static void PortTimersDisable(  ){
 }
 
 
-OMMoCoTransiver::OMMoCoTransiver() {
+OMMoCoTransceiver::OMMoCoTransceiver() {
 }
 
-OMMoCoTransiver::~OMMoCoTransiver() {
+OMMoCoTransceiver::~OMMoCoTransceiver() {
 }
 
 /**
  *
  * */
-char OMMoCoTransiver::Init( uint8_t ucPort, uint8_t ucBusAddress, unsigned long ulBaudRate )
+char OMMoCoTransceiver::Init( uint8_t ucPort, uint8_t ucBusAddress, unsigned long ulBaudRate )
 {
     char            eStatus = OM_NOERR;
     unsigned short  usTimerT35_50us;
@@ -77,7 +77,7 @@ char OMMoCoTransiver::Init( uint8_t ucPort, uint8_t ucBusAddress, unsigned long 
 /**
  *
  * */
-void OMMoCoTransiver::StartTransiver( void )
+void OMMoCoTransceiver::StartTransceiver( void )
 {
     DISABLE(  );
     /* Initially the receiver is in the state STATE_RX_INIT. we start
@@ -95,7 +95,7 @@ void OMMoCoTransiver::StartTransiver( void )
 /**
  *
  * */
-void OMMoCoTransiver::StopTransiver( void )
+void OMMoCoTransceiver::StopTransceiver( void )
 {
     DISABLE(  );
     portSerial.enableRxTx( false, false );
@@ -107,7 +107,7 @@ void OMMoCoTransiver::StopTransiver( void )
  * Should first function called to set begin frame pointer.
  * Frame pointer should have some free bytes in buffer before pointing address.
  * */
-char OMMoCoTransiver::Receive( uint8_t * pucRcvAddress, uint8_t ** pucFrame, unsigned short * pusLength )
+char OMMoCoTransceiver::Receive( uint8_t * pucRcvAddress, uint8_t ** pucFrame, unsigned short * pusLength )
 {
     bool    xFrameReceived = false;
     char    eStatus = OM_NOERR;
@@ -145,7 +145,7 @@ char OMMoCoTransiver::Receive( uint8_t * pucRcvAddress, uint8_t ** pucFrame, uns
 /**
  *
  * */
-char OMMoCoTransiver::Send( uint8_t ucSlaveAddress, const uint8_t * pucFrame, unsigned short usLength )
+char OMMoCoTransceiver::Send( uint8_t ucSlaveAddress, const uint8_t * pucFrame, unsigned short usLength )
 {
     char    eStatus = OM_NOERR;
     unsigned short usCRC16;
@@ -186,7 +186,7 @@ char OMMoCoTransiver::Send( uint8_t ucSlaveAddress, const uint8_t * pucFrame, un
 /**
  *
  * */
-bool OMMoCoTransiver::UpdateReceiveFSM( void )
+bool OMMoCoTransceiver::UpdateReceiveFSM( void )
 {
     bool            xTaskNeedSwitch = false;
     uint8_t         ucByte;
@@ -250,7 +250,7 @@ bool OMMoCoTransiver::UpdateReceiveFSM( void )
 /**
  *
  * */
-bool OMMoCoTransiver::UpdateTransmitFSM( void )
+bool OMMoCoTransceiver::UpdateTransmitFSM( void )
 {
     bool xNeedPoll = false;
 
@@ -288,5 +288,6 @@ bool OMMoCoTransiver::UpdateTransmitFSM( void )
 
     return xNeedPoll;
 }
+
 
 

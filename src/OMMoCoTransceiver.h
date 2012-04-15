@@ -1,5 +1,5 @@
 /*
- * OMMoCoTransiver.h
+ * OMMoCoTransceiver.h
  *
  *  Created on: 05.04.2012
  *      Author: perepelitsa
@@ -10,8 +10,8 @@
 #include "OMMocobus.h"
 #include "SerialPort.h"
 
-#ifndef OMMOCOTRANSIVER_H_
-#define OMMOCOTRANSIVER_H_
+#ifndef OMMOCOTransceiver_H_
+#define OMMOCOTransceiver_H_
 
 #define RESULT_OK 0
 
@@ -26,7 +26,7 @@
 #define OM_PDU_ADDR_OFF     4
 #define OM_PDU_FUNC_OFF     5
 
-class OMMoCoTransiver {
+class OMMoCoTransceiver {
 	/* ----------------------- Type definitions ---------------------------------*/
 	typedef enum
 	{
@@ -42,14 +42,6 @@ class OMMoCoTransiver {
 	    STATE_TX_XMIT               /*!< Transmitter is in transfer state. */
 	} eMBSndState;
 
-	typedef enum
-	{
-	    OM_READY,                   /*!< Startup finished. */
-	    OM_FRAME_RECEIVED,          /*!< Frame received. */
-	    OM_EXECUTE,                 /*!< Execute function. */
-	    OM_FRAME_SENT               /*!< Frame sent. */
-	} eOMEventType;
-
 	volatile eMBSndState eSndState;
 	volatile eMBRcvState eRcvState;
 
@@ -63,13 +55,22 @@ class OMMoCoTransiver {
 
 	SerialPort portSerial;
 
+protected:
+	typedef enum
+		{
+		    OM_READY,                   /*!< Startup finished. */
+		    OM_FRAME_RECEIVED,          /*!< Frame received. */
+		    OM_EXECUTE,                 /*!< Execute function. */
+		    OM_FRAME_SENT               /*!< Frame sent. */
+		} eOMEventType;
+
 public:
-	OMMoCoTransiver();
-	virtual ~OMMoCoTransiver();
+	OMMoCoTransceiver();
+	virtual ~OMMoCoTransceiver();
 
 	char Init(uint8_t ucPort, uint8_t ucBusAddress, unsigned long ulBaudRate);
-	void StartTransiver (void);
-	void StopTransiver (void);
+	void StartTransceiver (void);
+	void StopTransceiver (void);
 	char Receive(uint8_t * pucRcvAddress, uint8_t ** pucFrame, unsigned short * pusLength);
 	char Send(uint8_t ucSlaveAddress, const uint8_t * pucFrame, unsigned short usLength);
 
@@ -86,4 +87,4 @@ protected:
 
 };
 
-#endif /* OMMOCOTRANSIVER_H_ */
+#endif /* OMMOCOTransceiver_H_ */

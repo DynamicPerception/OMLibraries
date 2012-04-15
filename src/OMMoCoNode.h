@@ -9,9 +9,11 @@
 #define OMMOCONODE_H_
 
 #include "OMMoCoBus.h"
-#include "OMMoCoTransiver.h"
+#include "OMMoCoTransceiver.h"
+#include "ProgramControlBase.h"
+#include "ProgramDataSetBase.h"
 
-class OMMoCoNode: public OMMoCoBus, public OMMoCoTransiver {
+class OMMoCoNode: public OMMoCoBus, public OMMoCoTransceiver {
 	enum
 	{
 	    STATE_ENABLED,
@@ -21,6 +23,10 @@ class OMMoCoNode: public OMMoCoBus, public OMMoCoTransiver {
 
 
 	//SerialPort* port;
+
+	const ProgramControlBase* programControl;
+	const ProgramDataSetBase* programDataSet;
+
 	uint8_t ucMBAddress;
 
 	uint8_t   *ucOMFrame;
@@ -29,13 +35,16 @@ class OMMoCoNode: public OMMoCoBus, public OMMoCoTransiver {
 	unsigned short   usLength;
 
 public:
-	OMMoCoNode();//(const SerialPort& port);
+	OMMoCoNode(const ProgramControlBase& pc, const ProgramDataSetBase& pds);
 	virtual ~OMMoCoNode();
 	virtual char Close( void );
 	virtual char Enable(void);
 	virtual char Disable(void);
 	virtual char Poll(void);
 	virtual char Init(uint8_t ucBusAddress, unsigned long usPortBaud);
+
+private:
+	void process(uint8_t function, uint8_t ** pucFrame, unsigned short * pusLength);
 
 };
 
