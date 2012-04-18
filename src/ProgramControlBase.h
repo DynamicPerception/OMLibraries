@@ -8,6 +8,15 @@
 #ifndef PROGRAMCONTROLBASE_H_
 #define PROGRAMCONTROLBASE_H_
 
+
+  // core bus protocol command values
+#define OM_SER_BASECOM		1
+
+#define OM_SER_COREPROTO	1
+#define OM_SER_COREID		2
+#define OM_SER_COREVER		3
+#define OM_SER_COREADDR		4
+
 class ProgramControlBase {
 public:
 	ProgramControlBase();

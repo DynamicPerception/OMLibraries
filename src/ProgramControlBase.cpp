@@ -16,8 +16,15 @@ ProgramControlBase::~ProgramControlBase() {
 	// TODO Auto-generated destructor stub
 }
 
-
+/**
+ * Dispatch only Program Control group of commands
+ *
+ * */
 bool ProgramControlBase::dispatch(uint8_t cmd, uint8_t** mailbox) const {
 
-  return true;
+
+
 }
+
+
+

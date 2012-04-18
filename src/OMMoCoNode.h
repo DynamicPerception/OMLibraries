@@ -8,6 +8,7 @@
 #ifndef OMMOCONODE_H_
 #define OMMOCONODE_H_
 
+#include "ByteBuffer.h"
 #include "OMMoCoBus.h"
 #include "OMMoCoTransceiver.h"
 #include "ProgramControlBase.h"
@@ -22,16 +23,14 @@ class OMMoCoNode: public OMMoCoBus, public OMMoCoTransceiver {
 	} eOMState;
 
 
-	//SerialPort* port;
-
 	const ProgramControlBase* programControl;
 	const ProgramDataSetBase* programDataSet;
 
 	uint8_t ucMBAddress;
 
-	uint8_t   *ucOMFrame;
-	uint8_t    ucRcvAddress;
-	uint8_t    ucFunctionCode;
+	uint8_t *ucOMFrame;
+	uint8_t ucRcvAddress;
+	uint8_t ucFunctionCode;
 	unsigned short   usLength;
 
 public:
@@ -45,6 +44,7 @@ public:
 
 private:
 	void process(uint8_t function, uint8_t ** pucFrame, unsigned short * pusLength);
+	void _coreProtocol(uint8_t subCom, ByteBuffer& buf);
 
 };
 

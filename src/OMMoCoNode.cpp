@@ -113,7 +113,6 @@ char OMMoCoNode::Disable( void )
  * */
 char OMMoCoNode::Poll( void )
 {
-    int     i;
     char    eStatus = OM_NOERR;
     eOMEventType    eEvent;
 
@@ -161,11 +160,13 @@ char OMMoCoNode::Poll( void )
 }
 
 /**
+ * N.B. decide about indexing
  *
  * */
 void OMMoCoNode::process( uint8_t function, uint8_t ** pucFrame, unsigned short * pusLength )
 {
    bool res;
+   ByteBuffer b;
 	if (function == OM_PROGRAM_CONTROL_CODE){
 	   uint8_t command = *pucFrame[0];
        uint8_t* mailbox = pucFrame[1];
@@ -175,10 +176,46 @@ void OMMoCoNode::process( uint8_t function, uint8_t ** pucFrame, unsigned short 
 	   uint8_t sub = *pucFrame[1];
 	   uint8_t* mailbox = pucFrame[3];
 	   res = programDataSet->dispatch(command, sub, &mailbox);
+   } else if (function == OM_BASECOM_CODE) {
+	   uint8_t command = *pucFrame[0];
+	   b.assign(pucFrame[3], 20);
+      _coreProtocol(command, b);
+
    } else {
+
 
    }
 
 
 }
 
+/**
+ * // handle core protocol commands on behalf of the device
+ *
+ * */
+void OMMoCoNode::_coreProtocol( uint8_t subCom, ByteBuffer& b ) {
+
+		switch( subCom ) {
+		case OM_SER_COREPROTO:
+			// core protocol version supported
+			//response(true, (unsigned int) OM_SER_VER);
+			break;
+		case OM_SER_COREID:
+			// device identifier
+			//response(true, id(), 8);
+			break;
+		case OM_SER_COREVER:
+			// device version
+			//response(true, m_ver);
+			break;
+		case OM_SER_COREADDR:
+			// change node addr
+			//address(p_buf[1]);
+			//response(true);
+			break;
+		default:
+			// error
+			//response(false);
+			break;
+		}
+}

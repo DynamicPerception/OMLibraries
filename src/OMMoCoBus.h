@@ -184,7 +184,8 @@ public:
 
 	static const uint8_t OM_ADDRESS_MIN = 2;
 	static const uint8_t OM_ADDRESS_MAX = 254;
-
+    //very first byte of command
+	static const uint8_t OM_BASECOM_CODE = 1;
 	static const uint8_t OM_PROGRAM_CONTROL_CODE = 2;
 	static const uint8_t OM_PROGRAM_DATA_SET_CODE = 3;
 };
