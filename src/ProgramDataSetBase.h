@@ -17,7 +17,7 @@ public:
 
 protected:
 	virtual bool cdInterval(unsigned short interval) = 0;
-	virtual bool cdExposure(unsigned long exposure)  = 0;
+	virtual bool cdExposure(unsigned long exposure) = 0;
 	virtual bool cdFocus(unsigned short focus) = 0;
 	virtual bool cdMaxShots(unsigned short count) = 0;
 	virtual bool cdExposureDelay(unsigned short delay) = 0;

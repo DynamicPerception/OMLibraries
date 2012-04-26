@@ -14,8 +14,6 @@
 
 #include <inttypes.h>
 
-
-
 #define RTS_PIN         0
 #define RTS_DDR         DDRB
 #define RTS_PORT        PORTB
@@ -26,16 +24,23 @@ public:
 	virtual ~SerialPort();
 
 public:
-	bool initPort( uint8_t ucPort, unsigned long ulBaudRate);
-	void closePort( void );
-	void enableRxTx( bool xRxEnable, bool xTxEnable );
-	bool getByte( uint8_t * pucByte );
-	bool putByte( uint8_t ucByte );
+	bool initPort(uint8_t ucPort, unsigned long ulBaudRate);
+	void closePort(void);
+	void enableRxTx(bool xRxEnable, bool xTxEnable);
+	bool getByte(uint8_t * pucByte);
+	bool putByte(uint8_t ucByte);
 
 private:
-	inline void RTS_INIT() { RTS_DDR |= _BV( RTS_PIN ); RTS_PORT &= ~( _BV( RTS_PIN ) ); }
-	inline void RTS_HIGH() { RTS_PORT |= _BV( RTS_PIN ); }
-	inline void RTS_LOW()  { RTS_PORT &= ~( _BV( RTS_PIN ) );}
+	inline void RTS_INIT() {
+		RTS_DDR |= _BV(RTS_PIN);
+		RTS_PORT &= ~(_BV(RTS_PIN));
+	}
+	inline void RTS_HIGH() {
+		RTS_PORT |= _BV(RTS_PIN);
+	}
+	inline void RTS_LOW() {
+		RTS_PORT &= ~(_BV(RTS_PIN));
+	}
 
 };
 

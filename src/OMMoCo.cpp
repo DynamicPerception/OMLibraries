@@ -5,14 +5,14 @@
  *      Author: perepelitsa
  */
 
-#include "OMMoCoBus.h"
+#include "OMMoCo.h"
 
-OMMoCoBus::OMMoCoBus() {
+OMMoCo::OMMoCo() {
 	// TODO Auto-generated constructor stub
 
 }
 
-OMMoCoBus::~OMMoCoBus() {
+OMMoCo::~OMMoCo() {
 	// TODO Auto-generated destructor stub
 }
 

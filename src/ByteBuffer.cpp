@@ -14,9 +14,9 @@ ByteBuffer::ByteBuffer() {
 /**
  *
  * */
-void ByteBuffer::assign (uint8_t* in_buf, uint16_t in_size) {
+void ByteBuffer::assign(uint8_t* in_buf, uint16_t in_size) {
 	buf = in_buf;
-    rpos = 0;
+	rpos = 0;
 	wpos = 0;
 	max_size = in_size;
 }
@@ -24,7 +24,4 @@ void ByteBuffer::assign (uint8_t* in_buf, uint16_t in_size) {
 ByteBuffer::~ByteBuffer() {
 	// TODO Auto-generated destructor stub
 }
-
-
-
 
