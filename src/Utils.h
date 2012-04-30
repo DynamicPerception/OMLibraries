@@ -17,6 +17,7 @@ public:
 	static long ntol(uint8_t*);
 	static unsigned long ntoul(uint8_t*);
 	static float ntof(uint8_t*);
+	static unsigned long millis(void);
 };
 
 #endif /* UTILS_H_ */

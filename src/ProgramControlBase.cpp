@@ -21,6 +21,6 @@ ProgramControlBase::~ProgramControlBase() {
  *
  * */
 bool ProgramControlBase::dispatch(uint8_t cmd, uint8_t** mailbox) const {
-
+ return false;
 }
 

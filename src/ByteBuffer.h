@@ -25,14 +25,15 @@ public:
 	uint8_t size() const {
 		return rpos - wpos;
 	}
-	;
 
-	// writing raw data (command or response contents)
-	void write(uint8_t);
-	void write(unsigned int);
-	void write(int);
-	void write(unsigned long);
-	void write(long);
+	void reset() {
+		rpos = 0;
+		wpos = 0;
+	}
+
+	char* getBuf() const {
+		return (char*)buf;
+	}
 
 	template<typename T> void append(T data) {
 		unsigned int s = sizeof(data);

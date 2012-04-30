@@ -17,7 +17,7 @@
  */
 
 OMMoCoMaster::OMMoCoMaster(HardwareSerial& c_serObj, uint8_t c_dePin) :
-		OMMoCoBusExt(c_serObj, c_dePin, OM_SER_MASTER_ADDR) {
+		OMMoCoBus(c_serObj, c_dePin, (unsigned int)OM_SER_MASTER_ADDR) {
 
 }
 

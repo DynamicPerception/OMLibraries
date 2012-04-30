@@ -8,12 +8,14 @@
 #ifndef PROGRAMDATASET_H_
 #define PROGRAMDATASET_H_
 
+#include <inttypes.h>
+
 class ProgramDataSetBase {
 public:
 	ProgramDataSetBase();
 	virtual ~ProgramDataSetBase();
 
-	bool dispatch(uint8_t command, uint8_t sub, uint8_t** mailbox);
+	bool dispatch(uint8_t command, uint8_t sub, uint8_t** mailbox) const;
 
 protected:
 	virtual bool cdInterval(unsigned short interval) = 0;

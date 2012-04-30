@@ -7,7 +7,7 @@
 
 #include <avr/interrupt.h>
 
-#include "OMMocobus.h"
+#include "OMMoCo.h"
 #include "SerialPort.h"
 
 #ifndef OMMOCOTransceiver_H_

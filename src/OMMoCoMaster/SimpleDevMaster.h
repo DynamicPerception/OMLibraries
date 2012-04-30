@@ -8,10 +8,16 @@
 #ifndef SIMPLEDEVMASTER_H_
 #define SIMPLEDEVMASTER_H_
 
+#include <inttypes.h>
+#include "OMMoCoMaster.h"
+#include "ByteBuffer.h"
 
 
 class SimpleDevMaster : public OMMoCoMaster {
-	HardwareSerial serObj;
+	//HardwareSerial serObj;
+	uint8_t slave_addr;
+	uint8_t sendBufStore[10];
+	ByteBuffer sendBuf;
 public:
 	SimpleDevMaster(HardwareSerial& c_serObj, uint8_t c_dePin);
 	virtual ~SimpleDevMaster();
@@ -70,6 +76,8 @@ public:
 			                   uint32_t decelIntervals);
 	bool cleanPlannedTravel();
 	bool statusRequest(uint8_t statusType, unsigned char* blob);
+
+
 
 };
 

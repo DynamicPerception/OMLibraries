@@ -8,6 +8,8 @@
 #ifndef PROGRAMCONTROLBASE_H_
 #define PROGRAMCONTROLBASE_H_
 
+#include <inttypes.h>
+
 // core bus protocol command values
 #define OM_SER_BASECOM		1
 

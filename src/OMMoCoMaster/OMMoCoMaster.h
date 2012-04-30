@@ -33,9 +33,8 @@
 // must load before wconstants to prevent issues
 #include <math.h>
 #include "Arduino.h"
-#include <HardwareSerial.h>
+#include "HardwareSerial.h"
 
-#include "OMMoCoDefs.h"
 #include "../OMMoCoBusExt.h"
 
 

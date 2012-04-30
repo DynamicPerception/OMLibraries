@@ -9,6 +9,8 @@
 #define OMMOCOBUSEXT_H_
 
 //#include "OMMoCo.h"
+#include <inttypes.h>
+#include "HardwareSerial.h"
 #include "OMMoCoDefs.h"
 
 /**!
@@ -16,6 +18,9 @@
  * */
 class OMMoCoBus {
 public:
+	/*
+	 *
+	 * */
 	OMMoCoBus(HardwareSerial& port, uint8_t, unsigned int mode);
 	virtual ~OMMoCoBus();
 

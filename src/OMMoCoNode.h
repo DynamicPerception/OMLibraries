@@ -9,12 +9,12 @@
 #define OMMOCONODE_H_
 
 #include "ByteBuffer.h"
-#include "OMMoCoBus.h"
+#include "OMMoCo.h"
 #include "OMMoCoTransceiver.h"
 #include "ProgramControlBase.h"
 #include "ProgramDataSetBase.h"
 
-class OMMoCoNode: public OMMoCoBus, public OMMoCoTransceiver {
+class OMMoCoNode: public OMMoCo, public OMMoCoTransceiver {
 	enum {
 		STATE_ENABLED, STATE_DISABLED, STATE_NOT_INITIALIZED
 	} eOMState;
