@@ -10,6 +10,7 @@
 
 #define OM_PCODE_PC   2
 #define OM_PCODE_PDS  3
+#define OM_PDU_ESC    0x3E
 //command constants group 2 (1 bytes)
 #define CMD_PC_NOOP              0x00 //0
 #define CMD_PC_START             0x01 //1
@@ -58,6 +59,9 @@
 #define CMD_MD_EASING_MODE      0x0209 // 2_9
 #define CMD_MD_CONTINUOUS_MODE  0x020A // 2_10
 
-
+#define htonl(A) ((((uint32_t)(A) & 0xff000000) >> 24) | \
+(((uint32_t)(A) & 0x00ff0000) >> 8) | \
+(((uint32_t)(A) & 0x0000ff00) << 8) | \
+(((uint32_t)(A) & 0x000000ff) << 24))
 
 #endif /* OMMOCOCOMMANDS_H_ */
