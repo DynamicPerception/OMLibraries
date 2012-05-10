@@ -21,7 +21,7 @@ OMMoCoMaster::OMMoCoMaster(HardwareSerial& c_serObj, uint8_t c_dePin) :
 
 }
 
-/** Send A Command to a Node
+/** Send A Command to a Node with no data
 
  @param p_addr
  Device address to send command to
@@ -40,21 +40,21 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd) {
 	return _getResponse();
 }
 
-/** Send A Command to a Node with Data
+/**!
+ * Send A Command to a Node with 8bit Data.
+ *(cmd_format: 8,8,8)
+ * @param p_addr
+ * Device address to send command to
 
- @param p_addr
- Device address to send command to
+ * @param p_cmd
+ * Command code
 
- @param p_cmd
- Command code
+ * @param p_arg
+ * Command data to send
 
- @param p_arg
- Command data to send
-
- @return
- An integer with the packet code returned, or -1 for response timeout
+ * @return
+ * An integer with the packet code returned, or -1 for response timeout
  */
-
 int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg) {
 
 	// 1 bytes sent to node after command
@@ -64,8 +64,9 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg) {
 	return _getResponse();
 }
 
-/** Send A Command to a Node with Two Data Byte Values
-
+/**!
+ *  Send A Command to a Node with Two 8bit Data Values.
+ *  (cmd_format: 8,8,8,8)
  @param p_addr
  Device address to send command to
 
@@ -78,7 +79,6 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg) {
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-
 int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg,
 		uint8_t p_arg2) {
 
@@ -90,8 +90,9 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg,
 	return _getResponse();
 }
 
-/** Send A Command to a Node with Data
-
+/**
+ * ! Send A Command to a Node with 16bit Data.
+ * (cmd_format: 8,8,16)
  @param p_addr
  Device address to send command to
 
@@ -104,8 +105,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg,
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg) {
 
 	// 2 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, 2);
@@ -114,8 +114,8 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg) {
 	return _getResponse();
 }
 
-/** Send A Command to a Node with Data
-
+/** Send A Command to a Node with 32bit Data
+  (cmd_format: 8,8,32)
  @param p_addr
  Device address to send command to
 
@@ -128,8 +128,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg) {
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned long p_arg) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint32_t p_arg) {
 
 	// 4 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, 4);
@@ -137,6 +136,64 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned long p_arg) {
 
 	return _getResponse();
 }
+
+int OMMoCoMaster::command(uint8_t p_addr,
+		                  uint8_t p_cmd,
+		                  uint8_t p_arg1,
+		                  uint16_t p_arg2)
+{
+	// 3 bytes sent to node after command
+		sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
+		this->write(p_arg1);
+		this->write(p_arg2);
+
+		return _getResponse();
+}
+
+int OMMoCoMaster::command(uint8_t p_addr,
+		                  uint8_t p_cmd,
+		                  uint8_t p_arg1,
+		                  uint32_t p_arg2)
+{
+	// 5 bytes sent to node after command
+		sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
+		this->write(p_arg1);
+		this->write(p_arg2);
+
+		return _getResponse();
+
+}
+
+int OMMoCoMaster::command(uint8_t p_addr,
+		                  uint8_t p_cmd,
+		                  uint16_t p_arg1,
+		                  uint8_t p_arg2)
+{
+	// 3 bytes sent to node after command
+	  sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
+	  this->write(p_arg1);
+	  this->write(p_arg2);
+
+	  return _getResponse();
+
+}
+
+
+int OMMoCoMaster::command(uint8_t p_addr,
+		                  uint8_t p_cmd,
+		                  uint16_t p_arg1,
+		                  uint32_t p_arg2)
+{
+	// 6 bytes sent to node after command
+	sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
+	this->write(p_arg1);
+	this->write(p_arg2);
+
+	return _getResponse();
+
+}
+
+
 
 /** Send A Command to a Node with Data
 
@@ -318,14 +375,14 @@ int OMMoCoMaster::changeAddress(uint8_t p_addr, uint8_t p_newAddr) {
 // get response with timeout
 int OMMoCoMaster::_getResponse() {
 
-	unsigned long cur_tm = millis();
+	unsigned long cur_tm = Utils::millis();
 
 	// timeout if we don't get a response packet in
 	// time
 
 	uint8_t code = getPacket();
 	while (code == 0) {
-		if (millis() - cur_tm > OM_SER_MASTER_TIMEOUT)
+		if (Utils::millis() - cur_tm > OM_SER_MASTER_TIMEOUT)
 			return -1;
 		code = getPacket();
 	}

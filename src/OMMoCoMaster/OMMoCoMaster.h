@@ -81,12 +81,22 @@ class OMMoCoMaster: public OMMoCoBus {
 public:
 
 	OMMoCoMaster(HardwareSerial& c_serObj, uint8_t c_dePin);
-
+    // 0bytes of data
 	int command(uint8_t p_addr, uint8_t p_cmd);
+	// 1bytes of data
 	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg);
-	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg, uint8_t p_arg2);
-	int command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg);
-	int command(uint8_t p_addr, uint8_t p_cmd, unsigned long p_arg);
+	// 2bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg);
+	// 3bytes of data in two kind
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint16_t p_arg2);
+	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg1, uint8_t p_arg2);
+	// 4bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint32_t p_arg);
+	// 5bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint32_t p_arg2);
+    // 6bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg1, uint32_t p_arg2);
+    // user defined
 	int command(uint8_t p_addr, uint8_t p_cmd, char* p_arg, uint8_t p_len);
 
 	int responseType();
