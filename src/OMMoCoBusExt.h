@@ -22,7 +22,7 @@ public:
 	 *
 	 * */
 	OMMoCoBus(HardwareSerial& port, uint8_t, unsigned int mode);
-	virtual ~OMMoCoBus();
+	virtual ~OMMoCoBus(){}
 
 	unsigned int address();
 	void address(unsigned int);
