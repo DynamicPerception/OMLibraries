@@ -7,6 +7,7 @@
 
 #include "OMAxis.h"
 #include "OMMoCoCommands.h"
+#include "ByteBuffer.h"
 
 OMAxis::OMAxis(HardwareSerial& c_serObj, uint8_t c_dePin)
 :OMMoCoMaster(c_serObj, c_dePin)
@@ -191,7 +192,7 @@ bool OMAxis::cameraDisable() {
  * cmd_format:8,8,(8|8|16)
  **/
 bool OMAxis::moveMotor(bool dir, uint16_t steps) {
-	uint32_t param = (CMD_PC_MOVE_MOTOR_SMPL << 24) | (dir << 16) | (steps);
+	uint32_t param = (CMD_PC_MOVE_MOTOR_SMPL << 24) | ((uint32_t)dir << 16) | (steps);
 	return command(slave_addr, OM_PCODE_PC, param);
 }
 

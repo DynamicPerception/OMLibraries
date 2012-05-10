@@ -113,6 +113,9 @@ public:
 private:
 
 	int _getResponse();
+protected:
+	// 2bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2);
 };
 
 /**
