@@ -1,0 +1,19 @@
+# 1.0.1
+
+ - Fixed casting issue with ntoul() in OMMoCoBus.cpp
+
+# 1.1.0
+
+ - Added OMEEPROM
+ - Added OMMenuMgr
+ - Abstracted direct pin and register/flag references in libraries to allow for re-definition
+
+ OMComHandler:
+ 	- Added triggers to COM1 and COM2, with length of time triggered
+	- Switched master timing signal to COM1
+
+ OMMotor:
+	- Automatically re-calculating distance to home when ms changes
+	- Fixed a bug wherein a home command after a continuous move would fail to operate
+ 	
+
