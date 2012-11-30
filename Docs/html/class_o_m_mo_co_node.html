@@ -36,6 +36,7 @@
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -65,6 +66,8 @@ $(document).ready(function(){initNavTree('class_o_m_mo_co_node.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">OMMoCoNode Class Reference</div>  </div>
@@ -74,14 +77,20 @@ $(document).ready(function(){initNavTree('class_o_m_mo_co_node.html','');});
 <p>MoCoBus Node Library.  
  <a href="class_o_m_mo_co_node.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="_o_m_mo_co_node_8h_source.html">OMMoCoNode.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">OMMoCoNode.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for OMMoCoNode:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_o_m_mo_co_node.png" usemap="#OMMoCoNode_map" alt=""/>
   <map id="OMMoCoNode_map" name="OMMoCoNode_map">
-<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="0,0,97,24"/>
+<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="0,0,135,24"/>
+<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="145,0,280,24"/>
+<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="290,0,425,24"/>
+<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="435,0,570,24"/>
+<area href="class_o_m_mo_co.html" alt="OMMoCo" shape="rect" coords="580,0,715,24"/>
+<area href="class_o_m_mo_co_transceiver.html" alt="OMMoCoTransceiver" shape="rect" coords="725,0,860,24"/>
+<area href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library." alt="OMMoCoBus" shape="rect" coords="870,0,1005,24"/>
 </map>
  </div></div>
 
@@ -103,27 +112,361 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae1407f1b00bfecd7911b205867a85dfc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_node.html#ae1407f1b00bfecd7911b205867a85dfc">setBCastHandler</a> (void(*)(uint8_t, uint8_t *))</td></tr>
 <tr class="memitem:a0cf7bcb280b63ba06d70e998eb58dfa6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_node.html#a0cf7bcb280b63ba06d70e998eb58dfa6">version</a> ()</td></tr>
 <tr class="memitem:a333cfc0b31df10b6ff70679e5cd5b52a"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_node.html#a333cfc0b31df10b6ff70679e5cd5b52a">id</a> ()</td></tr>
+<tr class="memitem:a8c3ba70606d3a0caa52709d7155ca824"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c3ba70606d3a0caa52709d7155ca824"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>OMMoCoNode</b> (const <a class="el" href="class_program_control_base.html">ProgramControlBase</a> &amp;pc, const <a class="el" href="class_program_data_set_base.html">ProgramDataSetBase</a> &amp;pds)</td></tr>
+<tr class="memitem:a18dd51bb85d91da178551cd03145aebd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18dd51bb85d91da178551cd03145aebd"></a>
+virtual char&#160;</td><td class="memItemRight" valign="bottom"><b>Close</b> (void)</td></tr>
+<tr class="memitem:a06bdd5b29bdfb8a9cf24360d49f1dbec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06bdd5b29bdfb8a9cf24360d49f1dbec"></a>
+virtual char&#160;</td><td class="memItemRight" valign="bottom"><b>Enable</b> (void)</td></tr>
+<tr class="memitem:a739fa276e9c15981c888c6432d0d5dbf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a739fa276e9c15981c888c6432d0d5dbf"></a>
+virtual char&#160;</td><td class="memItemRight" valign="bottom"><b>Disable</b> (void)</td></tr>
+<tr class="memitem:a7971651cf89d91a2b7a78992690bd8cb"><td class="memItemLeft" align="right" valign="top">virtual char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_node.html#a7971651cf89d91a2b7a78992690bd8cb">Poll</a> (void)</td></tr>
+<tr class="memitem:a35132353c3d197ab11651a6efd032f09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35132353c3d197ab11651a6efd032f09"></a>
+virtual char&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (uint8_t ucBusAddress, unsigned long usPortBaud)</td></tr>
+<tr class="memitem:aa0e74680489ce20ae7daab8387e71f88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0e74680489ce20ae7daab8387e71f88"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>OMMoCoNode</b> (HardwareSerial &amp;c_serObj, uint8_t c_dePin, unsigned int c_addr, unsigned int c_ver, char *c_id)</td></tr>
+<tr class="memitem:a1c69fdbee058f70035fc29a22b53f5a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c69fdbee058f70035fc29a22b53f5a8"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>check</b> ()</td></tr>
+<tr class="memitem:ae83ba323f19fde07537d82792cb21a4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae83ba323f19fde07537d82792cb21a4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat)</td></tr>
+<tr class="memitem:a41c1ee150dceffe73fd7cac341e3fe5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c1ee150dceffe73fd7cac341e3fe5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, uint8_t p_resp)</td></tr>
+<tr class="memitem:a82e37165c3cf8f733fe26f8b3022e4aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82e37165c3cf8f733fe26f8b3022e4aa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned int p_resp)</td></tr>
+<tr class="memitem:a998894e19d231d89adb3285bf9005268"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a998894e19d231d89adb3285bf9005268"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, int p_resp)</td></tr>
+<tr class="memitem:ab4046bef9daf9c10eebe7fffe7a53f60"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4046bef9daf9c10eebe7fffe7a53f60"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned long p_resp)</td></tr>
+<tr class="memitem:aa1ed572382dbfb42f7ddf8ff05239a95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1ed572382dbfb42f7ddf8ff05239a95"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, long p_resp)</td></tr>
+<tr class="memitem:afc80acb3f4b66078391215e58585a0b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc80acb3f4b66078391215e58585a0b9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, float p_resp)</td></tr>
+<tr class="memitem:a7f77dfe14efa087c30ee631dddad6704"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f77dfe14efa087c30ee631dddad6704"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, char *p_resp, int p_len)</td></tr>
+<tr class="memitem:aa6cb6e4afb626636d080b6d1799bcd50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6cb6e4afb626636d080b6d1799bcd50"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:ae1407f1b00bfecd7911b205867a85dfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1407f1b00bfecd7911b205867a85dfc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setBCastHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:a0cf7bcb280b63ba06d70e998eb58dfa6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cf7bcb280b63ba06d70e998eb58dfa6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> ()</td></tr>
+<tr class="memitem:a4d3229666a0c2791e4fe32079a663d82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d3229666a0c2791e4fe32079a663d82"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> ()</td></tr>
+<tr class="memitem:a86e959df9037af0f5bf2ce2e2381a1cf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_node.html#a86e959df9037af0f5bf2ce2e2381a1cf">OMMoCoNode</a> (HardwareSerial &amp;c_serObj, unsigned int c_addr, unsigned int c_ver, char *c_id)</td></tr>
+<tr class="memitem:a1c69fdbee058f70035fc29a22b53f5a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c69fdbee058f70035fc29a22b53f5a8"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>check</b> ()</td></tr>
+<tr class="memitem:ae83ba323f19fde07537d82792cb21a4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae83ba323f19fde07537d82792cb21a4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat)</td></tr>
+<tr class="memitem:a41c1ee150dceffe73fd7cac341e3fe5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c1ee150dceffe73fd7cac341e3fe5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, uint8_t p_resp)</td></tr>
+<tr class="memitem:a82e37165c3cf8f733fe26f8b3022e4aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82e37165c3cf8f733fe26f8b3022e4aa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned int p_resp)</td></tr>
+<tr class="memitem:a998894e19d231d89adb3285bf9005268"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a998894e19d231d89adb3285bf9005268"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, int p_resp)</td></tr>
+<tr class="memitem:ab4046bef9daf9c10eebe7fffe7a53f60"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4046bef9daf9c10eebe7fffe7a53f60"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned long p_resp)</td></tr>
+<tr class="memitem:aa1ed572382dbfb42f7ddf8ff05239a95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1ed572382dbfb42f7ddf8ff05239a95"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, long p_resp)</td></tr>
+<tr class="memitem:afc80acb3f4b66078391215e58585a0b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc80acb3f4b66078391215e58585a0b9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, float p_resp)</td></tr>
+<tr class="memitem:a7f77dfe14efa087c30ee631dddad6704"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f77dfe14efa087c30ee631dddad6704"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, char *p_resp, int p_len)</td></tr>
+<tr class="memitem:aa6cb6e4afb626636d080b6d1799bcd50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6cb6e4afb626636d080b6d1799bcd50"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:ae1407f1b00bfecd7911b205867a85dfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1407f1b00bfecd7911b205867a85dfc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setBCastHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:a0cf7bcb280b63ba06d70e998eb58dfa6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cf7bcb280b63ba06d70e998eb58dfa6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> ()</td></tr>
+<tr class="memitem:a4d3229666a0c2791e4fe32079a663d82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d3229666a0c2791e4fe32079a663d82"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> ()</td></tr>
+<tr class="memitem:a86e959df9037af0f5bf2ce2e2381a1cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86e959df9037af0f5bf2ce2e2381a1cf"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>OMMoCoNode</b> (HardwareSerial &amp;c_serObj, unsigned int c_addr, unsigned int c_ver, char *c_id)</td></tr>
+<tr class="memitem:a1c69fdbee058f70035fc29a22b53f5a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c69fdbee058f70035fc29a22b53f5a8"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>check</b> ()</td></tr>
+<tr class="memitem:ae83ba323f19fde07537d82792cb21a4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae83ba323f19fde07537d82792cb21a4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat)</td></tr>
+<tr class="memitem:a41c1ee150dceffe73fd7cac341e3fe5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c1ee150dceffe73fd7cac341e3fe5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, uint8_t p_resp)</td></tr>
+<tr class="memitem:a82e37165c3cf8f733fe26f8b3022e4aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82e37165c3cf8f733fe26f8b3022e4aa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned int p_resp)</td></tr>
+<tr class="memitem:a998894e19d231d89adb3285bf9005268"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a998894e19d231d89adb3285bf9005268"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, int p_resp)</td></tr>
+<tr class="memitem:ab4046bef9daf9c10eebe7fffe7a53f60"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4046bef9daf9c10eebe7fffe7a53f60"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned long p_resp)</td></tr>
+<tr class="memitem:aa1ed572382dbfb42f7ddf8ff05239a95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1ed572382dbfb42f7ddf8ff05239a95"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, long p_resp)</td></tr>
+<tr class="memitem:afc80acb3f4b66078391215e58585a0b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc80acb3f4b66078391215e58585a0b9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, float p_resp)</td></tr>
+<tr class="memitem:a7f77dfe14efa087c30ee631dddad6704"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f77dfe14efa087c30ee631dddad6704"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, char *p_resp, int p_len)</td></tr>
+<tr class="memitem:aa6cb6e4afb626636d080b6d1799bcd50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6cb6e4afb626636d080b6d1799bcd50"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:ae1407f1b00bfecd7911b205867a85dfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1407f1b00bfecd7911b205867a85dfc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setBCastHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:a0cf7bcb280b63ba06d70e998eb58dfa6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cf7bcb280b63ba06d70e998eb58dfa6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> ()</td></tr>
+<tr class="memitem:a4d3229666a0c2791e4fe32079a663d82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d3229666a0c2791e4fe32079a663d82"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> ()</td></tr>
+<tr class="memitem:a86e959df9037af0f5bf2ce2e2381a1cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86e959df9037af0f5bf2ce2e2381a1cf"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>OMMoCoNode</b> (HardwareSerial &amp;c_serObj, unsigned int c_addr, unsigned int c_ver, char *c_id)</td></tr>
+<tr class="memitem:a1c69fdbee058f70035fc29a22b53f5a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c69fdbee058f70035fc29a22b53f5a8"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>check</b> ()</td></tr>
+<tr class="memitem:ae83ba323f19fde07537d82792cb21a4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae83ba323f19fde07537d82792cb21a4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat)</td></tr>
+<tr class="memitem:a41c1ee150dceffe73fd7cac341e3fe5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c1ee150dceffe73fd7cac341e3fe5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, uint8_t p_resp)</td></tr>
+<tr class="memitem:a82e37165c3cf8f733fe26f8b3022e4aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82e37165c3cf8f733fe26f8b3022e4aa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned int p_resp)</td></tr>
+<tr class="memitem:a998894e19d231d89adb3285bf9005268"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a998894e19d231d89adb3285bf9005268"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, int p_resp)</td></tr>
+<tr class="memitem:ab4046bef9daf9c10eebe7fffe7a53f60"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4046bef9daf9c10eebe7fffe7a53f60"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, unsigned long p_resp)</td></tr>
+<tr class="memitem:aa1ed572382dbfb42f7ddf8ff05239a95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1ed572382dbfb42f7ddf8ff05239a95"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, long p_resp)</td></tr>
+<tr class="memitem:afc80acb3f4b66078391215e58585a0b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc80acb3f4b66078391215e58585a0b9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, float p_resp)</td></tr>
+<tr class="memitem:a7f77dfe14efa087c30ee631dddad6704"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f77dfe14efa087c30ee631dddad6704"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>response</b> (bool p_stat, char *p_resp, int p_len)</td></tr>
+<tr class="memitem:aa6cb6e4afb626636d080b6d1799bcd50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6cb6e4afb626636d080b6d1799bcd50"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:ae1407f1b00bfecd7911b205867a85dfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1407f1b00bfecd7911b205867a85dfc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setBCastHandler</b> (void(*)(uint8_t, uint8_t *))</td></tr>
+<tr class="memitem:a0cf7bcb280b63ba06d70e998eb58dfa6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cf7bcb280b63ba06d70e998eb58dfa6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> ()</td></tr>
+<tr class="memitem:a4d3229666a0c2791e4fe32079a663d82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d3229666a0c2791e4fe32079a663d82"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> ()</td></tr>
 <tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address</a> ()</td></tr>
 <tr class="memitem:ab4678ed2fd9d1be4666fc1d43deb7846"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ab4678ed2fd9d1be4666fc1d43deb7846">address</a> (unsigned int)</td></tr>
+<tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e5fd9b0f4adda950d9c0b392216d4a6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
+<tr class="memitem:ab4678ed2fd9d1be4666fc1d43deb7846"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4678ed2fd9d1be4666fc1d43deb7846"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (unsigned int)</td></tr>
+<tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e5fd9b0f4adda950d9c0b392216d4a6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
+<tr class="memitem:ab4678ed2fd9d1be4666fc1d43deb7846"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4678ed2fd9d1be4666fc1d43deb7846"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (unsigned int)</td></tr>
+<tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e5fd9b0f4adda950d9c0b392216d4a6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
+<tr class="memitem:a7d91d05587d86a2a0623cb15fc6ccf3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d91d05587d86a2a0623cb15fc6ccf3b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (unsigned int p_addr)</td></tr>
+<tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e5fd9b0f4adda950d9c0b392216d4a6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
+<tr class="memitem:a7d91d05587d86a2a0623cb15fc6ccf3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d91d05587d86a2a0623cb15fc6ccf3b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (unsigned int p_addr)</td></tr>
+<tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e5fd9b0f4adda950d9c0b392216d4a6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
+<tr class="memitem:a7d91d05587d86a2a0623cb15fc6ccf3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d91d05587d86a2a0623cb15fc6ccf3b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (unsigned int p_addr)</td></tr>
 <tr class="memitem:ab766533ac99363cb6d92a52357cfb7a1"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ab766533ac99363cb6d92a52357cfb7a1">buffer</a> ()</td></tr>
+<tr class="memitem:a13b56c9ce6c994acc73df9ed4d7a69a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b56c9ce6c994acc73df9ed4d7a69a8"></a>
+uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> ()</td></tr>
+<tr class="memitem:a13b56c9ce6c994acc73df9ed4d7a69a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b56c9ce6c994acc73df9ed4d7a69a8"></a>
+uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> ()</td></tr>
+<tr class="memitem:a13b56c9ce6c994acc73df9ed4d7a69a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b56c9ce6c994acc73df9ed4d7a69a8"></a>
+uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> ()</td></tr>
+<tr class="memitem:a13b56c9ce6c994acc73df9ed4d7a69a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b56c9ce6c994acc73df9ed4d7a69a8"></a>
+uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> ()</td></tr>
+<tr class="memitem:a13b56c9ce6c994acc73df9ed4d7a69a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b56c9ce6c994acc73df9ed4d7a69a8"></a>
+uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> ()</td></tr>
 <tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a490368905b48e8318734abe757983cec">bufferLen</a> ()</td></tr>
+<tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a490368905b48e8318734abe757983cec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>bufferLen</b> ()</td></tr>
+<tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a490368905b48e8318734abe757983cec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>bufferLen</b> ()</td></tr>
+<tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a490368905b48e8318734abe757983cec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>bufferLen</b> ()</td></tr>
+<tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a490368905b48e8318734abe757983cec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>bufferLen</b> ()</td></tr>
+<tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a490368905b48e8318734abe757983cec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>bufferLen</b> ()</td></tr>
 <tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a577164df79b2be053269fb0729fce5be">addressCallback</a> (void(*)(uint8_t))</td></tr>
+<tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a577164df79b2be053269fb0729fce5be"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addressCallback</b> (void(*)(uint8_t))</td></tr>
+<tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a577164df79b2be053269fb0729fce5be"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addressCallback</b> (void(*)(uint8_t))</td></tr>
+<tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a577164df79b2be053269fb0729fce5be"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addressCallback</b> (void(*)(uint8_t))</td></tr>
+<tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a577164df79b2be053269fb0729fce5be"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addressCallback</b> (void(*)(uint8_t))</td></tr>
+<tr class="memitem:a577164df79b2be053269fb0729fce5be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a577164df79b2be053269fb0729fce5be"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addressCallback</b> (void(*)(uint8_t))</td></tr>
 <tr class="memitem:aaa65952427bbd58ab7d0adb31385046a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aaa65952427bbd58ab7d0adb31385046a">ntoi</a> (uint8_t *)</td></tr>
+<tr class="memitem:aaa65952427bbd58ab7d0adb31385046a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa65952427bbd58ab7d0adb31385046a"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoi</b> (uint8_t *)</td></tr>
+<tr class="memitem:a88d450d778bbf6494f1d9c4f529ee274"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88d450d778bbf6494f1d9c4f529ee274"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoi</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a88d450d778bbf6494f1d9c4f529ee274"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88d450d778bbf6494f1d9c4f529ee274"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoi</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a88d450d778bbf6494f1d9c4f529ee274"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88d450d778bbf6494f1d9c4f529ee274"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoi</b> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:aed0ede63294aeec46d8f00f5f07e5750"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aed0ede63294aeec46d8f00f5f07e5750">ntoui</a> (uint8_t *)</td></tr>
+<tr class="memitem:aed0ede63294aeec46d8f00f5f07e5750"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed0ede63294aeec46d8f00f5f07e5750"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoui</b> (uint8_t *)</td></tr>
+<tr class="memitem:a7a90d267a7a21c886b93b58f247d4f4c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a90d267a7a21c886b93b58f247d4f4c"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoui</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a7a90d267a7a21c886b93b58f247d4f4c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a90d267a7a21c886b93b58f247d4f4c"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoui</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a7a90d267a7a21c886b93b58f247d4f4c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a90d267a7a21c886b93b58f247d4f4c"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>ntoui</b> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:a7daaeac1ea6d439f7a700c56eaa9c005"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a7daaeac1ea6d439f7a700c56eaa9c005">ntol</a> (uint8_t *)</td></tr>
+<tr class="memitem:a7daaeac1ea6d439f7a700c56eaa9c005"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7daaeac1ea6d439f7a700c56eaa9c005"></a>
+long&#160;</td><td class="memItemRight" valign="bottom"><b>ntol</b> (uint8_t *)</td></tr>
+<tr class="memitem:a195ed57e431fce980589ed5b81bb25a1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a195ed57e431fce980589ed5b81bb25a1"></a>
+long&#160;</td><td class="memItemRight" valign="bottom"><b>ntol</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a195ed57e431fce980589ed5b81bb25a1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a195ed57e431fce980589ed5b81bb25a1"></a>
+long&#160;</td><td class="memItemRight" valign="bottom"><b>ntol</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a195ed57e431fce980589ed5b81bb25a1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a195ed57e431fce980589ed5b81bb25a1"></a>
+long&#160;</td><td class="memItemRight" valign="bottom"><b>ntol</b> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:aafbc502bef76d3ff7765e07c6f885eef"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aafbc502bef76d3ff7765e07c6f885eef">ntoul</a> (uint8_t *)</td></tr>
+<tr class="memitem:aafbc502bef76d3ff7765e07c6f885eef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aafbc502bef76d3ff7765e07c6f885eef"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>ntoul</b> (uint8_t *)</td></tr>
+<tr class="memitem:a15fe12677338c70ca39408946e56aa36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15fe12677338c70ca39408946e56aa36"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>ntoul</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a15fe12677338c70ca39408946e56aa36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15fe12677338c70ca39408946e56aa36"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>ntoul</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a15fe12677338c70ca39408946e56aa36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15fe12677338c70ca39408946e56aa36"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>ntoul</b> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:ac56606c240a631e330e7f0e7a1b3ea94"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ac56606c240a631e330e7f0e7a1b3ea94">ntof</a> (uint8_t *)</td></tr>
+<tr class="memitem:ac56606c240a631e330e7f0e7a1b3ea94"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac56606c240a631e330e7f0e7a1b3ea94"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ntof</b> (uint8_t *)</td></tr>
+<tr class="memitem:a65b49619f92f96e915fe246f7f447a8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b49619f92f96e915fe246f7f447a8b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ntof</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a65b49619f92f96e915fe246f7f447a8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b49619f92f96e915fe246f7f447a8b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ntof</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a65b49619f92f96e915fe246f7f447a8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b49619f92f96e915fe246f7f447a8b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ntof</b> (uint8_t *p_dat)</td></tr>
+<tr class="memitem:a2e413ee09b485d9efde60841c55c5811"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e413ee09b485d9efde60841c55c5811"></a>
+virtual char&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (uint8_t ucBusAddress, uint32_t portBaud)=0</td></tr>
+<tr class="memitem:a66745f67edbb99a49be9c7f8b754ee94"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66745f67edbb99a49be9c7f8b754ee94"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (uint8_t ucPort, uint8_t ucBusAddress, unsigned long ulBaudRate)</td></tr>
+<tr class="memitem:a3f722daaa9d7080bc60438f66fcb3dc1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f722daaa9d7080bc60438f66fcb3dc1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>StartTransceiver</b> (void)</td></tr>
+<tr class="memitem:a3b5d9494de556a589053c3352cd88816"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b5d9494de556a589053c3352cd88816"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>StopTransceiver</b> (void)</td></tr>
+<tr class="memitem:a125cc68195e2b9772d59492677159184"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_transceiver.html#a125cc68195e2b9772d59492677159184">Receive</a> (uint8_t *pucRcvAddress, uint8_t **pucFrame, unsigned short *pusLength)</td></tr>
+<tr class="memitem:ae18ef0df3dcfed468268aeb03df5f520"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae18ef0df3dcfed468268aeb03df5f520"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><b>Send</b> (uint8_t ucSlaveAddress, const uint8_t *pucFrame, unsigned short usLength)</td></tr>
+<tr class="memitem:aa9e90b183194f8f8dec538c34f01b8ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9e90b183194f8f8dec538c34f01b8ff"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>UpdateReceiveFSM</b> (void)</td></tr>
+<tr class="memitem:a2239232fd686a5af881d14d56187237e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2239232fd686a5af881d14d56187237e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>UpdateTransmitFSM</b> (void)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a51cf94fa17649f77fbe32c90c96a1179"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51cf94fa17649f77fbe32c90c96a1179"></a>
+static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>OM_ADDRESS_MIN</b> = 2</td></tr>
+<tr class="memitem:aa5cbe4667faeed69df65323ae3881685"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5cbe4667faeed69df65323ae3881685"></a>
+static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>OM_ADDRESS_MAX</b> = 254</td></tr>
+<tr class="memitem:a83f88d6bcbd2926d49028903570e7607"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83f88d6bcbd2926d49028903570e7607"></a>
+static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>OM_BASECOM_CODE</b> = 1</td></tr>
+<tr class="memitem:a35ead371492a4ca068771b1b872a320a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35ead371492a4ca068771b1b872a320a"></a>
+static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>OM_PROGRAM_CONTROL_CODE</b> = 2</td></tr>
+<tr class="memitem:a78d14090093e73e461cedee7ec609859"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78d14090093e73e461cedee7ec609859"></a>
+static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>OM_PROGRAM_DATA_SET_CODE</b> = 3</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pro-types"></a>
+Protected Types</h2></td></tr>
+<tr class="memitem:a1ea52bee125e7ed913773915b2cc2cc9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9">eOMEventType</a> { <a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9a18a0ab1ee1f99c3e4bc6ccba1ea30b0d">OM_READY</a>, 
+<a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9a8012653c52ff2615e645bd69b210b7c1">OM_FRAME_RECEIVED</a>, 
+<a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9a60f10e76add8a6d05c65087e643bc861">OM_EXECUTE</a>, 
+<a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9a6fea11139b1e362ab01941646bdc9b45">OM_FRAME_SENT</a>
+ }</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a> ()</td></tr>
+<tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7503c9932e5dd118ac0a003ed729eb7"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPacket</b> ()</td></tr>
+<tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7503c9932e5dd118ac0a003ed729eb7"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPacket</b> ()</td></tr>
+<tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7503c9932e5dd118ac0a003ed729eb7"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPacket</b> ()</td></tr>
+<tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7503c9932e5dd118ac0a003ed729eb7"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPacket</b> ()</td></tr>
+<tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7503c9932e5dd118ac0a003ed729eb7"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPacket</b> ()</td></tr>
 <tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a> ()</td></tr>
+<tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad576a49c41682e401f5ffff59b1e2c52"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBroadcast</b> ()</td></tr>
+<tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad576a49c41682e401f5ffff59b1e2c52"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBroadcast</b> ()</td></tr>
+<tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad576a49c41682e401f5ffff59b1e2c52"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBroadcast</b> ()</td></tr>
+<tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad576a49c41682e401f5ffff59b1e2c52"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBroadcast</b> ()</td></tr>
 <tr class="memitem:a01ebebae4c25a561b3aa666bc00c09b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader</a> (unsigned int, uint8_t, uint8_t)</td></tr>
+<tr class="memitem:a01ebebae4c25a561b3aa666bc00c09b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01ebebae4c25a561b3aa666bc00c09b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sendPacketHeader</b> (unsigned int, uint8_t, uint8_t)</td></tr>
+<tr class="memitem:a01ebebae4c25a561b3aa666bc00c09b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01ebebae4c25a561b3aa666bc00c09b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sendPacketHeader</b> (unsigned int, uint8_t, uint8_t)</td></tr>
+<tr class="memitem:a537c8d98c67988983b9ba8824aa140a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a537c8d98c67988983b9ba8824aa140a8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sendPacketHeader</b> (unsigned int p_addr, uint8_t p_code, uint8_t p_dlen)</td></tr>
+<tr class="memitem:a537c8d98c67988983b9ba8824aa140a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a537c8d98c67988983b9ba8824aa140a8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sendPacketHeader</b> (unsigned int p_addr, uint8_t p_code, uint8_t p_dlen)</td></tr>
+<tr class="memitem:a537c8d98c67988983b9ba8824aa140a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a537c8d98c67988983b9ba8824aa140a8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sendPacketHeader</b> (unsigned int p_addr, uint8_t p_code, uint8_t p_dlen)</td></tr>
 <tr class="memitem:a5762c6450a362153180092b960a57da2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a5762c6450a362153180092b960a57da2">write</a> (uint8_t)</td></tr>
 <tr class="memitem:a93215552a06a6aafe30602fc1bc7d777"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a93215552a06a6aafe30602fc1bc7d777">write</a> (unsigned int)</td></tr>
 <tr class="memitem:a6767bd763ffee1d8cebf8446c2dbc0b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a6767bd763ffee1d8cebf8446c2dbc0b6">write</a> (int)</td></tr>
 <tr class="memitem:a15d46ceea50f3f0c9691842e7ccbd3f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a15d46ceea50f3f0c9691842e7ccbd3f0">write</a> (unsigned long)</td></tr>
 <tr class="memitem:aae6fb8c97ecb09e25138974e9a6da8ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aae6fb8c97ecb09e25138974e9a6da8ff">write</a> (long)</td></tr>
+<tr class="memitem:a5762c6450a362153180092b960a57da2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5762c6450a362153180092b960a57da2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t)</td></tr>
+<tr class="memitem:a93215552a06a6aafe30602fc1bc7d777"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93215552a06a6aafe30602fc1bc7d777"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned int)</td></tr>
+<tr class="memitem:a6767bd763ffee1d8cebf8446c2dbc0b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6767bd763ffee1d8cebf8446c2dbc0b6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int)</td></tr>
+<tr class="memitem:a15d46ceea50f3f0c9691842e7ccbd3f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15d46ceea50f3f0c9691842e7ccbd3f0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned long)</td></tr>
+<tr class="memitem:aae6fb8c97ecb09e25138974e9a6da8ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae6fb8c97ecb09e25138974e9a6da8ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (long)</td></tr>
+<tr class="memitem:a5762c6450a362153180092b960a57da2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5762c6450a362153180092b960a57da2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t)</td></tr>
+<tr class="memitem:a93215552a06a6aafe30602fc1bc7d777"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93215552a06a6aafe30602fc1bc7d777"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned int)</td></tr>
+<tr class="memitem:a6767bd763ffee1d8cebf8446c2dbc0b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6767bd763ffee1d8cebf8446c2dbc0b6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int)</td></tr>
+<tr class="memitem:a15d46ceea50f3f0c9691842e7ccbd3f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15d46ceea50f3f0c9691842e7ccbd3f0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned long)</td></tr>
+<tr class="memitem:aae6fb8c97ecb09e25138974e9a6da8ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae6fb8c97ecb09e25138974e9a6da8ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (long)</td></tr>
+<tr class="memitem:a8689cb7f693dde954acb68dbfc0bc38e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8689cb7f693dde954acb68dbfc0bc38e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t p_dat)</td></tr>
+<tr class="memitem:a44eea903a7590d007ac391f2a5c0c523"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44eea903a7590d007ac391f2a5c0c523"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned int p_dat)</td></tr>
+<tr class="memitem:afdf6e05b1d2e1ceadb8549a292a65282"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdf6e05b1d2e1ceadb8549a292a65282"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int p_dat)</td></tr>
+<tr class="memitem:a3c224bdab2c88cf050e8d3183697afaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c224bdab2c88cf050e8d3183697afaf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned long p_dat)</td></tr>
+<tr class="memitem:aae42ed90118f243e55aec3210804d078"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae42ed90118f243e55aec3210804d078"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (long p_dat)</td></tr>
+<tr class="memitem:a8689cb7f693dde954acb68dbfc0bc38e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8689cb7f693dde954acb68dbfc0bc38e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t p_dat)</td></tr>
+<tr class="memitem:a44eea903a7590d007ac391f2a5c0c523"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44eea903a7590d007ac391f2a5c0c523"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned int p_dat)</td></tr>
+<tr class="memitem:afdf6e05b1d2e1ceadb8549a292a65282"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdf6e05b1d2e1ceadb8549a292a65282"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int p_dat)</td></tr>
+<tr class="memitem:a3c224bdab2c88cf050e8d3183697afaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c224bdab2c88cf050e8d3183697afaf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned long p_dat)</td></tr>
+<tr class="memitem:aae42ed90118f243e55aec3210804d078"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae42ed90118f243e55aec3210804d078"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (long p_dat)</td></tr>
+<tr class="memitem:a8689cb7f693dde954acb68dbfc0bc38e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8689cb7f693dde954acb68dbfc0bc38e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t p_dat)</td></tr>
+<tr class="memitem:a44eea903a7590d007ac391f2a5c0c523"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44eea903a7590d007ac391f2a5c0c523"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned int p_dat)</td></tr>
+<tr class="memitem:afdf6e05b1d2e1ceadb8549a292a65282"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdf6e05b1d2e1ceadb8549a292a65282"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int p_dat)</td></tr>
+<tr class="memitem:a3c224bdab2c88cf050e8d3183697afaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c224bdab2c88cf050e8d3183697afaf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (unsigned long p_dat)</td></tr>
+<tr class="memitem:aae42ed90118f243e55aec3210804d078"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae42ed90118f243e55aec3210804d078"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (long p_dat)</td></tr>
+<tr class="memitem:a0793a13d57924f40d416769ec022d5ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0793a13d57924f40d416769ec022d5ae"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>PortEventInit</b> (void)</td></tr>
+<tr class="memitem:ae4252220f7a6e8678ea64e232f84c885"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4252220f7a6e8678ea64e232f84c885"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>PortEventGet</b> (<a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9">eOMEventType</a> *event)</td></tr>
+<tr class="memitem:aeaaf0b100a769c2db438bcaf29041df6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeaaf0b100a769c2db438bcaf29041df6"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>PortEventPost</b> (<a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9">eOMEventType</a> event)</td></tr>
+<tr class="memitem:a271a917bd369c9724cd6759b9e18904b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271a917bd369c9724cd6759b9e18904b"></a>
+<a class="el" href="class_serial_port.html">SerialPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>getPort</b> ()</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>MoCoBus Node Library. </p>
@@ -136,8 +479,47 @@ Protected Member Functions</h2></td></tr>
 <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8h_source.html#l00080">80</a> of file <a class="el" href="_o_m_mo_co_node_8h_source.html">OMMoCoNode.h</a>.</p>
-</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html#l00080">80</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.h</a>.</p>
+</div><hr/><h2>Member Enumeration Documentation</h2>
+<a class="anchor" id="a1ea52bee125e7ed913773915b2cc2cc9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9">eOMEventType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">inherited</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" id="a1ea52bee125e7ed913773915b2cc2cc9a18a0ab1ee1f99c3e4bc6ccba1ea30b0d"></a>OM_READY</em>&nbsp;</td><td>
+<p>Startup finished. </p>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" id="a1ea52bee125e7ed913773915b2cc2cc9a8012653c52ff2615e645bd69b210b7c1"></a>OM_FRAME_RECEIVED</em>&nbsp;</td><td>
+<p>Frame received. </p>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" id="a1ea52bee125e7ed913773915b2cc2cc9a60f10e76add8a6d05c65087e643bc861"></a>OM_EXECUTE</em>&nbsp;</td><td>
+<p>Execute function. </p>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" id="a1ea52bee125e7ed913773915b2cc2cc9a6fea11139b1e362ab01941646bdc9b45"></a>OM_FRAME_SENT</em>&nbsp;</td><td>
+<p>Frame sent. </p>
+</td></tr>
+</table>
+</dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_o_m_mo_co_transceiver_8h_source.html#l00056">56</a> of file <a class="el" href="_o_m_mo_co_transceiver_8h_source.html">OMMoCoTransceiver.h</a>.</p>
+
+</div>
+</div>
+<hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="aa0e74680489ce20ae7daab8387e71f88"></a>
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +577,61 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00043">43</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00043">43</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a86e959df9037af0f5bf2ce2e2381a1cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_o_m_mo_co_node.html">OMMoCoNode</a> </td>
+          <td>(</td>
+          <td class="paramtype">HardwareSerial &amp;&#160;</td>
+          <td class="paramname"><em>c_serObj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>c_addr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>c_ver</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>c_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Constructor</p>
+<p>Constructs a new instance of the class. Accepts a hardware serial object, the digital pin # of the transceiver DE/RE pin combination, and the current device address.</p>
+<p>You may change the address later using <a class="el" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address()</a>, note that for nodes the address must be greater than 1.</p>
+<p>A textual identifier and version number is required for all nodes on a bus. These are used to differentiate types of nodes and capabilities of nodes of the same type running different versions of firmware. You must change the version number when changing what commands your device accepts or how it responds to commands so that others who are creating masters may know if your device supports the capabilities they expect.</p>
+<p>The textual identifier for a node must be exactly 8 characters long, and must consist only of the lower-ASCII character set (numeric value &gt;= 32 and &lt;= 126). If you attempt to use any character outside of this set, this library will automatically replace these characters with the character '0' (numeric value = 48).</p>
+<dl class="params"><dt>Parameters:</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">c_serObj</td><td>An Arduino HardwareSerial object</td></tr>
+    <tr><td class="paramname">c_addr</td><td>The device address</td></tr>
+    <tr><td class="paramname">c_ver</td><td>The version of this specific device</td></tr>
+    <tr><td class="paramname">c_id</td><td>A unique, 8-character description of this device that differentiates it from other devices on the bus </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="tags_2_o_m_a_v_r_libraries-1_81_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00040">40</a> of file <a class="el" href="tags_2_o_m_a_v_r_libraries-1_81_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">tags/OMAVRLibraries-1.1/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -224,7 +660,7 @@ Protected Member Functions</h2></td></tr>
 <p>Gets the current address assigned to this node.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Device address </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00087">87</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00087">87</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -258,9 +694,9 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>.</p>
+<p>Reimplemented in <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>, <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>, <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>, <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>, <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>, and <a class="el" href="class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846">OMMoCoMaster</a>.</p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00099">99</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00099">99</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -295,7 +731,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00126">126</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00126">126</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -325,7 +761,7 @@ Protected Member Functions</h2></td></tr>
 <p>Check OM_SER_BUFLEN constant for maximum buffer length.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Pointer to packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00495">495</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00495">495</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +789,7 @@ Protected Member Functions</h2></td></tr>
 <p>Retrieves the length of data, in bytes, currently stored in the packet data buffer.</p>
 <dl class="section return"><dt>Returns:</dt><dd>The length of data, in bytes, in the packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00508">508</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00508">508</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -377,7 +813,7 @@ Protected Member Functions</h2></td></tr>
 <p><a class="el" href="class_o_m_mo_co_node.html#a1c69fdbee058f70035fc29a22b53f5a8">check()</a> returns 0 if no packet was available, a packet was found but not meant for this node, a core protocol command was received, or if an error occurs reading the packet. Otherwise, it returns the packet code associated with the packet.</p>
 <dl class="section return"><dt>Returns:</dt><dd>The Packet Code, or 0 if no packet available. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00276">276</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00276">276</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -407,7 +843,7 @@ Protected Member Functions</h2></td></tr>
 <p>Note: this method is not intended for direct use in Nodes, instead see <a class="el" href="class_o_m_mo_co_node.html#a1c69fdbee058f70035fc29a22b53f5a8">OMMoCoNode::check()</a> which is the correct way to check for a received command packet.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Packet code, or 0 if not intended for us/error packet </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00147">147</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00147">147</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -425,7 +861,7 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Get Identifier </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00326">326</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00326">326</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -464,7 +900,7 @@ Protected Member Functions</h2></td></tr>
 <div class="line">  }</div>
 </div><!-- fragment --><dl class="section return"><dt>Returns:</dt><dd>True if the previously received packet was a broadcast packet, false if directed to the specific device. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00390">390</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00390">390</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -498,7 +934,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A float </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00688">688</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00688">688</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -532,7 +968,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A signed integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00630">630</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00630">630</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -566,7 +1002,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00673">673</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00673">673</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -600,7 +1036,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00644">644</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00644">644</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -634,7 +1070,79 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00658">658</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00658">658</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7971651cf89d91a2b7a78992690bd8cb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char Poll </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>All in one function </p>
+
+<p>Implements <a class="el" href="class_o_m_mo_co.html">OMMoCo</a>.</p>
+
+<p>Definition at line <a class="el" href="branches_2old_2src_2_o_m_mo_co_node_8cpp_source.html#l00094">94</a> of file <a class="el" href="branches_2old_2src_2_o_m_mo_co_node_8cpp_source.html">branches/old/src/OMMoCoNode.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a125cc68195e2b9772d59492677159184"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char Receive </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>pucRcvAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramname"><em>pucFrame</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned short *&#160;</td>
+          <td class="paramname"><em>pusLength</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inherited</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Should first function called to set begin frame pointer. Frame pointer should have some free bytes in buffer before pointing address. </p>
+
+<p>Definition at line <a class="el" href="_o_m_mo_co_transceiver_8cpp_source.html#l00098">98</a> of file <a class="el" href="_o_m_mo_co_transceiver_8cpp_source.html">OMMoCoTransceiver.cpp</a>.</p>
 
 </div>
 </div>
@@ -659,7 +1167,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00062">62</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00062">62</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -695,7 +1203,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00076">76</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00076">76</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -731,7 +1239,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00093">93</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00093">93</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -767,7 +1275,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00109">109</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00109">109</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -803,7 +1311,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00142">142</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00142">142</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -839,7 +1347,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00126">126</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00126">126</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -875,7 +1383,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00158">158</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00158">158</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -919,7 +1427,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00181">181</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00181">181</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -984,12 +1492,39 @@ Protected Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">p_addr</td><td>The device address to ssend the packet header to</td></tr>
     <tr><td class="paramname">p_code</td><td>The packet code to use</td></tr>
+    <tr><td class="paramname">p_dlen</td><td>The packet data length, in bytes</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Send Packet Header</p>
+<p>Sends a complete packet header, given an address to target, a packet code to ssend, and the length of data that will be sent.</p>
+<p>This method is part of a low-level toolkit for creating MoCoBus handlers, and should not be used in part of a normal Node implementation. Instead, see <a class="el" href="class_o_m_mo_co_node.html#ae83ba323f19fde07537d82792cb21a4d">OMMoCoNode::response()</a>.</p>
+<p>A MoCoBus packet always starts with a 10-byte header with the following structure:</p>
+<table  border="1" width="80%">
+<tr>
+<td>0 </td><td>1 </td><td>2 </td><td>3 </td><td>4 </td><td>5 </td><td>6 </td><td>7 </td><td>8 </td><td>9  </td></tr>
+<tr>
+<td colspan="6"><b>Break Sequence</b> </td><td colspan="2"><b>Address</b> </td><td><b>Packet Code</b> </td><td><b>Data Len</b>  </td></tr>
+<tr>
+<td>0 </td><td>0 </td><td>0 </td><td>0 </td><td>0 </td><td>255 </td><td colspan="2">0-65535 </td><td>0-255 </td><td>0-255  </td></tr>
+</table>
+<p>Note that all multi-byte values sent using the MoCoBus specification are in Big-Endian (Network) byte order!</p>
+<p>There are two types of packets which may be sent on MoCoBus, and they are not differentiated except in the order in which they occur:</p>
+<p>Command Packet</p>
+<p>A command packet is sent by a Master, and may have up to 254 packet codes, from 1-255. 0 is never a valid packet code for a command packet. Up to 255 data bytes may be included with the packet, as long as they do not include a sequence which corresponds to the break sequence noted above.</p>
+<p>Generally speaking, due to the limitation of 254 packet codes, the protocol for a specific node type will likely define a series of sub-codes for use as the first byte or set of bytes in the packet data.</p>
+<p>Response Packet</p>
+<p>A response packet is sent by a Node, in response to a command packet, back to the master. It should only have two valid packet codes: 0 and 1, with 0 indicating an error occured processing the command and 1 indicating that the command was successfully completed. Response packets may or may not contain actual packet data, this will depend on the specific implementation by the node.</p>
+<dl class="params"><dt>Parameters:</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p_addr</td><td>The device address to ssend the packet header to</td></tr>
+    <tr><td class="paramname">p_code</td><td>The packet code to use</td></tr>
     <tr><td class="paramname">p_dlen</td><td>The packet data length, in bytes </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00339">339</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00339">339</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1033,7 +1568,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00248">248</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00248">248</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -1060,7 +1595,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00205">205</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00205">205</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -1078,7 +1613,7 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Get Version </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_node_8cpp_source.html#l00318">318</a> of file <a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html#l00318">318</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +1641,7 @@ Protected Member Functions</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00401">401</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00401">401</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1134,7 +1669,7 @@ Protected Member Functions</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00430">430</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00430">430</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1162,7 +1697,7 @@ Protected Member Functions</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00443">443</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00443">443</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1190,7 +1725,7 @@ Protected Member Functions</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00456">456</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00456">456</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1218,13 +1753,23 @@ Protected Member Functions</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a01ebebae4c25a561b3aa666bc00c09b4">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00471">471</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html#l00471">471</a> of file <a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_bus_2_o_m_mo_co_bus_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoBus/OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li><a class="el" href="_o_m_mo_co_node_8h_source.html">OMMoCoNode.h</a></li>
-<li><a class="el" href="_o_m_mo_co_node_8cpp_source.html">OMMoCoNode.cpp</a></li>
+<li><a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.h</a></li>
+<li><a class="el" href="branches_2old_2src_2_o_m_mo_co_node_8h_source.html">branches/old/src/OMMoCoNode.h</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_80_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">tags/OMAVRLibraries-1.0/OMMoCoNode/OMMoCoNode.h</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_81_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">tags/OMAVRLibraries-1.1/OMMoCoNode/OMMoCoNode.h</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_811_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">tags/OMAVRLibraries-1.11/OMMoCoNode/OMMoCoNode.h</a></li>
+<li><a class="el" href="trunk_2_o_m_mo_co_node_2_o_m_mo_co_node_8h_source.html">trunk/OMMoCoNode/OMMoCoNode.h</a></li>
+<li><a class="el" href="branches_2cc-dev_2_libraries_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">branches/cc-dev/Libraries/OMMoCoNode/OMMoCoNode.cpp</a></li>
+<li><a class="el" href="branches_2old_2src_2_o_m_mo_co_node_8cpp_source.html">branches/old/src/OMMoCoNode.cpp</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_80_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">tags/OMAVRLibraries-1.0/OMMoCoNode/OMMoCoNode.cpp</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_81_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">tags/OMAVRLibraries-1.1/OMMoCoNode/OMMoCoNode.cpp</a></li>
+<li><a class="el" href="tags_2_o_m_a_v_r_libraries-1_811_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">tags/OMAVRLibraries-1.11/OMMoCoNode/OMMoCoNode.cpp</a></li>
+<li><a class="el" href="trunk_2_o_m_mo_co_node_2_o_m_mo_co_node_8cpp_source.html">trunk/OMMoCoNode/OMMoCoNode.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -1232,7 +1777,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_o_m_mo_co_node.html">OMMoCoNode</a></li>
-    <li class="footer">Generated on Sun Jun 17 2012 13:59:33 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Fri Nov 30 2012 13:55:06 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>

@@ -34,13 +34,23 @@ var NAVTREE =
       [ "The Stepping Cycle", "ommotion.html#steptiming", null ],
       [ "Timing and Speed Controls", "ommotion.html#movespeed", null ]
     ] ],
+    [ "Namespaces", null, [
+      [ "Namespace List", "namespaces.html", "namespaces" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ]
+      ] ]
+    ] ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -52,7 +62,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"class_o_m_state.html#ad199af294bd90a766be9159a3ea6b183",
+"class_bus_master.html#aae42ed90118f243e55aec3210804d078",
+"class_menu_engine.html#a3930f8dccecd943b02d30ecd7ba13676",
+"class_o_m_axis.html#a13b56c9ce6c994acc73df9ed4d7a69a8",
+"class_o_m_byte_buffer.html#a1c5decc881616baf622d49b86932cdde",
+"class_o_m_mo_co_bus.html#a44eea903a7590d007ac391f2a5c0c523",
+"class_o_m_mo_co_master.html#aa7503c9932e5dd118ac0a003ed729eb7",
+"class_o_m_mo_co_transceiver.html#a1ea52bee125e7ed913773915b2cc2cc9a6fea11139b1e362ab01941646bdc9b45",
+"class_program_data_set_base.html",
+"class_simple_dev_master.html#aa7c695a07e602a8450e037ee3cb2cb89",
 ];
 
 var navTreeSubIndices = new Array();
