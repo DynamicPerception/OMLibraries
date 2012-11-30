@@ -341,6 +341,42 @@ void OMMenuMgr::setRoot(OMMenuItem* p_root) {
 }
 
 
+/** Get Hold Modifier
+ 
+  If a button is held by the user, the hold modifier is increased
+  every OM_MENU_DEBOUNCE period of time.  In between these time
+  periods, checkInput() returns BUTTON_NONE, to prevent duplication
+  of input (e.g. bouncing).  
+ 
+ By checking this value, you can determine the difference between a
+ button being held (hold modifier > 1) and debounced, and no button
+ being pressed.  E.g.:
+ 
+ @code
+ byte          button = Menu.checkInput();
+ unsigned int holdMod = Menu.holdModifier();
+ 
+ if( button == BUTTON_NONE && holdMod > 1 ) {
+    // last button press is held!
+ }
+ else if( button != BUTTON_NONE ) {
+    // a button is pressed for the first time, or being
+    // held for the first debounce cycle
+ }
+ else {
+    // no button is pressed at all
+ }
+ @endcode
+ 
+ @return
+ Hold modifier, >= 1
+ */
+
+unsigned int OMMenuMgr::holdModifier() {
+    
+    return m_holdMod;
+}
+
 
 int OMMenuMgr::_checkAnalog() {
     
@@ -485,7 +521,18 @@ void OMMenuMgr::_menuNav(uint8_t p_mode) {
     
     }
     
-    else if( p_mode == CHANGE_UP ) {
+        // this saves 20 byte of flash versus the code commented out,
+        // and allows wrapping from top of list to end (but not end of
+        // list to top!)
+    else {
+        
+        m_curTarget += p_mode == CHANGE_UP ? -1 : 1;
+        m_curTarget = m_curTarget > childCount ? childCount : m_curTarget;
+        _displayList(m_curParent, m_curTarget);
+        
+    }
+    
+    /*else if( p_mode == CHANGE_UP ) {
         
             // don't attempt to move above total list
         if( m_curTarget == 0 )
@@ -504,7 +551,7 @@ void OMMenuMgr::_menuNav(uint8_t p_mode) {
         m_curTarget++;
         _displayList(m_curParent, m_curTarget);
         
-    }
+    } */
         
     
 }
@@ -619,8 +666,6 @@ void OMMenuMgr::_displayEdit(OMMenuItem* p_item) {
         m_tempI   = *reinterpret_cast<int*>(valPtr);
     else if( type == TYPE_LONG || type == TYPE_ULONG )
         m_tempL   = *reinterpret_cast<long*>(valPtr);
-    else if( type == TYPE_FLOAT || type == TYPE_FLOAT_10 || type == TYPE_FLOAT_100 || type == TYPE_FLOAT_1000 )
-        m_tempF    = *reinterpret_cast<float*>(valPtr);
     else if( type == TYPE_SELECT ) {
             // select types are interesting...  We have a list of possible values and
             // labels - we need to work that back to an index in the list...
@@ -656,6 +701,8 @@ void OMMenuMgr::_displayEdit(OMMenuItem* p_item) {
         _displayFlagVal();
         return;
     }
+    else if( type >= TYPE_FLOAT ) // always run as last check
+        m_tempF    = *reinterpret_cast<float*>(valPtr);    
     
     // throw number on-screen
     _displayVoidNum(valPtr, type, 1, 0);
@@ -679,31 +726,19 @@ void OMMenuMgr::_displayVoidNum(void* p_ptr, uint8_t p_type, int p_row, int p_co
     else if( p_type == TYPE_FLOAT_1000 )
         floatPrecision = 3;
     
-    
-    switch (p_type) {
-        case TYPE_BYTE:
+    if( p_type == TYPE_BYTE )
             utoa(*reinterpret_cast<uint8_t*>(p_ptr), m_dispBuf, 10);
-            break;
-        case TYPE_INT:
+    else if( p_type == TYPE_INT)
             itoa(*reinterpret_cast<int*>(p_ptr), m_dispBuf, 10);
-            break;
-        case TYPE_UINT:
+    else if( p_type == TYPE_UINT )
             utoa(*reinterpret_cast<unsigned int*>(p_ptr), m_dispBuf, 10);
-            break;
-        case TYPE_LONG:
+    else if( p_type == TYPE_LONG)
             ltoa(*reinterpret_cast<long*>(p_ptr), m_dispBuf, 10);
-            break;
-        case TYPE_ULONG:
+    else if( p_type ==  TYPE_ULONG )
             ultoa(*reinterpret_cast<unsigned long*>(p_ptr), m_dispBuf, 10);
-            break;
-        case TYPE_FLOAT:
-        case TYPE_FLOAT_10:
-        case TYPE_FLOAT_100:
-        case TYPE_FLOAT_1000:
+    else if( p_type >= TYPE_FLOAT ) 
             dtostrf(*reinterpret_cast<float*>(p_ptr), floatPrecision + 2, floatPrecision, m_dispBuf);
-            break;
-    }
-    
+       
     _display(m_dispBuf, p_row, p_col, sizeof(char) * sizeof(m_dispBuf));
 
 }
@@ -733,50 +768,41 @@ void OMMenuMgr::_modifyTemp(uint8_t p_type, uint8_t p_mode, long p_min, long p_m
         // manage correct temporary variable change based on type
         // and apply floor/ceiling from min/max
 
-    switch (p_type) {
-        case TYPE_BYTE:
-            m_temp += mod;
-            if( p_min != 0 && p_max != 0 )
-                m_temp = m_temp > p_max ? p_max : ( m_temp < p_min ? p_min : m_temp );
-            tempNum = reinterpret_cast<void*>(&m_temp);
-            break;
-        case TYPE_INT:
-            m_tempI += mod;
-            if( p_min != 0 && p_max != 0 )
-                m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
-            tempNum = reinterpret_cast<void*>(&m_tempI);
-            break;
-        case TYPE_UINT:
-            *reinterpret_cast<unsigned int*>(&m_tempI) += mod;
-            if( p_min != 0 && p_max != 0 )
-                m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
-            tempNum = reinterpret_cast<void*>(&m_tempI);
-            break;
-        case TYPE_LONG:
-            m_tempL += mod;
-            if( p_min != 0 && p_max != 0 )
-                m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL );
-            tempNum = reinterpret_cast<void*>(&m_tempL);
-            break;
-        case TYPE_ULONG:
-            *reinterpret_cast<unsigned long*>(&m_tempL) += mod;
-            if( p_min != 0 && p_max != 0 )
-                m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL ); 
-            tempNum = reinterpret_cast<void*>(&m_tempL);
-            break;
-        case TYPE_FLOAT:
-        case TYPE_FLOAT_10:
-        case TYPE_FLOAT_100:
-        case TYPE_FLOAT_1000:
-            m_tempF += fmod;
-            if( p_min != 0 && p_max != 0 )
-                m_tempF = m_tempF > p_max ? p_max : ( m_tempF < p_min ? p_min : m_tempF );
-            tempNum = reinterpret_cast<void*>(&m_tempF);
-            break;
-        default:
-            tempNum = reinterpret_cast<void*>(&m_temp);
-            break;
-            
+    if( p_type == TYPE_BYTE ) {
+        m_temp += mod;
+        if( p_min != 0 && p_max != 0 )
+            m_temp = m_temp > p_max ? p_max : ( m_temp < p_min ? p_min : m_temp );
+        tempNum = reinterpret_cast<void*>(&m_temp);
+    }
+    else if( p_type == TYPE_INT ) {
+        m_tempI += mod;
+        if( p_min != 0 && p_max != 0 )
+            m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
+        tempNum = reinterpret_cast<void*>(&m_tempI);
+    }
+    else if( p_type == TYPE_UINT ) {
+        *reinterpret_cast<unsigned int*>(&m_tempI) += mod;
+        if( p_min != 0 && p_max != 0 )
+            m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
+        tempNum = reinterpret_cast<void*>(&m_tempI);
+    }
+    else if( p_type == TYPE_LONG ) {
+        m_tempL += mod;
+        if( p_min != 0 && p_max != 0 )
+            m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL );
+        tempNum = reinterpret_cast<void*>(&m_tempL);
+    }
+    else if( p_type == TYPE_ULONG ) {
+        *reinterpret_cast<unsigned long*>(&m_tempL) += mod;
+        if( p_min != 0 && p_max != 0 )
+            m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL ); 
+        tempNum = reinterpret_cast<void*>(&m_tempL);
+    }
+    else if( p_type >= TYPE_FLOAT ) {
+        m_tempF += fmod;
+        if( p_min != 0 && p_max != 0 )
+            m_tempF = m_tempF > p_max ? p_max : ( m_tempF < p_min ? p_min : m_tempF );
+        tempNum = reinterpret_cast<void*>(&m_tempF);
     }
 
         // display new temporary value
@@ -883,64 +909,56 @@ void OMMenuMgr::_edit(OMMenuItem* p_item, uint8_t p_type) {
         
         void* ptr = reinterpret_cast<void*>(pgm_read_word(&(thisValue->targetValue)));
         
-        switch(type) {
-            case TYPE_SELECT:
-                    // select is more special than the rest, dig?
-                {
-                        // some what convoluted - we get the value stored in the current index (in m_temp) from the list,
-                        // and store it in the byte pointer provided attached to the OMMenuSelectValue
-                    OMMenuSelectValue* sel      = reinterpret_cast<OMMenuSelectValue*>(ptr);
-                    OMMenuSelectListItem** list = reinterpret_cast<OMMenuSelectListItem**>(reinterpret_cast<void*>(pgm_read_word(&(sel->list))));
-                    OMMenuSelectListItem* item  = reinterpret_cast<OMMenuSelectListItem*>(pgm_read_word(&(list[m_temp])));
-                    uint8_t newVal              = pgm_read_byte(&(item->value));
-                    uint8_t* real               = reinterpret_cast<uint8_t*>(pgm_read_word(&(sel->targetValue)));                
-                    *real                       = newVal;
-                    
-                    _eewrite<uint8_t>(thisValue, newVal);
-                }
-                break;
-            case TYPE_BFLAG:
-                    // bflag is special too, we want to set a specific bit based on the current temp value
-                {
-                    OMMenuValueFlag* flag = reinterpret_cast<OMMenuValueFlag*>(ptr);
-                    uint8_t*       target = reinterpret_cast<uint8_t*>(pgm_read_word(&(flag->flag)));
-                    uint8_t           pos = pgm_read_byte(&(flag->pos));
-                    
-                    if( m_temp )
-                        *target |= (1 << pos);
-                    else
-                        *target &= (0xFF ^ (1 << pos));
-                    
-                    _eewrite<uint8_t>(thisValue, *target);
-                }
-                break;
-            case TYPE_BYTE:
+        if( type == TYPE_SELECT ) {
+            // select is more special than the rest, dig?
+            
+                // some what convoluted - we get the value stored in the current index (in m_temp) from the list,
+                // and store it in the byte pointer provided attached to the OMMenuSelectValue
+            OMMenuSelectValue* sel      = reinterpret_cast<OMMenuSelectValue*>(ptr);
+            OMMenuSelectListItem** list = reinterpret_cast<OMMenuSelectListItem**>(reinterpret_cast<void*>(pgm_read_word(&(sel->list))));
+            OMMenuSelectListItem* item  = reinterpret_cast<OMMenuSelectListItem*>(pgm_read_word(&(list[m_temp])));
+            uint8_t newVal              = pgm_read_byte(&(item->value));
+            uint8_t* real               = reinterpret_cast<uint8_t*>(pgm_read_word(&(sel->targetValue)));                
+            *real                       = newVal;
+            
+            _eewrite<uint8_t>(thisValue, newVal);
+        }
+        else if( type == TYPE_BFLAG) {
+                // bflag is special too, we want to set a specific bit based on the current temp value
+            OMMenuValueFlag* flag = reinterpret_cast<OMMenuValueFlag*>(ptr);
+            uint8_t*       target = reinterpret_cast<uint8_t*>(pgm_read_word(&(flag->flag)));
+            uint8_t           pos = pgm_read_byte(&(flag->pos));
+            
+            if( m_temp )
+                *target |= (1 << pos);
+            else
+                *target &= (0xFF ^ (1 << pos));
+            
+            _eewrite<uint8_t>(thisValue, *target);
+        }
+        else if( type == TYPE_BYTE) {
                 *reinterpret_cast<uint8_t*>(ptr) = m_temp;
                 _eewrite<uint8_t>(thisValue, *reinterpret_cast<uint8_t*>(ptr));
-                break;
-            case TYPE_UINT:
+        }
+        else if( type == TYPE_UINT) {
                 *reinterpret_cast<unsigned int*>(ptr) = *reinterpret_cast<unsigned int*>(&m_tempI);
                 _eewrite<unsigned int>(thisValue, *reinterpret_cast<unsigned int*>(ptr));
-                 break;
-            case TYPE_INT:
+        }
+        else if( type == TYPE_INT ) {
                 *reinterpret_cast<int*>(ptr) = m_tempI;
                 _eewrite<int>(thisValue, *reinterpret_cast<int*>(ptr));
-                break;
-            case TYPE_ULONG:
+        }
+        else if( type == TYPE_ULONG ) {
                 *reinterpret_cast<unsigned long*>(ptr) = *reinterpret_cast<unsigned long*>(&m_tempL);
                 _eewrite<unsigned long>(thisValue, *reinterpret_cast<unsigned long*>(ptr));
-                break;
-            case TYPE_LONG:
+        }
+        else if( type == TYPE_LONG ) {
                 *reinterpret_cast<long*>(ptr) = m_tempL;
                 _eewrite<long>(thisValue, *reinterpret_cast<long*>(ptr));
-                break;
-            case TYPE_FLOAT:
-            case TYPE_FLOAT_10:
-            case TYPE_FLOAT_100:
-            case TYPE_FLOAT_1000:
+        }
+        else if( type >= TYPE_FLOAT ) {
                 *reinterpret_cast<float*>(ptr) = m_tempF;
                 _eewrite<float>(thisValue, *reinterpret_cast<float*>(ptr));
-                break;
         }
         
         m_inEdit = false;
