@@ -770,37 +770,37 @@ void OMMenuMgr::_modifyTemp(uint8_t p_type, uint8_t p_mode, long p_min, long p_m
 
     if( p_type == TYPE_BYTE ) {
         m_temp += mod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_temp = m_temp > p_max ? p_max : ( m_temp < p_min ? p_min : m_temp );
         tempNum = reinterpret_cast<void*>(&m_temp);
     }
     else if( p_type == TYPE_INT ) {
         m_tempI += mod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
         tempNum = reinterpret_cast<void*>(&m_tempI);
     }
     else if( p_type == TYPE_UINT ) {
         *reinterpret_cast<unsigned int*>(&m_tempI) += mod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_tempI = m_tempI > p_max ? p_max : ( m_tempI < p_min ? p_min : m_tempI );
         tempNum = reinterpret_cast<void*>(&m_tempI);
     }
     else if( p_type == TYPE_LONG ) {
         m_tempL += mod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL );
         tempNum = reinterpret_cast<void*>(&m_tempL);
     }
     else if( p_type == TYPE_ULONG ) {
         *reinterpret_cast<unsigned long*>(&m_tempL) += mod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_tempL = m_tempL > p_max ? p_max : ( m_tempL < p_min ? p_min : m_tempL ); 
         tempNum = reinterpret_cast<void*>(&m_tempL);
     }
     else if( p_type >= TYPE_FLOAT ) {
         m_tempF += fmod;
-        if( p_min != 0 && p_max != 0 )
+        if( p_min != 0 || p_max != 0 )
             m_tempF = m_tempF > p_max ? p_max : ( m_tempF < p_min ? p_min : m_tempF );
         tempNum = reinterpret_cast<void*>(&m_tempF);
     }
