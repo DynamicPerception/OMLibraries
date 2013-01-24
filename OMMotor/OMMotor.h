@@ -526,16 +526,16 @@ private:
 
 	static unsigned long m_asyncSteps;
 	static unsigned long m_asyncDo;
-	static unsigned long m_stepsMoved;
+	static volatile unsigned long m_stepsMoved;
 	static unsigned long m_totalSteps;
 	
 	
 	
-	static unsigned long m_curOffCycles;
+	static volatile unsigned long m_curOffCycles;
 	static float m_curCycleErr;
 	static unsigned int m_curSampleRate;
 	static unsigned int m_cyclesPerSpline;
-	static unsigned long m_curSpline;
+	static volatile unsigned long m_curSpline;
 	static unsigned long m_totalSplines;
 	
 	static unsigned long m_curPlanSpd;
@@ -550,7 +550,7 @@ private:
 
 	static bool m_clearISR;
 	
-	static long m_homePos;
+	static volatile long m_homePos;
 	
 	static uint8_t m_curMs;
 	static uint8_t m_backAdj;

@@ -40,16 +40,16 @@ float(*OMMotor::f_easeCal)(OMMotor::s_splineCal*, float) = 0;
 
 unsigned long OMMotor::m_asyncSteps = 0;
 float OMMotor::m_contSpd = 100.0;
-unsigned long OMMotor::m_stepsMoved = 0;
+volatile unsigned long OMMotor::m_stepsMoved = 0;
 unsigned long OMMotor::m_Steps = 0;
 unsigned long OMMotor::m_totalSteps = 0;
-unsigned long OMMotor::m_curSpline = 0;
+volatile unsigned long OMMotor::m_curSpline = 0;
 unsigned long OMMotor::m_totalSplines = 0;
-unsigned long OMMotor::m_curOffCycles = 0;
+volatile unsigned long OMMotor::m_curOffCycles = 0;
 unsigned int OMMotor::m_curSampleRate = 200;
 unsigned int OMMotor::m_cyclesPerSpline = 5;
 float OMMotor::m_curCycleErr = 0.0;
-long OMMotor::m_homePos = 0;
+volatile long OMMotor::m_homePos = 0;
 
 unsigned long OMMotor::m_curPlanSpd = 0;
 float OMMotor::m_curPlanErr = 0.0;
@@ -1327,10 +1327,12 @@ void OMMotor::_runISR() {
       cyclesLow = 0;
       stepsTaken = 0;
       totalCyclesTaken = 0;
+      cycleErrAccumulated = 0.0;
       m_refresh = false;
   }
     
   if( m_asyncSteps > 0 && totalCyclesTaken >= m_cyclesPerSpline ) {
+      
   	  // we are ready for the next point in the spline,
   	  // run speed calculations
    
@@ -1378,7 +1380,7 @@ void OMMotor::_runISR() {
       stop();
       return;
     } // end if( m_curSpline...
-
+      
     	// move to the next point in the current spline.
     m_curSpline++;
     float tmPos = (float) m_curSpline / (float) m_totalSplines;
@@ -1386,6 +1388,8 @@ void OMMotor::_runISR() {
     	// get new off cycle timing for the next point in the spline
     f_easeFunc(false, tmPos);
     totalCyclesTaken = 0;
+
+
 
     	// we don't stop here, as we still need to check the off-time
     	// between steps, based on our current spline point
@@ -1397,6 +1401,7 @@ void OMMotor::_runISR() {
 
   if( cycleErrAccumulated >= 1.0 ) {
     	    
+
         // check the error rate (fractions of a cycle that
         // were accumulated - if at least one full cycle, add
         // an additional delay cycle to get overall movement
@@ -1414,7 +1419,7 @@ void OMMotor::_runISR() {
 
   if( cyclesLow >= m_curOffCycles ) {
      	// we've had enough low cycles, ok to trigger next step
-
+       
         // set pin to trigger step
         // digital pin 9 on atmega328p
       OM_MOT_STPREG |= (1 << OM_MOT_STPFLAG);
@@ -1448,6 +1453,7 @@ void OMMotor::_runISR() {
        // timing cycle
        
        OM_MOT_STPREG &= (B11111111 ^ (1 << OM_MOT_STPFLAG));
+
       
   } // end if( cyclesLow...    
       
@@ -1513,6 +1519,8 @@ void OMMotor::home() {
 
  if( homeDistance() == 0 )
      return;
+  
+ m_refresh = true;
     
  bool thsDir  = false;
  long goToPos = m_homePos;
@@ -1560,7 +1568,8 @@ void OMMotor::_linearEasing(bool p_Plan, float p_tmPos) {
 
   if( ! p_Plan ) {
   	  // we only do this for non-planned (i.e. real-time) moves
-  	  
+
+
      // figure out how many cycles we delay after each step
      float off_time = m_cyclesPerSpline / curSpd;
        
@@ -1569,6 +1578,13 @@ void OMMotor::_linearEasing(bool p_Plan, float p_tmPos) {
 	     
      m_curOffCycles = (unsigned long) off_time;
      m_curCycleErr = off_time - (unsigned long) off_time;
+      
+      // worry about the fact that floats and doubles CAN actually overflow an unsigned long
+      if( m_curCycleErr > 1.0 ) {
+          m_curCycleErr = 0.0;
+      }
+
+
   }
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
@@ -1600,6 +1616,7 @@ void OMMotor::_quadEasing(bool p_Plan, float p_tmPos) {
   float curSpd = f_easeCal(thisSpline, p_tmPos);
 
   if( ! p_Plan ) {
+            
   	  // we only do this for non-planned (i.e. real-time) moves
   	  
      // figure out how many cycles we delay after each step
@@ -1607,9 +1624,15 @@ void OMMotor::_quadEasing(bool p_Plan, float p_tmPos) {
        
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
-	     
+        
      m_curOffCycles = (unsigned long) off_time;
-     m_curCycleErr = off_time - (unsigned long) off_time;
+     m_curCycleErr = off_time - m_curOffCycles;
+      
+      // worry about the fact that floats and doubles CAN actually overflow an unsigned long
+     if( m_curCycleErr > 1.0 ) {
+        m_curCycleErr = 0.0;
+     }
+      
   }
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
