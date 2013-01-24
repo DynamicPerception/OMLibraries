@@ -1,8 +1,8 @@
-# 1.0.1
+# 1.01
 
  - Fixed casting issue with ntoul() in OMMoCoBus.cpp
 
-# 1.1.0
+# 1.10
 
  - Added OMEEPROM
  - Added OMMenuMgr
@@ -15,5 +15,11 @@
  OMMotor:
 	- Automatically re-calculating distance to home when ms changes
 	- Fixed a bug wherein a home command after a continuous move would fail to operate
- 	
+ 
+# 1.12
 
+ - Fixed bug caused by overflow of timing error correction in OMMotor
+
+
+
+	
