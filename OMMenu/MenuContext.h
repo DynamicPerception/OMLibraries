@@ -52,10 +52,10 @@ struct fixListEntry {
  * */
 class MenuContext {
     //
-	uint32_t iParamValue[NUMBER_OF_PARAMETERS]; //parameters value array to edit
+	int32_t iParamValue[NUMBER_OF_PARAMETERS]; //parameters value array to edit
 	//
-	const static uint32_t iParamMaxValue[NUMBER_OF_PARAMETERS];
-	const static uint16_t iParamMinValue[NUMBER_OF_PARAMETERS];
+	const static int32_t iParamMaxValue[NUMBER_OF_PARAMETERS];
+	const static int16_t iParamMinValue[NUMBER_OF_PARAMETERS];
 	const static uint16_t iStepParameters[NUMBER_OF_PARAMETERS];
 
     //dynamic list variables

@@ -35,16 +35,16 @@ enum {
 };
 
 /** enumeration with screen numbers in array */
-enum {
-	INITIAL_DISPLAY_SCREEN,
-	MENU_SCREEN,
-	CREATE_FILM_WIZARD,
-	RESCAN_DEVICES,
-	SETTINGS_SCREEN,
-	AXIS_WIZARD,
-	MAX_SCREENS, /* end of real entries */
-	OPEN_EDIT,    /* fake entry: opens parameter edit */
-	OPEN_ACTION
+enum MenuOrder {
+	INITIAL_DISPLAY_SCREEN, /* mandatory */
+	MENU_SCREEN,            /* user defined */
+	CREATE_FILM_WIZARD,     /* user defined */
+	RESCAN_DEVICES,         /* user defined */
+	SETTINGS_SCREEN,        /* user defined */
+	AXIS_WIZARD,            /* user defined */
+	MAX_SCREENS,            /* mandatory, end of real entries */
+	OPEN_EDIT,              /* mandatory, fake entry: opens parameter edit */
+	OPEN_ACTION             /* mandatory */
 };
 
 /**
@@ -109,7 +109,7 @@ public:
 	 strcpy_P((char*)destination, &Resources::resources[messageNumber][0]);
  }
 
- const static char d[LCD_WIDTH+1];
+// const static char d[LCD_WIDTH+1];
 };
 
 
