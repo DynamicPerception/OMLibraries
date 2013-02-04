@@ -253,15 +253,15 @@ public:
  @code
  // enumeration with screen numbers in array
    enum MenuOrder {
-	INITIAL_DISPLAY_SCREEN, //* mandatory
-	MENU_SCREEN,            //* user defined
-	CREATE_FILM_WIZARD,     //* user defined
-	RESCAN_DEVICES,         //* user defined
-	SETTINGS_SCREEN,        //* user defined
-	AXIS_WIZARD,            //* user defined
-	MAX_SCREENS,            //* mandatory, end of real entries
-    OPEN_EDIT,              //* mandatory, fake entry: opens parameter edit
-	OPEN_ACTION             //* mandatory
+	INITIAL_DISPLAY_SCREEN, // mandatory
+	MENU_SCREEN,            // user defined
+	CREATE_FILM_WIZARD,     // user defined
+	RESCAN_DEVICES,         // user defined
+	SETTINGS_SCREEN,        // user defined
+	AXIS_WIZARD,            // user defined
+	MAX_SCREENS,            // mandatory, end of real entries
+    OPEN_EDIT,              // mandatory, fake entry: opens parameter edit
+	OPEN_ACTION             // mandatory
   };
  @endcode
 

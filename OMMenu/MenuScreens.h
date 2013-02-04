@@ -35,7 +35,7 @@ enum {
 };
 
 /** enumeration with screen numbers in array */
-enum MenuOrder {
+enum eMenuOrder {
 	INITIAL_DISPLAY_SCREEN, /* mandatory */
 	MENU_SCREEN,            /* user defined */
 	CREATE_FILM_WIZARD,     /* user defined */

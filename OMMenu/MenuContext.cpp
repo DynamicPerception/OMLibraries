@@ -11,12 +11,22 @@
 #include <string.h>
 #include <avr/pgmspace.h>
 
+#include "RangeChecker.h"
+
 // Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
 #undef PROGMEM
 #define PROGMEM __attribute__((section(".progmem.data")))
 
+const uint16_t MenuContext::iStepParameters[NUMBER_OF_PARAMETERS] PROGMEM = {
+    1,1,1,1,1, //0-4
+    1,1,1,1,1, //5-9
+    1,1,1,1,1, //10-14
+    1,1,1,1,1, //15-19
+    1,1,1,1,1, //20-24
+    1,1,1,1,1,1,1 //25-31
+};
 
-const uint32_t MenuContext::iParamMaxValue[NUMBER_OF_PARAMETERS] PROGMEM = {
+/*const uint32_t MenuContext::iParamMaxValue[NUMBER_OF_PARAMETERS] PROGMEM = {
 	0,16,16,(99*3600UL+59*60UL+59UL),1, //0-4
 	1,99999,65535,65535,65535, //5-9
 	7,(99*3600UL+59*60UL+59UL),0,0,1, //10 - 14
@@ -35,14 +45,7 @@ const uint16_t MenuContext::iParamMinValue[NUMBER_OF_PARAMETERS] PROGMEM = {
 
 	};
 
-const uint16_t MenuContext::iStepParameters[NUMBER_OF_PARAMETERS] PROGMEM = {
-    1,1,1,1,1, //0-4
-    1,1,1,1,1, //5-9
-    1,1,1,1,1, //10-14
-    1,1,1,1,1, //15-19
-    1,1,1,1,1, //20-24
-    1,1,1,1,1,1,1 //25-31
-};
+*/
 
 //--param20
 const fixListEntry MenuContext::fixedList1[3] PROGMEM = {
@@ -54,7 +57,7 @@ const fixListEntry MenuContext::fixedList1[3] PROGMEM = {
 const fixListEntry MenuContext::fixedList2[2] PROGMEM = {
 	  //1234567890123456
 		{"Begin Film",INITIAL_DISPLAY_SCREEN , 1},
-		{"Again", CREATE_FILM_WIZARD, 1}
+		{"Again",  CREATE_FILM_WIZARD, 1}
 };//
 //--param22
 const fixListEntry MenuContext::fixedList3[2] PROGMEM = {
@@ -104,6 +107,8 @@ MenuContext::MenuContext()
 
 
 /**
+ * Defines parameter mapping as following:
+ *   0. Unused parameter
  *   1. Lead-in time (in seconds]
  *   2. Lead-out time (in seconds]
  *   3. Acceleration time (in seconds]
@@ -131,13 +136,15 @@ uint8_t MenuContext::formatParameterText(const uint8_t idx, uint8_t* cLineBuf, u
    char* ptrStart = (char*)&cLineBuf[2];
 	if ((idx > 0) && (idx < 10))  {
 	//integer type
-	   sprintf(ptrStart, "%lu", value );
+	   //sprintf(ptrStart, "%lu", value );
+	   ultoa(value, ptrStart, 10);
    }
    /*dynamic list, very special case*/
    if (idx == 10) {
 	   uint32_t listIdx = value;
-	   checkParamByIdx(idx, &listIdx);
-	   sprintf(ptrStart, "%s", &dynList[listIdx-1][0] );
+	   RangeChecker::checkParamByIdx(idx, &listIdx);
+	   //sprintf(ptrStart, "%s", &dynList[listIdx-1][0] );
+	   strcpy(ptrStart, &dynList[listIdx-1][0]);
 	   if (listIdx == dynListSize) {
 	     *item = 2;
 	     *level = CREATE_FILM_WIZARD;
@@ -156,13 +163,15 @@ uint8_t MenuContext::formatParameterText(const uint8_t idx, uint8_t* cLineBuf, u
 	   //tmp = tmp - ((uint32_t)minutes * 60UL); //
 	   tmp = tmp%60;
 	   uint8_t secs = tmp;
-	   sprintf(ptrStart, "%02d:%02d:%02d", hour, minutes, secs);
+	   time_to_str(ptrStart, hour, minutes, secs);
+	   //sprintf(ptrStart, "%02d:%02d:%02d", hour, minutes, secs);
+
    }
    /*magic 20,21... is list type*/
    if ((idx >= 20) && (idx < NUMBER_OF_PARAMETERS))
    {
 	   uint32_t listIdx = value;
-	   checkParamByIdx(idx, &listIdx);
+	   RangeChecker::checkParamByIdx(idx, &listIdx);
        if (idx == 20){
          strcpy_P(ptrStart, &fixedList1[listIdx].caption[0]);
          *item = pgm_read_byte(&fixedList1[listIdx].jumpItem);
@@ -235,7 +244,7 @@ void MenuContext::incParameter(){
 	uint16_t step;
 	memcpy_P(&step, &iStepParameters[cFocusParameter], sizeof(step));
 	iModifiableValue += step*iKeyboardIncrement;
-	checkParamByIdx(cFocusParameter, &iModifiableValue);
+	RangeChecker::checkParamByIdx(cFocusParameter, &iModifiableValue);
 }
 
 /****
@@ -247,7 +256,7 @@ void MenuContext::decParameter(){
 	//check for roll over zero
 	uint32_t tmp = iModifiableValue;
 	tmp -= step*iKeyboardIncrement;
-	if (checkParamByIdx(cFocusParameter, &tmp)) {
+	if (RangeChecker::checkParamByIdx(cFocusParameter, &tmp)) {
 	  iModifiableValue -= step*iKeyboardIncrement;
 	}
 }
@@ -276,32 +285,6 @@ void MenuContext::decTimer(const uint8_t idx){
 }
 
 
-uint8_t MenuContext::checkParamByIdx(const uint8_t idx, uint32_t* pParam)
-{
-	uint16_t paramMinValue;
-	uint32_t paramMaxValue;
-	//copy across FLASH space
-	memcpy_P(&paramMinValue, &iParamMinValue[idx], sizeof(paramMinValue));
-	memcpy_P(&paramMaxValue, &iParamMaxValue[idx], sizeof(paramMaxValue));
-
-	return checkParamRange(paramMinValue, paramMaxValue, pParam);
-}
-
-/**
- *
- * */
-uint8_t MenuContext::checkParamRange(uint32_t min, uint32_t max, uint32_t* pParam)
-{
-	uint8_t result = 0;
-	if (*pParam < min) {
-			*pParam = min;
-		} else if (*pParam > max) {
-			*pParam = max;
-		} else {
-			result = 1;
-		}
-	return result;
-}
 
 /**
  *
@@ -327,7 +310,8 @@ void MenuContext::resetList(void)
 	//	dynListSize++;
 	//}
 
-	sprintf(&dynList[dynListSize][0], "NEXT");
+	//sprintf(&dynList[dynListSize][0], "NEXT");
+	strcpy(&dynList[dynListSize][0], "NEXT");
 	dynListSize++;
 }
 
@@ -339,8 +323,38 @@ void MenuContext::addToList(uint8_t addr, const char* name)
 {
 	if (dynListSize < DYN_LIST_SIZE) {
 	  dynListNode[dynListSize] = addr;
-	  sprintf(&dynList[dynListSize][0], "%d_%s", addr, name);
+	  //sprintf(&dynList[dynListSize][0], "%d_%s", addr, name);
+	  char* ptr = byte_to_str(&dynList[dynListSize][0], addr);
+	  *ptr++ = '_';
+	  strcpy(ptr, name);
 	  dynListSize++;
 	}
+}
+
+/**
+ *
+ **/
+char* MenuContext::byte_to_str(char* buf, uint8_t v)
+{
+	  while(v > 0) {
+	    uint8_t d = v/10;
+	    *buf = (v - d*10) + '0';
+	    buf++;
+	    v = d;
+	  }
+	  return buf;
+}
+
+/**
+ *
+ **/
+char* MenuContext::time_to_str(char* buf, uint8_t hour, uint8_t min, uint8_t sec)
+{
+  char* ptr = byte_to_str(buf, hour);
+  *ptr++ = ':';
+  ptr = byte_to_str(ptr, min);
+  *ptr++ = ':';
+  ptr = byte_to_str(ptr, sec);
+  return ptr;
 }
 

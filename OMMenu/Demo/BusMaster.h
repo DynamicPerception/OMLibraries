@@ -20,7 +20,7 @@ class BusMaster: public Commander, public OMMoCoMaster {
 	//selected node addr in interactive mode
 	uint8_t cur_addr;
 public:
-	BusMaster(HardwareSerial& c_serObj, uint8_t c_dePin);
+	BusMaster(HardwareSerial& c_serObj);
 	virtual ~BusMaster();
 
 	//

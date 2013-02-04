@@ -71,10 +71,10 @@ const MenuScreen Resources::screens[] PROGMEM = {
 		  DIALOG_LEVEL_ENTRY,
 		  25, //shared dialog parameter >
 		  { //array
-			{ 0, 0, MenuOrder::MENU_SCREEN, 0  }, //1
-			{ 1, 0, MenuOrder::MENU_SCREEN, 0  }, //2
-			{ 2, 0, MenuOrder::MENU_SCREEN, 26 },
-			{ 3, 0, MenuOrder::MENU_SCREEN, 0  }
+			{ 0, 0, MENU_SCREEN, 0  }, //1
+			{ 1, 0, MENU_SCREEN, 0  }, //2
+			{ 2, 0, MENU_SCREEN, 26 },
+			{ 3, 0, MENU_SCREEN, 0  }
 		  }
 		},
 		//MENU_SCREEN-> Screen[1]
@@ -85,9 +85,9 @@ const MenuScreen Resources::screens[] PROGMEM = {
 		 0,
 		 {
 		    {24, 0, 0, 0},	//1
-		    {18, 0, MenuOrder::CREATE_FILM_WIZARD, 0},	//2
-		    {20, 0, MenuOrder::RESCAN_DEVICES, 0},	//3
-		    {19, 0, MenuOrder::SETTINGS_SCREEN, 0},	//4
+		    {18, 0, CREATE_FILM_WIZARD, 0},	//2
+		    {20, 0, RESCAN_DEVICES, 0},	//3
+		    {19, 0, SETTINGS_SCREEN, 0},	//4
 		  }
 		},
 		//CREATE_FILM_WIZARD-> Screen[2]
@@ -98,13 +98,13 @@ const MenuScreen Resources::screens[] PROGMEM = {
 		 0,
 		  {//items
 			 {0,0,0,0}, //dummy header
-			 {5, 0, MenuOrder::OPEN_EDIT, 10},  //1.Select Axis to move
-			 {12, 0, MenuOrder::OPEN_EDIT, 11}, //2. Enter "real time" of film
-			 {13, 0, MenuOrder::OPEN_EDIT, 20}, //3. Select exposure control
-			 {14, 0, MenuOrder::OPEN_EDIT, 2}, //4. Input exposure time in mS
-			 {15, 0, MenuOrder::OPEN_EDIT, 24}, //5. Select Motion Mode
-			 {16, 0, MenuOrder::OPEN_EDIT, 3}, //6. Enter "film length" of film
-			 {17, 0, MenuOrder::OPEN_EDIT, 21}  //7. Begin Film or Start Over?
+			 {5, 0, OPEN_EDIT, 10},  //1.Select Axis to move
+			 {12, 0, OPEN_EDIT, 11}, //2. Enter "real time" of film
+			 {13, 0, OPEN_EDIT, 20}, //3. Select exposure control
+			 {14, 0, OPEN_EDIT, 2}, //4. Input exposure time in mS
+			 {15, 0, OPEN_EDIT, 24}, //5. Select Motion Mode
+			 {16, 0, OPEN_EDIT, 3}, //6. Enter "film length" of film
+			 {17, 0, OPEN_EDIT, 21}  //7. Begin Film or Start Over?
 		  }
 		},
 		//RESCAN_DEVICES
@@ -126,8 +126,8 @@ const MenuScreen Resources::screens[] PROGMEM = {
 			0,
 			  {
 				 {0,0,0,0},             //dummy header
-				 {4, 0, MenuOrder::OPEN_EDIT, 23},	//2
-				 {21, 0, MenuOrder::OPEN_EDIT, 4}	//3
+				 {4, 0, OPEN_EDIT, 23},	//2
+				 {21, 0, OPEN_EDIT, 4}	//3
 			  }
 		},
 		//AXIS_WIZARD
@@ -138,13 +138,13 @@ const MenuScreen Resources::screens[] PROGMEM = {
 			0,
 			  {
 				 {0,0,0,0}, //dummy header
-				 {6, 1, MenuOrder::OPEN_ACTION, 4},   //1.1 Move axis to start point
-				 {7, 1, MenuOrder::OPEN_ACTION, 5},	//1.2 Move axis to end point
-				 {8, 0, MenuOrder::OPEN_EDIT, 6},	    //1.3 Lead-in time
-				 {9, 0, MenuOrder::OPEN_EDIT, 7},     //1.4 Lead-out time
-				 {10, 0, MenuOrder::OPEN_EDIT, 8},    //1.5 Acceleration time
-				 {11, 0, MenuOrder::OPEN_EDIT, 9},    //1.6 Deceleration time
-				 {3, 0, MenuOrder::OPEN_EDIT, 22}    //More?
+				 {6, 1, OPEN_ACTION, 4},   //1.1 Move axis to start point
+				 {7, 1, OPEN_ACTION, 5},	//1.2 Move axis to end point
+				 {8, 0, OPEN_EDIT, 6},	    //1.3 Lead-in time
+				 {9, 0, OPEN_EDIT, 7},     //1.4 Lead-out time
+				 {10, 0, OPEN_EDIT, 8},    //1.5 Acceleration time
+				 {11, 0, OPEN_EDIT, 9},    //1.6 Deceleration time
+				 {3, 0, OPEN_EDIT, 22}    //More?
 			  }
 		}
 

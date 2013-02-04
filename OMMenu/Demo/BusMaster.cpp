@@ -7,8 +7,8 @@
 
 #include "BusMaster.h"
 
-BusMaster::BusMaster(HardwareSerial& c_serObj, uint8_t c_dePin)
-:OMMoCoMaster(c_serObj, c_dePin)
+BusMaster::BusMaster(HardwareSerial& c_serObj)
+:OMMoCoMaster(c_serObj)
 {
 	cur_addr = 0;
 }

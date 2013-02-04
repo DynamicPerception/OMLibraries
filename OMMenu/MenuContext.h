@@ -53,16 +53,13 @@ struct fixListEntry {
 class MenuContext {
     //
 	int32_t iParamValue[NUMBER_OF_PARAMETERS]; //parameters value array to edit
-	//
-	const static int32_t iParamMaxValue[NUMBER_OF_PARAMETERS];
-	const static int16_t iParamMinValue[NUMBER_OF_PARAMETERS];
-	const static uint16_t iStepParameters[NUMBER_OF_PARAMETERS];
 
     //dynamic list variables
 	uint8_t dynListNode[DYN_LIST_SIZE]; //store bus_addr
 	char dynList[DYN_LIST_SIZE][LCD_WIDTH + 1]; //store display name
 	uint8_t dynListSize; //list size
 
+	const static uint16_t iStepParameters[NUMBER_OF_PARAMETERS];
     //ToDo define sizes
 	const static fixListEntry fixedList1[3];//None,Camera,Bulb
     const static fixListEntry fixedList2[2];//Begin,StartOver
@@ -83,15 +80,11 @@ class MenuContext {
 		//or cancelled by just pressing menu and not enter
     uint8_t keyCode;
 
-    //uint8_t jumpItem;
-    //uint8_t jumpLevel;
-
-
-
 protected:
-    uint8_t checkParamByIdx(uint8_t idx, uint32_t* pParam);
-    uint8_t checkParamRange(uint32_t min, uint32_t max, uint32_t* pParam);
-
+    //uint8_t checkParamByIdx(uint8_t idx, uint32_t* pParam);
+    //uint8_t checkParamRange(uint32_t min, uint32_t max, uint32_t* pParam);
+    char* byte_to_str(char* buf, uint8_t v);
+    char* time_to_str(char* buf, uint8_t hour, uint8_t min, uint8_t sec);
 public:
 	MenuContext();
 
@@ -127,9 +120,6 @@ public:
 	uint8_t getMaxCount(void) const {return DYN_LIST_SIZE;}
 	uint8_t getNodeAddr(uint8_t idx) {return dynListNode[idx];}
 
-//navigation support
-	//uint8_t getJumpLevel() const {return jumpLevel;};
-	//uint8_t getJumpItem() const {return jumpItem;};
 
 };
 
