@@ -935,7 +935,34 @@ void OMMotor::planRun() {
 	move(m_planDir, m_curPlanSpd);
 	
 }
+
+/** Reverse the Last Iteration of the Current Plan
+ 
+ Backs up one plan iteration by moving the same distance as the previous
+ plan interation in the opposite direction
+ 
+ */
 	
+void OMMotor::planReverse() {
+    if( ! enable() || m_curPlanSpline == 0 ) {
+        _fireCallback(OM_MOT_DONE);
+		return;  
+    }
+
+    
+    // get steps to move for last movement (m_curPlanSpline is not changed)
+    
+	float tmPos = (float) m_curPlanSpline / (float) m_curPlanSplines;
+	
+	f_easeFunc(true, tmPos); // sets m_curPlanSpd
+        // note that direction is reversed
+	move(!m_planDir, m_curPlanSpd);
+    
+    // now, we move back m_curPlanSpline so we don't lose our place
+    
+    m_curPlanSpline = (m_curPlanSpline >= 1) ? m_curPlanSpline - 1 : m_curPlanSpline;
+        
+}
 
 /** Move Now
 

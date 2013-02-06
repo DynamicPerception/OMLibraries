@@ -473,6 +473,7 @@ public:
 	
 	void plan(unsigned long, bool, unsigned long, unsigned long, unsigned long);
 	void planRun();
+    void planReverse();
 	
 	void home();
 	void homeSet();
