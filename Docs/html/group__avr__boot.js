@@ -1,0 +1,26 @@
+var group__avr__boot =
+[
+    [ "boot_is_spm_interrupt", "group__avr__boot.html#gacd6843d51a4fa7d68f3c4bc5aa393a3e", null ],
+    [ "boot_lock_bits_set", "group__avr__boot.html#gadaa352690ac1c82c535da9d8faf77590", null ],
+    [ "boot_lock_bits_set_safe", "group__avr__boot.html#gac80bd4f863ff7645204adb0eda3556ea", null ],
+    [ "boot_lock_fuse_bits_get", "group__avr__boot.html#gad2cbdea59ffec2e77ee2e63106459797", null ],
+    [ "boot_page_erase", "group__avr__boot.html#ga7249d12e06789cd306583abf7def8176", null ],
+    [ "boot_page_erase_safe", "group__avr__boot.html#ga5c345350a2fb349619b859dcf0dc0466", null ],
+    [ "boot_page_fill", "group__avr__boot.html#ga61add108c778273ff68233d044c3acca", null ],
+    [ "boot_page_fill_safe", "group__avr__boot.html#ga3f549e2ef9ca0f119a7070064c4dc372", null ],
+    [ "boot_page_write", "group__avr__boot.html#ga013d6d8c679ebdbc0e5fac179c38c9aa", null ],
+    [ "boot_page_write_safe", "group__avr__boot.html#ga107ad4c789e5c498062947d394ed98d5", null ],
+    [ "boot_rww_busy", "group__avr__boot.html#gaaba5a29359af671a37bccaa6a77bca7c", null ],
+    [ "boot_rww_enable", "group__avr__boot.html#ga8d2baaca2991318e0b06fdf9a5264923", null ],
+    [ "boot_rww_enable_safe", "group__avr__boot.html#gaeb0dba1dd9d338516a94c0bd8a8db78a", null ],
+    [ "boot_signature_byte_get", "group__avr__boot.html#gaf375d2543ba38dc56697b4f4bc37a717", null ],
+    [ "boot_spm_busy", "group__avr__boot.html#gae50dc01180110f30093a92fe64fe1565", null ],
+    [ "boot_spm_busy_wait", "group__avr__boot.html#ga24900c15109e8b419736d4b81b093fb8", null ],
+    [ "boot_spm_interrupt_disable", "group__avr__boot.html#gaf1e01d09c839793a6c0c990b1c5ae8b3", null ],
+    [ "boot_spm_interrupt_enable", "group__avr__boot.html#ga072040fce54f112355cb9ebf9ce41dd7", null ],
+    [ "BOOTLOADER_SECTION", "group__avr__boot.html#ga8a60eb0985d40ff71c42bb18f0f5789e", null ],
+    [ "GET_EXTENDED_FUSE_BITS", "group__avr__boot.html#gaf08aabaebbd69da659357f402d4d28ce", null ],
+    [ "GET_HIGH_FUSE_BITS", "group__avr__boot.html#ga44e70c9662e7ac06484144c15bc69aea", null ],
+    [ "GET_LOCK_BITS", "group__avr__boot.html#gae12d288a22cfbfa9d0cde12b1a779bfe", null ],
+    [ "GET_LOW_FUSE_BITS", "group__avr__boot.html#gac68c37ecf2354ba2af6e08379d65899f", null ]
+];
