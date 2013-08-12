@@ -1,5 +1,11 @@
 #include "OMMoCoMaster.h"
 
+
+/** @name OMMoCoMaster Library Methods
+ 
+ @{ 
+ */
+
 /** Constructor
 
  Constructs a new instance of the class. Accepts a hardware serial object and
@@ -12,8 +18,7 @@
 
  */
 
-OMMoCoMaster::OMMoCoMaster(HardwareSerial& c_serObj) :
-		OMMoCoBus(c_serObj, (unsigned int)OM_SER_MASTER_ADDR) {
+OMMoCoMaster::OMMoCoMaster(HardwareSerial& c_serObj) : OMMoCoBus(c_serObj) {
 
 }
 
@@ -60,9 +65,8 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg) {
 	return _getResponse();
 }
 
-/**!
- *  Send A Command to a Node with Two 8bit Data Values.
- *  (cmd_format: 8,8,8,8)
+/**
+ 
  @param p_addr
  Device address to send command to
 
@@ -75,8 +79,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg) {
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg,
-		uint8_t p_arg2) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg, uint8_t p_arg2) {
 
 	// 2 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, 2);
@@ -101,7 +104,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg,
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg) {
 
 	// 2 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, 2);
@@ -110,8 +113,8 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg) {
 	return _getResponse();
 }
 
-/** Send A Command to a Node with 32bit Data
-  (cmd_format: 8,8,32)
+/** 
+ 
  @param p_addr
  Device address to send command to
 
@@ -124,7 +127,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg) {
  @return
  An integer with the packet code returned, or -1 for response timeout
  */
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint32_t p_arg) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned long p_arg) {
 
 	// 4 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, 4);
@@ -133,11 +136,7 @@ int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint32_t p_arg) {
 	return _getResponse();
 }
 
-int OMMoCoMaster::command(uint8_t p_addr,
-		                  uint8_t p_cmd,
-		                  uint8_t p_arg1,
-		                  uint16_t p_arg2)
-{
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, unsigned int p_arg2) {
 	// 3 bytes sent to node after command
 		sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
 		this->write(p_arg1);
@@ -146,11 +145,7 @@ int OMMoCoMaster::command(uint8_t p_addr,
 		return _getResponse();
 }
 
-int OMMoCoMaster::command(uint8_t p_addr,
-		                  uint8_t p_cmd,
-		                  uint8_t p_arg1,
-		                  uint32_t p_arg2)
-{
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, unsigned long p_arg2) {
 	// 5 bytes sent to node after command
 		sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
 		this->write(p_arg1);
@@ -160,11 +155,7 @@ int OMMoCoMaster::command(uint8_t p_addr,
 
 }
 
-int OMMoCoMaster::command(uint8_t p_addr,
-		                  uint8_t p_cmd,
-		                  uint16_t p_arg1,
-		                  uint8_t p_arg2)
-{
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg1, uint8_t p_arg2) {
 	// 3 bytes sent to node after command
 	  sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
 	  this->write(p_arg1);
@@ -175,11 +166,7 @@ int OMMoCoMaster::command(uint8_t p_addr,
 }
 
 
-int OMMoCoMaster::command(uint8_t p_addr,
-		                  uint8_t p_cmd,
-		                  uint16_t p_arg1,
-		                  uint32_t p_arg2)
-{
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg1, unsigned long p_arg2) {
 	// 6 bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2));
 	this->write(p_arg1);
@@ -189,6 +176,37 @@ int OMMoCoMaster::command(uint8_t p_addr,
 
 }
 
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, uint8_t p_arg3) {
+    sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2) + sizeof(p_arg3));
+    this->write(p_arg1);
+    this->write(p_arg2);
+    this->write(p_arg3);   
+    return _getResponse();
+}
+
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, unsigned int p_arg3) {
+    sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2) + sizeof(p_arg3));
+    this->write(p_arg1);
+    this->write(p_arg2);
+    this->write(p_arg3);  
+    return _getResponse();
+}
+
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, unsigned long p_arg3) {
+    sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2) + sizeof(p_arg3));
+    this->write(p_arg1);
+    this->write(p_arg2);
+    this->write(p_arg3);   
+    return _getResponse();
+}
+
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, float p_arg3) {
+    sendPacketHeader(p_addr, p_cmd, sizeof(p_arg1) + sizeof(p_arg2) + sizeof(p_arg3));
+    this->write(p_arg1);
+    this->write(p_arg2);
+    this->write((unsigned long)p_arg3);
+    return _getResponse();
+}
 
 
 /** Send A Command to a Node with Data
@@ -212,8 +230,7 @@ int OMMoCoMaster::command(uint8_t p_addr,
  An integer with the packet code returned, or -1 for response timeout
  */
 
-int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, char* p_arg,
-		uint8_t p_len) {
+int OMMoCoMaster::command(uint8_t p_addr, uint8_t p_cmd, char* p_arg, uint8_t p_len) {
 
 	//  p_len bytes sent to node after command
 	sendPacketHeader(p_addr, p_cmd, p_len);
@@ -301,8 +318,7 @@ int OMMoCoMaster::responseLen() {
 
 int OMMoCoMaster::getVersion(uint8_t p_addr) {
 
-	if (command(p_addr, (uint8_t) OM_SER_BASECOM, (uint8_t) OM_SER_COREVER)
-			!= 1)
+	if (command(p_addr, (uint8_t) OM_SER_BASECOM, (uint8_t) OM_SER_COREVER)	!= 1)
 		return (-1);
 
 	if (responseLen() > 0) {
@@ -389,4 +405,8 @@ int OMMoCoMaster::_getResponse() {
 
 	return code;
 }
+
+/** 
+ @}
+ */
 

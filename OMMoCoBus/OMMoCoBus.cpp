@@ -1,8 +1,5 @@
 
 #include "OMMoCoBus.h"
-#include "Arduino.h"
-
-// #include "OMUtils.h"
 
 /*
 
@@ -39,7 +36,11 @@ Author: C.A. Church
 */
 
 
-#include <util/delay.h>
+
+/** @name OMMoCoBus Library Methods 
+ 
+ @{ 
+ */
 
 
 /** Constructor
@@ -688,5 +689,9 @@ float OMMoCoBus::ntof(uint8_t* p_dat) {
 	return(ret);
 }
 
+/**
+ 
+ @}
+ */
 
 

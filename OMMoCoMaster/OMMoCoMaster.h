@@ -36,7 +36,7 @@
 #include "Arduino.h"
 #include "HardwareSerial.h"
 
-#include "OMMoCoBus.h"
+#include "../OMMoCoBus/OMMoCoBus.h"
 
 
 
@@ -62,7 +62,7 @@
  
  With contributions by Stanislav Pereplitsa
 
- (c) 2012 Dynamic Perception LLC
+ (c) 2012, 2013 Dynamic Perception LLC
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -84,23 +84,33 @@ class OMMoCoMaster: public OMMoCoBus {
 public:
 
 	OMMoCoMaster(HardwareSerial& c_serObj);
+    
+    
     // 0bytes of data
 	int command(uint8_t p_addr, uint8_t p_cmd);
 	// 1bytes of data
 	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg);
 	// 2bytes of data
-	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg);
+	int command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg);
 	// 3bytes of data in two kind
-	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint16_t p_arg2);
-	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg1, uint8_t p_arg2);
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, unsigned int p_arg2);
+	int command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg1, uint8_t p_arg2);
 	// 4bytes of data
-	int command(uint8_t p_addr, uint8_t p_cmd, uint32_t p_arg);
+	int command(uint8_t p_addr, uint8_t p_cmd, unsigned long p_arg);
 	// 5bytes of data
-	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint32_t p_arg2);
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, unsigned long p_arg2);
 	// 6bytes of data
-	int command(uint8_t p_addr, uint8_t p_cmd, uint16_t p_arg1, uint32_t p_arg2);
+	int command(uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg1, unsigned long p_arg2);
 	// user defined
 	int command(uint8_t p_addr, uint8_t p_cmd, char* p_arg, uint8_t p_len);
+	// 2bytes of data
+	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2);
+    int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, uint8_t p_arg3);
+    int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, unsigned int p_arg3);
+    int command(uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, unsigned long p_arg3);
+    int command(uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, float p_arg3);
+    
+
 
 	int responseType();
 	int responseLen();
@@ -117,8 +127,7 @@ private:
 
 	int _getResponse();
 protected:
-	// 2bytes of data
-	int command(uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2);
+
 };
 
 /**
@@ -177,7 +186,7 @@ protected:
  int devVer    = 1;
 
  // initialize node
- OMMoCoNode Node = OMMoCoNode(Serial, DE_PIN, devAddr, devVer, devId);
+ OMMoCoNode Node = OMMoCoNode(Serial, devAddr, devVer, devId);
 
 
  void setup() {
@@ -236,7 +245,7 @@ protected:
  byte nodeAddr 	= 5;
  bool on 	= false;
 
- OMMoCoMaster myBus = OMMoCoMaster(Serial, DE_PIN);
+ OMMoCoMaster myBus = OMMoCoMaster(Serial);
 
  void setup() {
 	 Serial.begin(OM_SER_BPS);
@@ -284,7 +293,7 @@ protected:
 
  public:
 
- 	MyDevMaster(HardwareSerial& c_serObj, uint8_t c_dePin) : OMMoCoMaster(c_serObj, uint8_t c_dePin);
+ 	MyDevMaster(HardwareSerial& c_serObj) : OMMoCoMaster(c_serObj);
 
  	int ledOn(uint8_t addr);
  	int ledOff(uint8_t addr);
@@ -304,7 +313,7 @@ protected:
  #define LED_ON	2
  #define LED_OFF 3
 
- MyDevMaster::MyDevMaster(HardwareSerial& c_serObj, uint8_t c_dePin) : OMMoCoMaster(c_serObj, c_dePin) {
+ MyDevMaster::MyDevMaster(HardwareSerial& c_serObj) : OMMoCoMaster(c_serObj) {
 
  }
 
@@ -340,7 +349,7 @@ protected:
  byte nodeAddr 	= 5;
  bool on 	= false;
  
- MyDevMaster mvDev = MyDevMaster(Serial, DE_PIN);
+ MyDevMaster mvDev = MyDevMaster(Serial);
  
  void setup() {
  	Serial.begin(OM_SER_BPS);

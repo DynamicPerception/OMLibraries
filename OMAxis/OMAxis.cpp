@@ -34,6 +34,12 @@ OMAxis::OMAxis(HardwareSerial& c_serObj) : OMMoCoMaster(c_serObj) {
 }
 
 
+/** @name nanoMoCo Control Methods 
+ 
+ @{ 
+ 
+ */
+
 /** Set Target Node Address for Subsequent Commands
  
  You must set a target node address before sending commands. This allows
@@ -547,6 +553,21 @@ bool OMAxis::master(bool p_en) {
 	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_TIMING_MASTER, (uint8_t) p_en);
 }
 
+/** Specify Maximum Program Run Time
+ 
+ Specify the maximum program runtime, in milliseconds.
+ 
+ Programmed operation will automatically be stopped when this time is reached.
+ 
+ @param p_ms
+ Run time, in milliseconds
+ 
+ */
+
+bool OMAxis::maxRunTime(unsigned long p_ms) {
+    return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MAX_RUN, p_ms);
+}
+ 
 
 /** Perform a Complex Move Immediately
  
@@ -1058,5 +1079,8 @@ bool OMAxis::getMaster() {
     return ret;    
 }
 
+/** 
+ 
+ @} */
 
 

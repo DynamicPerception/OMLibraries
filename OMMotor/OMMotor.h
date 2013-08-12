@@ -83,7 +83,7 @@ See www.openmoco.org for more information
   @section movedefs Defining A Move
   
   A move can be defined in a number of ways, but the most interesting move is
-  one which has five attributes specified:
+  one which has four attributes specified:
   
    <ul>
    	<li>Distance to move</li>

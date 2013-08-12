@@ -29,35 +29,20 @@ See www.openmoco.org for more information
 #define OMMOCODEFS_H_
 
 
+
 // types of data responses which can be sent back
 enum {
 	R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STR
 };
 
 
-#ifndef OMB_DEPIN
-    #define OMB_DEPIN 5
-#endif
-#ifndef OMB_DEREG
-    #define OMB_DEREG   PORTD
-#endif
-#ifndef OMB_DEPFLAG
-    #define OMB_DEPFLAG PORTD5
-#endif
+    // load pin definitions
 
-#ifndef OMB_SRDREG
-    #define OMB_SRDREG  UDR0
+#if defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB647__) || defined(__AVR_AT90USB1287__)
+    #include "OMMoCoPinsAT90.h"
+#else
+    #include "OMMoCoPinsATMega328.h"
 #endif
-#ifndef OMB_SRRFLAG
-    #define OMB_SRRFLAG UDRE0
-#endif
-#ifndef OMB_SRREG
-    #define OMB_SRSREG   UCSR0A
-#endif
-#ifndef OMB_SRCLRFLAG
-    #define OMB_SRTXFLAG   TXC0
-#endif
-
 
 
 // bus 'master' address, for responses

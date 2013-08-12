@@ -32,6 +32,11 @@
 
 #include "../OMMoCoMaster/OMMoCoMaster.h"
 
+/** @file OMAxis.h 
+ 
+ Header file for OMAxis class
+ 
+ */
 
  /** Easing Types for OMAxis */
 enum EasingMode { 
@@ -54,7 +59,6 @@ enum StepRateValue {
 
  /** MicroSteps Values */
 enum MicroSteps {
-    
     MS_1   = 1,
     MS_2   = 2,
     MS_4   = 4,
@@ -64,7 +68,9 @@ enum MicroSteps {
 
  /** Planned Movement Type */
 enum PlanType {
+        /** Interleaved Motion */
     PLAN_INTERLEAVE = 0,
+        /** Continuous Motion */
     PLAN_CONTINUOUS = 1
 };
 
@@ -88,16 +94,16 @@ enum ComLine {
  The following provides a basic example of controlling a node via this class in an Arduino sketch:
  
  @code
+ 
+    // note: include all headers due to issues with Arduino build process
+ 
  #include "OMMoCoBus.h"
  #include "OMMoCoMaster.h"
  #include "OMAxis.h"
  
-  // RS-485 driver enable pin must be pin 5
- #define DE_PIN 5
- 
  byte nodeAddr = 3;
  
- OMAxis axis = OMAxis(Serial, DE_PIN);
+ OMAxis axis = OMAxis(Serial);
  
  void setup() {
     Serial.begin(OM_SER_BPS);
@@ -122,7 +128,8 @@ enum ComLine {
  }
  @endcode
  
- @author Stanislav Pereplitsa, C.A. Church
+ @author 
+ Stanislav Pereplitsa, C.A. Church
  
  
  Copyright (c) 2012, 2013 Dynamic Perception LLC
@@ -210,3 +217,330 @@ private:
 };
 
 #endif /* OMAXIS_H_ */
+
+/**
+ 
+ @page nanomoco Controlling nanoMoCo Devices with OMAxis
+ 
+ You can control up to 32 nanoMoCo devices at once per MoCoBus.  The OMAxis class creates a high-level interface
+ to all commands the nanoMoCo can accept, including all status commands.
+ 
+ The OMAxis class is an OMMoCoMaster-derived class, so you can perform lower-level activities if you prefer,
+ however this should not be necessary.
+ 
+ 
+ @section nmdevaddr Device Addressing
+ 
+ To reduce overall memory footprint, one OMAxis instance can be used for up to 32 distinct nanoMoCo devices.
+ This is achieved by passing an address to the target() method, which sets the address for subsequent commands.
+ 
+ For example, we can send the same commands to multiple nodes in a loop:
+ 
+ @code
+ 
+    // note: include all headers due to issues with Arduino build process
+ 
+ #include "OMMoCoBus.h"
+ #include "OMMoCoMaster.h"
+ #include "OMAxis.h"
+ 
+ byte addresses[3] = { 4, 5, 6 };
+ 
+ OMAxis Axis = OMAxis(Serial);
+ 
+ void setup() {
+    Serial.begin(OM_SER_BPS);
+ 
+    sendCommands();
+ }
+ 
+ void loop() {
+ 
+ 
+ }
+ 
+ void sendCommands() {
+ 
+    for( byte i = 0; i < sizeof(addresses) * sizeof(byte); i++ ) {
+ 
+        Axis.target( addresses[i] );
+        
+        if( Axis.connected() ) {
+            Axis.enableCamera(false);
+        }
+    }
+ 
+ }
+ 
+ @endcode
+ 
+ NB: You'll see connected() used a lot in the examples.  Its use should be abundant when sending
+ commands to nodes, it tells you whether or not the node is connected and responding to commands
+ at that address.
+ 
+ If you wish to set device addresses via your Arduino sketch, look at the changeAddress() method,
+ otherwise you can use any other facility for setting device addresses, like Graffik.
+ 
+ Each nanoMoCo device <b>must</b> have a unique address, otherwise communication will be impaired
+ on the bus - as two devices will attempt to respond at once.
+ 
+ 
+ @section nmenable Enabling Functions on the nanoMoCo
+ 
+ Most functions of the nanoMoCo can be enabled/disabled.  You should always ensure, before starting a
+ series of commands, or after having completed a programmed activity, that the functions you need 
+ enabled/disabled are so.  Do not rely any expected defaults.
+ 
+ Some high-level functions, such as motor driving and camera control, are enabled using specific
+ boolean parameters to enable or disable all related functions, these include enableCamera() and
+ enableMotor().
+ 
+ Other functions, such as controlling the focus line, delaying after a shot, or exposing the camera
+ are enabled or disabled by specifying how long the activity should occur for.  For example, to 
+ disable focus line control, we simply set focus time to 0ms with focus().  By specifying 0 time
+ to execute any given activity, we disable that activity.
+ 
+ 
+ @section nminteractivesms Interactive Control with Discrete Movements
+ 
+ The most simple form of motion control to understand is that of interactive control.  In interactive
+ control, you tell each nanoMoCo device exactly what to do, and when to do it.  By 'discrete movements'
+ we mean that we're going to issue commands for very specific moves to points. For example, if we wanted to 
+ perform a shoot-move-shoot move for five shots with one nanoMoCo, we can use the expose() and simple
+ move() methods:
+ 
+ @code
+ 
+ for( byte i = 0; i < 5; i++) {
+ 
+    Axis.expose(500);
+    delay(500);
+ 
+    Axis.move(true, 100);
+    delay(500);
+  }
+ @endcode
+ 
+ When using the simple move() method to create discrete movements, the motor will accelerate quickly and move 
+ at a speed up to the maximum speed you've set via maxSpeed().
+ 
+ All moves, camera controls, etc. are non-blocking.  This means you may continue to send commands, and even
+ perform other actions while these commands are being executed.
+ 
+ 
+ @section nminteractivec Interactive Control with Continuous Movement
+ 
+ Like moving with discrete movements (e.g. SMS), we can also do direct, interactive control with continuous
+ movement.  In this case, instead of telling the nanoMoCo how many steps to take, we tell it what speed we
+ want it to move at.  
+ 
+ To execute a standard continuous move, we have to do a few things:
+ 
+ <ul>
+    <li>Tell the nanoMoCo that movement will be continuous</li>
+    <li>Tell it what speed to move at</li>
+    <li>Tell it to start moving</li>
+ </ul>
+ 
+ The following code shows us how to do this:
+ 
+ @code
+ 
+ Axis.continuous(true); // enable continuous motion
+ Axis.continuousSpeed(1.5); // steps per second
+ Axis.move(true, 0); // start moving
+ 
+ @endcode
+ 
+ The continuous speed is expressed in steps per second, and is a floating-point value.  You may, and should,
+ change the speed during the move.  Note that no acceleration or deceleration is done for you, you must
+ accelerate and decelerate by modulating the speed. 
+ 
+ Our call to move() here is special: note that we told it to go 0 steps. When moving continuously, we control 
+ the speed and not the total steps via the move command.
+ 
+ The motor will continue running at the last set speed until one of the following occurs:
+ 
+ <ul>
+    <li>stop() is called</li>
+    <li>stopMotor() is called</li>
+    <li>maxSteps() is reached</li>
+ </ul>
+ 
+ NB: You may reset a maxSteps() counter at any time by sending a stop() command, which resets all counters.
+ 
+ Of course, this kind of continuous motion control is both boring and a lot of work to implement.  Let's look
+ at something more interesting...
+ 
+ 
+ @section nminteractivecm Interactive Control with Complex Movement
+ 
+ We can perform a complex continuous move with a specified distance to travel, time to travel, acceleration
+ period, and deceleration period by using the complex move() method.  This method takes more arguments than
+ the simple move() method, and allows us to create far more expressive moves with a single line of code.
+ 
+ For more information on how the complex moves, and what the result looks like, see \ref ommotion "Motion Capabilities".
+ 
+ For example, the following command causes a move to be executed:
+ 
+ @code
+ Axis.move(true, 5000, 60000, 3000, 2000);
+ @endcode
+ 
+ This would be a lot more work to do interactively just using a basic continuous move, plus we don't have to worry
+ about calling continuous() or setting a continuousSpeed().  The nanoMoCo simply calculates for us what speed to
+ be going, and how far it has gone, every tiny fraction of a second.
+ 
+ NB: If you specify a move that cannot be made within current parameters (too far too quickly), you will not get
+ an error or warning, but your motor will mvoe erratically, and may attempt to make a very long move at the end
+ of the movement to catch up to the desired position.
+ 
+ 
+ @section nmprogram Basic Programmed Activities
+ 
+ The real power of the nanoMoCo shines when we get to programmed activities.  Unlike interactive control, we don't
+ have to keep timing and issue each command ourselves.  Instead, we tell the nanoMoCo what we want it to do, and
+ it manages what it takes to do that for us.
+ 
+ The most basic form of this is a shoot-move-shoot move with no "output" acceleration. By this, we mean that the distance
+ moved between each exposure doesn't change.  Each discrete movement has a brief acceleration and deceleration period.
+ 
+ To achieve this, we will tell the nanoMoCo what its operating parameters are, and then to start executing them:
+ 
+ @code
+ Axis.enableMotor(true); // motor will be enabled
+ Axis.enableCamera(true); // camera will be enabled
+ 
+ Axis.interval(1000); // 1-second exposure interval
+ 
+ Axis.steps(50); // move 50 steps between each exposure
+ Axis.dir(true); // move in the 'true' direction
+ 
+ Axis.exposure(250); // trigger exposure for 250mS
+ Axis.exposureDelay(300); // delay for 300mS after exposure before moving
+ 
+ Axis.maxShots(100); // take a maximum of 100 exposures
+ 
+ Axis.start(); // begin executing the program
+ @endcode
+ 
+ In the above example, the axis will move 50 steps in the 'true' direction between each exposure, and there 
+ will be at least 1 second between each exposure.
+ 
+ You may pause execution of a SMS motion program at any time by using pause(), and resume it again using start().  
+ You may stop the program execution entirely by using the stop() command. The program will automatically stop 
+ when one of the following occurs:
+ 
+ <ul>
+    <li>maxShots() is reached</li>
+    <li>maxRunTime() is reached</li>
+ </ul>
+ 
+ If maxSteps() is reached, the motor will stop moving, but the program will otherwise continue operating.
+ 
+ 
+ @section nmprogramadv Expressive Programmed Moves
+ 
+ We can achieve much more expressive programmed moves using the plan() method.  The plan() control tells the
+ motor to make a complex move once the program is started using start().  While basic programmed moves only
+ let us do SMS-style movements, planned movements can be either continuous or interleaved between exposures.
+ 
+ The plan() adds one additional argument that the complex move() method does not - and that is whether the 
+ move is continuous, or SMS-style. We still have to setup the camera like we would normally.
+ 
+ @code
+ Axis.motorEnable(true); // motor will be enabled
+ Axis.cameraEnable(true); // camera will be enabled
+ 
+ Axis.interval(1000); // 1-second exposure interval
+ 
+ Axis.exposure(250); // trigger exposure for 250mS
+ Axis.exposureDelay(300); // delay for 300mS after exposure before moving
+ 
+ Axis.plan(PLAN_CONTINUOUS, true, 5000, 60000, 3000, 2000); // plan a complex move 
+ Axis.start(); // begin executing the program
+ @endcode
+ 
+ Now, unlike our previous programmed activity, we have expressed not only some movement, but the final target
+ position, the time to arrive there, how long to accelerate, and how long to decelerate.  
+ 
+ For continuous moves, the times used in a plan (arrival time, acceleration time, and deceleration time) are
+ all expressed in milliseconds.  For interleaved (SMS) moves, the times expressed are intervals. 
+ 
+ We can also express a delay before the movement is to start, we do this using the delayMoveStart() command. 
+ Like with plan, delayMoveStart() values are milliseconds for continuous moves, or intervals for interleaved
+ motion.
+ 
+ Planned move programs follow the same stop profile as a basic programmed move. 
+ 
+ An interleaved planned move may be paused and re-started without issue, however, it is not possible to pause
+ a continuous planned move as stepper motors are not capable of starting movement at high speeds, and must
+ accelerate into such speeds.
+ 
+ 
+ @section nmeasing Setting Easing Mode for Expressive Programmed Moves
+ 
+ We all know that being limited to, say, linear acceleration, can be really boring in the final output video.
+ With the nanoMoCo, it is possible to choose from Linear, Quadratic, or Inverse Quadratic easing profiles to
+ get that extra punch in moves.  The selected easing profile is used for any complex move() or plan(), whether
+ it is continuous or interleaved.  Simply call easing() before sending the move command or starting the 
+ program.
+ 
+ You should not change easing profiles while a move is being executed, or a program is running. Doing so will
+ result in undefined behavior.
+ 
+ 
+ @section nmsynchro Synchronizing Multiple Nodes
+ 
+ When operating with multiple nodes, it is important that some synchronization is performed between them.  In
+ the case of SMS movement, this is essential to prevent the nodes that are not controlling the camera to know
+ when it is safe to move.  This is achieved using the master() method.  Only one node should ever be set to
+ master.
+ 
+ The master will send a clear to move signal to the slaves using COM3 when the exposure is complete, and the
+ exposure delay has expired.
+ 
+ @code
+    // set address 4 as master, all else as slaves
+ Axis.target(4);
+ Axis.master(true);
+ 
+ Axis.target(5);
+ Axis.master(false);
+ 
+ Axis.target(6);
+ Axis.master(false);
+ @endcode
+ 
+ The node controlling the camera must always be set as the master.  Controlling multiple cameras from slaves
+ is possible, but the master or other nodes may move while they are exposing.
+ 
+ For slave nodes, the interval value is ignored.  This means that for interleaved motion, the slave nodes will
+ only move after the master has sent the slave clear signal.  For continuous motion, master is less important,
+ obviously, as motors will move at their needed speeds at the right times.
+ 
+ To start, stop, or pause multiple nodes at the same time, use the broadcast forms of the commands.
+ 
+ 
+ @section nmstatus Requesting Operational Status
+ 
+ You can request operational status from any nanoMoCo node by using the methods whose names start with 'get', 
+ e.g. getRunning().
+ 
+ You should always check to see if the node is connected and responding, otherwise the results returned by these
+ methods are not reliable.
+ 
+ @code
+ 
+ if( Axis.connected() ) {
+    unsigned long runTime - Axis.getRunTime();
+ }
+ 
+ @endcode
+ 
+ */
+
+
+
+
+

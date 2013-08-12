@@ -27,9 +27,13 @@ OpenMoco MoCoBus Core Libraries
 #ifndef OMMOCOBUS_H_
 #define OMMOCOBUS_H_
 
+#include <util/delay.h>
 #include <inttypes.h>
-#include "HardwareSerial.h"
+#include <Arduino.h>
+
 #include "OMMoCoDefs.h"
+
+
 
     
 /**
@@ -163,10 +167,10 @@ OpenMoco MoCoBus Core Libraries
   */
   
 class OMMoCoBus {
+    
 public:
 
-	OMMoCoBus(HardwareSerial& port, unsigned int mode);
-	virtual ~OMMoCoBus(){}
+	OMMoCoBus(HardwareSerial& c_serObj, unsigned int c_dAddr = 0);
 
 	unsigned int address();
 	void address(unsigned int p_addr);
