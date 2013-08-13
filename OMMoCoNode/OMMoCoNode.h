@@ -34,7 +34,7 @@ See www.openmoco.org for more information
 #include "Arduino.h"
 #include <HardwareSerial.h>
 
-#include "OMMoCoBus.h"
+#include "../OMMoCoBus/OMMoCoBus.h"
 
 
 
@@ -186,7 +186,7 @@ char devId[]  = "MyDevice";
 int devVer    = 1;
 
  // initialize node
-OMMoCoNode Node = OMMoCoNode(Serial, DE_PIN, devAddr, devVer, devId);
+OMMoCoNode Node = OMMoCoNode(Serial, devAddr, devVer, devId);
   
 void setup() {
 	Serial.begin(OM_SER_BPS);
@@ -238,7 +238,7 @@ char devId[]  = "MyDevice";
 int devVer    = 1;
 
  // initialize node
-OMMoCoNode Node = OMMoCoNode(Serial, DE_PIN, devAddr, devVer, devId);
+OMMoCoNode Node = OMMoCoNode(Serial, devAddr, devVer, devId);
 
 
 void setup() {
