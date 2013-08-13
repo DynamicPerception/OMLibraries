@@ -10,6 +10,9 @@ Complete Doxygen documentation including tutorials and examples can be found in 
 
 Key Libraries
 -------------
+### OMAxis
+
+High-level control library for nanoMoCo devices.  Controls up to 32 nanoMoCo devices via one MoCoBus connection and provides easy-to-use methods for interacting with each device.
 
 ### OMState
 
