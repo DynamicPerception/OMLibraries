@@ -4,6 +4,7 @@ var class_o_m_mo_co_master =
     [ "address", "class_o_m_mo_co_master.html#ab4678ed2fd9d1be4666fc1d43deb7846", null ],
     [ "address", "class_o_m_mo_co_master.html#a4e5fd9b0f4adda950d9c0b392216d4a6", null ],
     [ "addressCallback", "class_o_m_mo_co_master.html#a577164df79b2be053269fb0729fce5be", null ],
+    [ "broadcast", "class_o_m_mo_co_master.html#a2447568093ab53e134f84016f056ac69", null ],
     [ "buffer", "class_o_m_mo_co_master.html#ab766533ac99363cb6d92a52357cfb7a1", null ],
     [ "bufferLen", "class_o_m_mo_co_master.html#a490368905b48e8318734abe757983cec", null ],
     [ "changeAddress", "class_o_m_mo_co_master.html#aaa162670404f285691dfc2efa3498110", null ],

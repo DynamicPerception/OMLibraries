@@ -5,6 +5,7 @@ var class_o_m_axis =
     [ "address", "class_o_m_axis.html#a4e5fd9b0f4adda950d9c0b392216d4a6", null ],
     [ "addressCallback", "class_o_m_axis.html#a577164df79b2be053269fb0729fce5be", null ],
     [ "backlash", "class_o_m_axis.html#ac3099d303ce523e132cdb456364b5afe", null ],
+    [ "broadcast", "class_o_m_axis.html#a2447568093ab53e134f84016f056ac69", null ],
     [ "buffer", "class_o_m_axis.html#ab766533ac99363cb6d92a52357cfb7a1", null ],
     [ "bufferLen", "class_o_m_axis.html#a490368905b48e8318734abe757983cec", null ],
     [ "changeAddress", "class_o_m_axis.html#aaa162670404f285691dfc2efa3498110", null ],

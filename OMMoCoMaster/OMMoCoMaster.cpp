@@ -1,7 +1,7 @@
 #include "OMMoCoMaster.h"
 
 
-/** @name OMMoCoMaster Library Methods
+/** @name OMMoCoMaster Public Methods
  
  @{ 
  */
@@ -20,6 +20,22 @@
 
 OMMoCoMaster::OMMoCoMaster(HardwareSerial& c_serObj) : OMMoCoBus(c_serObj) {
 
+}
+
+/** Broadcast a Command to All Nodes 
+ 
+ Sends a broadcast command to all nodes.  Always returns true, as no
+ nodes shall respond to a broadcast command.
+ 
+ @param p_cmd
+ A valid BroadCastType value
+ 
+ @return
+ Always returns 1 (successful)
+ */
+
+int OMMoCoMaster::broadcast(BroadCastType p_cmd) {
+    return command(OM_SER_BCAST_ADDR, (uint8_t) p_cmd);
 }
 
 /** Send A Command to a Node with no data

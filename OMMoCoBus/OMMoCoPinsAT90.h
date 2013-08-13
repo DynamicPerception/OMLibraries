@@ -26,13 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.All rights 
 
 
 #ifndef OMB_DEPIN
-    #define OMB_DEPIN 5
+    #define OMB_DEPIN 28
 #endif
 #ifndef OMB_DEREG
     #define OMB_DEREG   PORTD
 #endif
 #ifndef OMB_DEPFLAG
-    #define OMB_DEPFLAG PORTD5
+    #define OMB_DEPFLAG PORTD4
 #endif
 
 #ifndef OMB_SRDREG
@@ -48,4 +48,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.All rights 
     #define OMB_SRTXFLAG   TXC1
 #endif
 
-#endif
+#endif // _OMMoCoPinsAT90_h

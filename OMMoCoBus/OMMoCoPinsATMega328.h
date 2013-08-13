@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.All rights 
 #ifndef _OMMoCoPinsATMega328_h
 #define _OMMoCoPinsATMega328_h
 
+#warning Loading 328 Definitions
+
 #ifndef OMB_DEPIN
     #define OMB_DEPIN 5
 #endif
@@ -50,4 +52,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.All rights 
     #define OMB_SRTXFLAG   TXC0
 #endif
 
-#endif
+#endif // _OMMoCoPinsATMega328_h

@@ -111,6 +111,7 @@ public:
     int command(uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, float p_arg3);
     
 
+    int broadcast(BroadCastType p_cmd);
 
 	int responseType();
 	int responseLen();
@@ -126,6 +127,7 @@ public:
 private:
 
 	int _getResponse();
+    
 protected:
 
 };
@@ -168,10 +170,8 @@ protected:
 
  node_sketch.pde:
  @code
+ #include "OMMoCoBus.h"
  #include "OMMoCoNode.h"
-
- // RS-485 driver enable pin
- #define DE_PIN 5
 
  // two commands we can accept...
 
@@ -485,6 +485,12 @@ protected:
  	command(OM_SER_BCAST_ADDR, OM_BCAST_START);
  @endcode
  
+ Of course, we have a helper method with makes this more simple, and clear:
+ 
+ @code
+    broadcast(OM_BCAST_START);
+ @endcode
+ 
  
  @section mastervalid Validating a Node
 
@@ -512,7 +518,7 @@ protected:
 
  public:
 
- 	MyDevMaster(HardwareSerial& c_serObj, uint8_t c_dePin) : OMMoCoMaster(c_serObj, uint8_t c_dePin);
+ 	MyDevMaster(HardwareSerial& c_serObj) : OMMoCoMaster(c_serObj);
 
 	int ledOn(uint8_t addr);
 	int ledOff(uint8_t addr);
@@ -536,7 +542,7 @@ protected:
  #define LED_ON	2
  #define LED_OFF 3
 
- MyDevMaster::MyDevMaster(HardwareSerial& c_serObj, uint8_t c_dePin) : OMMoCoMaster(c_serObj, c_dePin) {
+ MyDevMaster::MyDevMaster(HardwareSerial& c_serObj) : OMMoCoMaster(c_serObj) {
 
  }
 
@@ -565,13 +571,11 @@ protected:
 
  #include "device_master.h"
 
- #define DE_PIN 5
-
  byte nodeAddr 	= 5;
  bool led 	= false;
  bool ok 	= true;
 
- MyDevMaster mvDev = MyDevMaster(Serial, DE_PIN);
+ MyDevMaster mvDev = MyDevMaster(Serial);
 
  void setup() {
  	Serial.begin(OM_SER_BPS);

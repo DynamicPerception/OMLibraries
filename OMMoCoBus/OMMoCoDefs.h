@@ -29,6 +29,11 @@ See www.openmoco.org for more information
 #define OMMOCODEFS_H_
 
 
+/** @file OMMoCoDefs.h
+ 
+ MoCoBus Definitions
+ 
+ */
 
 // types of data responses which can be sent back
 enum {
@@ -93,9 +98,17 @@ enum {
 #define OM_SER_COREADDR		4
 
 // commond broadcast commands
-#define OM_BCAST_START		1
-#define OM_BCAST_STOP		2
-#define OM_BCAST_PAUSE		3
+
+ /** Common Broadcast Command Types */
+enum BroadCastType {
+        /** Start Program Execution */
+    OM_BCAST_START = 1,
+        /** Stop Program Execution */
+    OM_BCAST_STOP  = 2,
+        /** Pause Program Execution */
+    OM_BCAST_PAUSE = 3
+};
+
 
 
 #endif /* OMMOCODEFS_H_ */

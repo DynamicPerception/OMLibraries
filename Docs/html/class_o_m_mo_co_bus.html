@@ -81,14 +81,15 @@ Inheritance diagram for OMMoCoBus:</div>
   <map id="OMMoCoBus_map" name="OMMoCoBus_map">
 <area href="class_o_m_mo_co_master.html" title="MoCoBus Master Library." alt="OMMoCoMaster" shape="rect" coords="0,56,106,80"/>
 <area href="class_o_m_mo_co_node.html" title="MoCoBus Node Library." alt="OMMoCoNode" shape="rect" coords="116,56,222,80"/>
-<area href="class_o_m_axis.html" alt="OMAxis" shape="rect" coords="0,112,106,136"/>
+<area href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus." alt="OMAxis" shape="rect" coords="0,112,106,136"/>
 </map>
  </div></div>
 
 <p><a href="class_o_m_mo_co_bus-members.html">List of all members.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2><a name="member-group"></a>
-OMMoCoBus Library Methods</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">OMMoCoBus Public Methods</div></td></tr>
 <tr class="memitem:ab4687e7b754328363b2a5e607abe07ad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ab4687e7b754328363b2a5e607abe07ad">OMMoCoBus</a> (HardwareSerial &amp;c_serObj, unsigned int c_dAddr=0)</td></tr>
 <tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address</a> ()</td></tr>
 <tr class="memitem:a7d91d05587d86a2a0623cb15fc6ccf3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a7d91d05587d86a2a0623cb15fc6ccf3b">address</a> (unsigned int p_addr)</td></tr>
@@ -100,6 +101,11 @@ OMMoCoBus Library Methods</h2></td></tr>
 <tr class="memitem:a195ed57e431fce980589ed5b81bb25a1"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a195ed57e431fce980589ed5b81bb25a1">ntol</a> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:a15fe12677338c70ca39408946e56aa36"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a15fe12677338c70ca39408946e56aa36">ntoul</a> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:a65b49619f92f96e915fe246f7f447a8b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a65b49619f92f96e915fe246f7f447a8b">ntof</a> (uint8_t *p_dat)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="member-group"></a>
+OMMoCoBus Protected Methods</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp63faa7b9a894f60911e3cc561f934662"></a> These methods can only be used within classes derived from <a class="el" href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library.">OMMoCoBus</a> </p>
+</td></tr>
 <tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a> ()</td></tr>
 <tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a> ()</td></tr>
 <tr class="memitem:a537c8d98c67988983b9ba8824aa140a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader</a> (unsigned int p_addr, uint8_t p_code, uint8_t p_dlen)</td></tr>
@@ -119,9 +125,14 @@ OMMoCoBus Library Methods</h2></td></tr>
 Pin Assignments</h1>
 <p>For porting to other chipsets, or for changing the default DE pin from Arduino 5 on the Atmega328p, you may define any of the following #define's before #include'ing this library. The following defines are available, with their default values:</p>
 <p>DE Pin Assignments</p>
-<p>OMB_DEPIN 5 OMB_DEREG PORTD OMB_DEPFLAG PORTD5</p>
+<p>OMB_DEPIN 5</p>
+<p>OMB_DEREG PORTD</p>
+<p>OMB_DEPFLAG PORTD5</p>
 <p>Serial Handling Registers/Flags</p>
-<p>OMB_SRDREG UDR0 OMB_SRRFLAG UDRE0 OMB_SRSREG UCSR0A OMB_SRTXFLAG TXC0</p>
+<p>OMB_SRDREG UDR0</p>
+<p>OMB_SRRFLAG UDRE0</p>
+<p>OMB_SRSREG UCSR0A</p>
+<p>OMB_SRTXFLAG TXC0</p>
 <dl class="section author"><dt>Author:</dt><dd>C. A. Church</dd></dl>
 <p>With contributions by Stanislav Perepelitsa</p>
 <p>(c) 2011-2012 Dynamic Perception LLC</p>
@@ -129,7 +140,7 @@ Pin Assignments</h1>
 <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8h_source.html#l00169">169</a> of file <a class="el" href="_o_m_mo_co_bus_8h_source.html">OMMoCoBus.h</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8h_source.html#l00182">182</a> of file <a class="el" href="_o_m_mo_co_bus_8h_source.html">OMMoCoBus.h</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ab4687e7b754328363b2a5e607abe07ad"></a>
 <div class="memitem">
@@ -263,7 +274,7 @@ Pin Assignments</h1>
 <p>Check OM_SER_BUFLEN constant for maximum buffer length.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Pointer to packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00491">491</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00141">141</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -283,7 +294,7 @@ Pin Assignments</h1>
 <p>Retrieves the length of data, in bytes, currently stored in the packet data buffer.</p>
 <dl class="section return"><dt>Returns:</dt><dd>The length of data, in bytes, in the packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00504">504</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00154">154</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -313,7 +324,7 @@ Pin Assignments</h1>
 <p>Note: this method is not intended for direct use in Nodes, instead see <a class="el" href="class_o_m_mo_co_node.html#a1c69fdbee058f70035fc29a22b53f5a8">OMMoCoNode::check()</a> which is the correct way to check for a received command packet.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Packet code, or 0 if not intended for us/error packet </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00143">143</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00265">265</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -340,19 +351,19 @@ Pin Assignments</h1>
 <p>Received Packet was Broadcast</p>
 <p>Call after using <a class="el" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket()</a> to determine if the packet received was a broadcast packet.</p>
 <p>For example:</p>
-<div class="fragment"><div class="line">  uint8_t ret = <a class="code" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a>();</div>
-<div class="line">  </div>
-<div class="line">  <span class="keywordflow">if</span>( ret != 0 ) {</div>
-<div class="line">        <span class="keywordflow">if</span>( <a class="code" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a>() == <span class="keyword">true</span> ) {</div>
-<div class="line">                <span class="comment">// do something with the broadcast packet</span></div>
-<div class="line">        }</div>
-<div class="line">        <span class="keywordflow">else</span> {</div>
-<div class="line">                <span class="comment">// directed packet</span></div>
-<div class="line">        }</div>
-<div class="line">  }</div>
+<div class="fragment"><div class="line"> uint8_t ret = <a class="code" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a>();</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span>( ret != 0 ) {</div>
+<div class="line"> <span class="keywordflow">if</span>( <a class="code" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a>() == <span class="keyword">true</span> ) {</div>
+<div class="line"> <span class="comment">// do something with the broadcast packet</span></div>
+<div class="line"> }</div>
+<div class="line"> <span class="keywordflow">else</span> {</div>
+<div class="line"> <span class="comment">// directed packet</span></div>
+<div class="line"> }</div>
+<div class="line"> }</div>
 </div><!-- fragment --><dl class="section return"><dt>Returns:</dt><dd>True if the previously received packet was a broadcast packet, false if directed to the specific device. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00386">386</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00508">508</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -378,7 +389,7 @@ Pin Assignments</h1>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A float </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00684">684</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00225">225</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -404,7 +415,7 @@ Pin Assignments</h1>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A signed integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00626">626</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00167">167</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -430,7 +441,7 @@ Pin Assignments</h1>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00669">669</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00210">210</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -456,7 +467,7 @@ Pin Assignments</h1>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00640">640</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00181">181</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -482,7 +493,7 @@ Pin Assignments</h1>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00654">654</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00195">195</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +563,7 @@ Pin Assignments</h1>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00335">335</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00457">457</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +591,7 @@ Pin Assignments</h1>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00397">397</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00519">519</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -608,7 +619,7 @@ Pin Assignments</h1>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00426">426</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00548">548</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -636,7 +647,7 @@ Pin Assignments</h1>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00439">439</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00561">561</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -664,7 +675,7 @@ Pin Assignments</h1>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00452">452</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00574">574</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -692,7 +703,7 @@ Pin Assignments</h1>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00467">467</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00589">589</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -706,7 +717,7 @@ Pin Assignments</h1>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_o_m_mo_co_bus.html">OMMoCoBus</a></li>
-    <li class="footer">Generated on Mon Aug 12 2013 17:24:00 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Tue Aug 13 2013 10:27:48 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>

@@ -50,6 +50,13 @@ OpenMoco MoCoBus Core Libraries
  
  The following libraries are included:
  
+ <h2>OMAxis</h2>
+ The OMAxis class provides complete control of up to 32 nanoMoCo devices connected
+ via MoCoBus through a single object instance.  All high-level functionality and
+ complete control of the connected devices is provided.
+ 
+ <br/><br/>
+ 
  <h2>OMState</h2>
  The OMState class allows you to quickly and easily add a state engine to your
  firmware.  This class can be used with any arduino-based device to quickly and
@@ -134,14 +141,20 @@ OpenMoco MoCoBus Core Libraries
   DE Pin Assignments
  
  OMB_DEPIN      5
+ 
  OMB_DEREG      PORTD
+ 
  OMB_DEPFLAG    PORTD5
+ 
  
   Serial Handling Registers/Flags
  
  OMB_SRDREG     UDR0
+ 
  OMB_SRRFLAG    UDRE0
+ 
  OMB_SRSREG     UCSR0A
+ 
  OMB_SRTXFLAG   TXC0
 
  

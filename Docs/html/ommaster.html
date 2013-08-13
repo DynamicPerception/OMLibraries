@@ -71,11 +71,9 @@ A Reference Device Type</h1>
 <p>In our examples below, we'll be talking to a device. If you haven't already, you should start with the <a class="el" href="omnode.html">Creating MoCoBus Node Devices</a> page.</p>
 <p>For many examples that follow in this class, we will use the following node device sketch:</p>
 <p>node_sketch.pde: </p>
-<div class="fragment"><div class="line"><span class="preprocessor"> #include &quot;OMMoCoNode.h&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor"> #include &quot;OMMoCoBus.h&quot;</span></div>
+<div class="line"><span class="preprocessor"> #include &quot;OMMoCoNode.h&quot;</span></div>
 <div class="line"></div>
-<div class="line"> <span class="comment">// RS-485 driver enable pin</span></div>
-<div class="line"><span class="preprocessor"> #define DE_PIN 5</span></div>
-<div class="line"><span class="preprocessor"></span></div>
 <div class="line"> <span class="comment">// two commands we can accept...</span></div>
 <div class="line"></div>
 <div class="line"><span class="preprocessor"> #define LED_ON 2</span></div>
@@ -282,9 +280,11 @@ Receiving Data from the Node</h1>
 <h1><a class="anchor" id="masterbcast"></a>
 Sending Broadcast Commands to Nodes</h1>
 <p>The MoCoBus protocol allows for broadcast commands to be sent to all nodes. To send a broadcast command, direct your command to the address OM_SER_BCAST_ADDR.</p>
-<p>Note that since no node may respond to a broadcast command, your command will always have a response code of 1, even if no devices are present on the bus. It is not possible to know from a broadcast command whether it was successfully received by any node. You should limit yourself to broadcast code defintions specified in <a class="el" href="_o_m_mo_co_defs_8h_source.html">OMMoCoDefs.h</a>.</p>
+<p>Note that since no node may respond to a broadcast command, your command will always have a response code of 1, even if no devices are present on the bus. It is not possible to know from a broadcast command whether it was successfully received by any node. You should limit yourself to broadcast code defintions specified in <a class="el" href="_o_m_mo_co_defs_8h.html">OMMoCoDefs.h</a>.</p>
 <p>For example, send a start command to all nodes:</p>
-<div class="fragment"><div class="line">        command(OM_SER_BCAST_ADDR, OM_BCAST_START);</div>
+<div class="fragment"><div class="line">        command(OM_SER_BCAST_ADDR, <a class="code" href="_o_m_mo_co_defs_8h.html#a5a06a9ee616e4733cd8839e33a91ee8aae7ad0ce30ac69d62fc5e45a9e0db609a">OM_BCAST_START</a>);</div>
+</div><!-- fragment --><p>Of course, we have a helper method with makes this more simple, and clear:</p>
+<div class="fragment"><div class="line">    broadcast(<a class="code" href="_o_m_mo_co_defs_8h.html#a5a06a9ee616e4733cd8839e33a91ee8aae7ad0ce30ac69d62fc5e45a9e0db609a">OM_BCAST_START</a>);</div>
 </div><!-- fragment --><h1><a class="anchor" id="mastervalid"></a>
 Validating a Node</h1>
 <p>If it is possible that there is more than one type of node on the bus, it is also possible that you may have the wrong address for the node device type you're expecting.</p>
@@ -298,7 +298,7 @@ Validating a Node</h1>
 <div class="line"></div>
 <div class="line"> <span class="keyword">public</span>:</div>
 <div class="line"></div>
-<div class="line">        MyDevMaster(HardwareSerial&amp; c_serObj, uint8_t c_dePin) : <a class="code" href="class_o_m_mo_co_master.html" title="MoCoBus Master Library.">OMMoCoMaster</a>(c_serObj, uint8_t c_dePin);</div>
+<div class="line">        MyDevMaster(HardwareSerial&amp; c_serObj) : <a class="code" href="class_o_m_mo_co_master.html" title="MoCoBus Master Library.">OMMoCoMaster</a>(c_serObj);</div>
 <div class="line"></div>
 <div class="line">        <span class="keywordtype">int</span> ledOn(uint8_t addr);</div>
 <div class="line">        <span class="keywordtype">int</span> ledOff(uint8_t addr);</div>
@@ -316,7 +316,7 @@ Validating a Node</h1>
 <div class="line"><span class="preprocessor"> #define LED_ON 2</span></div>
 <div class="line"><span class="preprocessor"></span><span class="preprocessor"> #define LED_OFF 3</span></div>
 <div class="line"><span class="preprocessor"></span></div>
-<div class="line"> MyDevMaster::MyDevMaster(HardwareSerial&amp; c_serObj, uint8_t c_dePin) : <a class="code" href="class_o_m_mo_co_master.html" title="MoCoBus Master Library.">OMMoCoMaster</a>(c_serObj, c_dePin) {</div>
+<div class="line"> MyDevMaster::MyDevMaster(HardwareSerial&amp; c_serObj) : <a class="code" href="class_o_m_mo_co_master.html" title="MoCoBus Master Library.">OMMoCoMaster</a>(c_serObj) {</div>
 <div class="line"></div>
 <div class="line"> }</div>
 <div class="line"></div>
@@ -339,13 +339,11 @@ Validating a Node</h1>
 <p>master_sketch.pde: </p>
 <div class="fragment"><div class="line"><span class="preprocessor"> #include &quot;device_master.h&quot;</span></div>
 <div class="line"></div>
-<div class="line"><span class="preprocessor"> #define DE_PIN 5</span></div>
-<div class="line"><span class="preprocessor"></span></div>
 <div class="line"> byte nodeAddr  = 5;</div>
 <div class="line"> <span class="keywordtype">bool</span> led       = <span class="keyword">false</span>;</div>
 <div class="line"> <span class="keywordtype">bool</span> ok        = <span class="keyword">true</span>;</div>
 <div class="line"></div>
-<div class="line"> MyDevMaster mvDev = MyDevMaster(Serial, DE_PIN);</div>
+<div class="line"> MyDevMaster mvDev = MyDevMaster(Serial);</div>
 <div class="line"></div>
 <div class="line"> <span class="keywordtype">void</span> setup() {</div>
 <div class="line">        Serial.begin(OM_SER_BPS);</div>
@@ -373,7 +371,7 @@ Validating a Node</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Aug 12 2013 17:24:00 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Tue Aug 13 2013 10:27:47 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>

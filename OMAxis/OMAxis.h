@@ -85,11 +85,20 @@ enum ComLine {
     
 };
 
-/** OMAxis provides the primary interface for controlling nanoMoCo devices on an AVR platform.
+/** 
+ 
+ @brief Complete control of nanoMoCo Devices on MoCoBus
+ 
+ 
+ OMAxis provides the primary interface for controlling nanoMoCo devices on an AVR platform.
  
  Only one OMAxis instance is required to speak to any number of devices.  For most nanoMoCo-specific
  commands, you need only to specify the target() before issuing a command. Each command issued returns
  true or false indicating whether the remote device successfully received the command.
+ 
+ See \ref nanomoco "Controlling nanoMoCo Devices with OMAxis" for detailed information on how to talk to, and
+ control your devices.
+ 
  
  The following provides a basic example of controlling a node via this class in an Arduino sketch:
  
@@ -449,8 +458,8 @@ private:
  move is continuous, or SMS-style. We still have to setup the camera like we would normally.
  
  @code
- Axis.motorEnable(true); // motor will be enabled
- Axis.cameraEnable(true); // camera will be enabled
+ Axis.enableMotor(true); // motor will be enabled
+ Axis.enableCamera(true); // camera will be enabled
  
  Axis.interval(1000); // 1-second exposure interval
  
@@ -486,6 +495,10 @@ private:
  it is continuous or interleaved.  Simply call easing() before sending the move command or starting the 
  program.
  
+ @code
+ Axis.easing(EASING_QUAD);
+ @endcode
+ 
  You should not change easing profiles while a move is being executed, or a program is running. Doing so will
  result in undefined behavior.
  
@@ -519,7 +532,15 @@ private:
  only move after the master has sent the slave clear signal.  For continuous motion, master is less important,
  obviously, as motors will move at their needed speeds at the right times.
  
- To start, stop, or pause multiple nodes at the same time, use the broadcast forms of the commands.
+ To start, stop, or pause multiple nodes at the same time, use the broadcast method:
+ 
+ @code
+ Axis.broadcast(OM_BCAST_START);
+ 
+ ...
+ 
+ Axis.broadcast(OM_BCAST_STOP);
+ @endcode
  
  
  @section nmstatus Requesting Operational Status

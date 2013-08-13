@@ -140,34 +140,36 @@ $(document).ready(function(){initNavTree('_o_m_mo_co_master_8h.html','');});
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a1594cfb596378e93d395227d2f72c97e">command</a>(uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, <span class="keywordtype">float</span> p_arg3);</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    </div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a84ef3ebbd7f6fd8ef56b3bb650077128">responseType</a>();</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a0af3244752a69e70c5a6ee503c2d8165">responseLen</a>();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordtype">char</span>* <a class="code" href="class_o_m_mo_co_master.html#aa67c81d20b16c2d014221cc1683c8bd0">responseData</a>();</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="comment">// overload from OMMoCoBus</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a8e8ed3ae9b7dafa7f6e4b2e80d112fde">getVersion</a>(uint8_t p_addr);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordtype">char</span>* <a class="code" href="class_o_m_mo_co_master.html#a0d298f3c44e0f91000d59cc2e94382e1">getId</a>(uint8_t p_addr);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#aaa162670404f285691dfc2efa3498110">changeAddress</a>(uint8_t p_addr, uint8_t p_newAddr);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keywordtype">int</span> _getResponse();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;};</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a2447568093ab53e134f84016f056ac69">broadcast</a>(<a class="code" href="_o_m_mo_co_defs_8h.html#a5a06a9ee616e4733cd8839e33a91ee8a">BroadCastType</a> p_cmd);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a84ef3ebbd7f6fd8ef56b3bb650077128">responseType</a>();</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a0af3244752a69e70c5a6ee503c2d8165">responseLen</a>();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordtype">char</span>* <a class="code" href="class_o_m_mo_co_master.html#aa67c81d20b16c2d014221cc1683c8bd0">responseData</a>();</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="comment">// overload from OMMoCoBus</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#a8e8ed3ae9b7dafa7f6e4b2e80d112fde">getVersion</a>(uint8_t p_addr);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordtype">char</span>* <a class="code" href="class_o_m_mo_co_master.html#a0d298f3c44e0f91000d59cc2e94382e1">getId</a>(uint8_t p_addr);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="class_o_m_mo_co_master.html#aaa162670404f285691dfc2efa3498110">changeAddress</a>(uint8_t p_addr, uint8_t p_newAddr);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">int</span> _getResponse();</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;};</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;<span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_16a1abc13c6fec1a5602f54506b2a4c2.html">OMMoCoMaster</a></li><li class="navelem"><b>OMMoCoMaster.h</b></li>
-    <li class="footer">Generated on Mon Aug 12 2013 17:24:00 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Tue Aug 13 2013 10:27:47 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>

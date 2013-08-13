@@ -90,7 +90,7 @@ uint8_t OMAxis::target() {
  */
 
 bool OMAxis::interval(unsigned long p_ms) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_INTERVAL, p_ms);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_INTERVAL, p_ms) > 0 );
 }
 
 /** Set Exposure Time for Automatic Operation
@@ -103,7 +103,7 @@ bool OMAxis::interval(unsigned long p_ms) {
 
  */
 bool OMAxis::exposure(unsigned long p_ms) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_EXPOSURE, p_ms);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_EXPOSURE, p_ms) > 0 );
 
 }
 
@@ -117,7 +117,7 @@ bool OMAxis::exposure(unsigned long p_ms) {
 
  */
 bool OMAxis::focus(unsigned int p_ms) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_FOCUS, p_ms);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_FOCUS, p_ms) > 0 );
 }
 
 /** Set Maximum Shot Count
@@ -135,7 +135,7 @@ bool OMAxis::focus(unsigned int p_ms) {
  
  */
 bool OMAxis::maxShots(unsigned int p_count) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_MAXSHOT, p_count);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_MAXSHOT, p_count) > 0 );
 
 }
 /** Set the Exposure Delay
@@ -151,7 +151,7 @@ bool OMAxis::maxShots(unsigned int p_count) {
  
  */
 bool OMAxis::exposureDelay(unsigned int p_ms) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_DELAY, p_ms);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_DELAY, p_ms) > 0 );
 }
 
 /** Tie Focus Line to Shutter Line
@@ -168,7 +168,7 @@ bool OMAxis::exposureDelay(unsigned int p_ms) {
  
  */
 bool OMAxis::tie(bool p_en) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_TIE, (uint8_t)p_en);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_TIE, (uint8_t)p_en) > 0 );
 }
 
 
@@ -188,7 +188,7 @@ bool OMAxis::tie(bool p_en) {
  
  */
 bool OMAxis::repeat(uint8_t p_count) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_REPEAT, p_count);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_CAM, SC_CAM_REPEAT, p_count) > 0 );
 }
 
 /** Steps to Take Between Each Shot (Basic Automation)
@@ -204,7 +204,7 @@ bool OMAxis::repeat(uint8_t p_count) {
  */
 
 bool OMAxis::steps(unsigned int p_steps) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_STEPS, p_steps);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_STEPS, p_steps) > 0 );
 }
 
 
@@ -220,7 +220,7 @@ bool OMAxis::steps(unsigned int p_steps) {
  
  */
 bool OMAxis::dir(bool p_dir) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_DIR, (uint8_t) p_dir);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_DIR, (uint8_t) p_dir) > 0 );
 }
 
 
@@ -241,7 +241,7 @@ bool OMAxis::dir(bool p_dir) {
  
  */
 bool OMAxis::maxSteps(unsigned long p_steps) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_MAXSTEP, p_steps);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_MAXSTEP, p_steps) > 0 );
 }
 
 
@@ -258,7 +258,7 @@ bool OMAxis::maxSteps(unsigned long p_steps) {
  */
 bool OMAxis::enableMotor(bool p_en) {
     uint8_t comCode = p_en ? SC_MOT_ENABLE : SC_MOT_DISABLE;
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, comCode);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, comCode) > 0 );
 }
 
 
@@ -270,7 +270,7 @@ bool OMAxis::enableMotor(bool p_en) {
  
  */
 bool OMAxis::setHome(void) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_SETHOME);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_SETHOME) > 0 );
 }
 
 /** Set Backlash Correction Amount
@@ -285,7 +285,7 @@ bool OMAxis::setHome(void) {
  
  */
 bool OMAxis::backlash(uint8_t p_steps) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_BACKLASH, p_steps);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_BACKLASH, p_steps) > 0 );
 }
 
 
@@ -303,7 +303,7 @@ bool OMAxis::backlash(uint8_t p_steps) {
  
  */
 bool OMAxis::easing(EasingMode p_mode) {
-    return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_EASE, (uint8_t) p_mode );
+    return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_EASE, (uint8_t) p_mode ) > 0 );
 }
 
 
@@ -342,7 +342,7 @@ bool OMAxis::easing(EasingMode p_mode) {
  
  */
 bool OMAxis::continuous(bool p_en) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_CONTEN, (uint8_t) p_en);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_CONTEN, (uint8_t) p_en) > 0 );
 }
 
 /** Set Continuous Movement Speed
@@ -361,7 +361,7 @@ bool OMAxis::continuous(bool p_en) {
  */
  
 bool OMAxis::continuousSpeed(float p_speed) {
-	return command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_CONTSPD, p_speed);
+	return ( command(m_slaveAddr, OM_PCODE_PDS, OM_PCODE_MOTOR, SC_MOT_CONTSPD, p_speed) > 0 );
 }
 
 
@@ -369,7 +369,7 @@ bool OMAxis::continuousSpeed(float p_speed) {
  
  */
 bool OMAxis::start() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_START);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_START) > 0 );
 }
 
 /** Pause the Current Program
@@ -378,7 +378,7 @@ bool OMAxis::start() {
  
  */
 bool OMAxis::pause() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_PAUSE);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_PAUSE) > 0 );
 }
 
 
@@ -390,7 +390,7 @@ bool OMAxis::pause() {
  
  */
 bool OMAxis::stop() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_STOP);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_STOP) > 0 );
 }
 
 /** Enable or Disable Camera Control
@@ -407,7 +407,7 @@ bool OMAxis::stop() {
  */
 bool OMAxis::enableCamera(bool p_en) {
     uint8_t com = p_en ? CMD_PC_CAM_ENABLE : CMD_PC_CAM_DISABLE;
-	return command(m_slaveAddr, OM_PCODE_PC, com);
+	return ( command(m_slaveAddr, OM_PCODE_PC, com) > 0 );
 }
 
 
@@ -427,14 +427,14 @@ bool OMAxis::enableCamera(bool p_en) {
  Whether or not command succeeded. 
  */
 bool OMAxis::move(bool p_dir, unsigned long p_steps) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOVE_MOTOR_SMPL, p_dir, p_steps);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOVE_MOTOR_SMPL, p_dir, p_steps) > 0 );
 }
 
 /** Send Motor to Home Immediately
  
  */
 bool OMAxis::home() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_SEND_MOTOR_HOME);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_SEND_MOTOR_HOME) > 0 );
 }
 
 /** Expose Camera Now
@@ -445,7 +445,7 @@ bool OMAxis::home() {
  Exposure time, in milliseconds
  */
 bool OMAxis::expose(unsigned long p_ms) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_EXPOSE_NOW, p_ms);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_EXPOSE_NOW, p_ms) > 0 );
 }
 
 /** Enable/Disable Driver Sleep
@@ -462,7 +462,7 @@ bool OMAxis::expose(unsigned long p_ms) {
  
  */
 bool OMAxis::sleep(bool p_en) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_SLEEP, (uint8_t) p_en);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_SLEEP, (uint8_t) p_en) > 0 );
 }
 
 /** Set the Maximum Stepping Rate
@@ -479,7 +479,7 @@ bool OMAxis::sleep(bool p_en) {
  
  */
 bool OMAxis::maxStepRate(StepRateValue p_cycles) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_MAX_RATE, (unsigned int) p_cycles);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_MAX_RATE, (unsigned int) p_cycles) > 0 );
 
 }
 
@@ -495,7 +495,7 @@ bool OMAxis::maxStepRate(StepRateValue p_cycles) {
  
  */
 bool OMAxis::maxSpeed(unsigned int p_steps) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_MAX_SPEED, p_steps);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MOTOR_MAX_SPEED, p_steps) > 0 );
 }
 
 /** Turn On or Off the Debug LED
@@ -505,7 +505,7 @@ bool OMAxis::maxSpeed(unsigned int p_steps) {
  
  */
 bool OMAxis::led(bool p_en) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_DEBUG_LED, (uint8_t) p_en);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_DEBUG_LED, (uint8_t) p_en) > 0 );
 }
 
 /** Stop Motor Immediately
@@ -515,7 +515,7 @@ bool OMAxis::led(bool p_en) {
  
  */
 bool OMAxis::stopMotor() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_STOP_MOTOR_NOW);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_STOP_MOTOR_NOW) > 0 );
 }
 
 /** Set MicroStep Amount
@@ -528,7 +528,7 @@ bool OMAxis::stopMotor() {
  
  */
 bool OMAxis::ms(MicroSteps p_micros) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MICROSTEP_LVL, (uint8_t) p_micros);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MICROSTEP_LVL, (uint8_t) p_micros) > 0 );
 }
 
 
@@ -550,7 +550,7 @@ bool OMAxis::ms(MicroSteps p_micros) {
  
  */
 bool OMAxis::master(bool p_en) {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_TIMING_MASTER, (uint8_t) p_en);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_TIMING_MASTER, (uint8_t) p_en) > 0 );
 }
 
 /** Specify Maximum Program Run Time
@@ -565,7 +565,7 @@ bool OMAxis::master(bool p_en) {
  */
 
 bool OMAxis::maxRunTime(unsigned long p_ms) {
-    return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MAX_RUN, p_ms);
+    return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MAX_RUN, p_ms) > 0 );
 }
  
 
@@ -617,7 +617,7 @@ bool OMAxis::move(bool p_dir, unsigned long p_steps, unsigned long p_travel, uns
 	sendBuf.append(OM_PDU_ESC);
 	sendBuf.append(p_decel);
     
-	return command(m_slaveAddr, OM_PCODE_PC, sendBuf.getBuf(), sendBuf.size());
+	return ( command(m_slaveAddr, OM_PCODE_PC, sendBuf.getBuf(), sendBuf.size()) > 0 );
     
 
 }
@@ -685,7 +685,7 @@ bool OMAxis::plan(PlanType p_type, bool p_dir, unsigned long p_steps, unsigned l
 	sendBuf.append(OM_PDU_ESC);
 	sendBuf.append(p_decel);
     
-	return command(m_slaveAddr, OM_PCODE_PC, sendBuf.getBuf(), sendBuf.size());
+	return ( command(m_slaveAddr, OM_PCODE_PC, sendBuf.getBuf(), sendBuf.size()) > 0 );
 
 }
 /** Clear a Planned Complex Move
@@ -694,7 +694,7 @@ bool OMAxis::plan(PlanType p_type, bool p_dir, unsigned long p_steps, unsigned l
  
  */
 bool OMAxis::clearPlan() {
-	return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_CLEAR_PLAN);
+	return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_CLEAR_PLAN) > 0 );
 }
 
 /** Delay Planned Move
@@ -706,7 +706,7 @@ bool OMAxis::clearPlan() {
  */
 
 bool OMAxis::delayMoveStart(unsigned long p_ms) {
-    return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MAX_RUN, p_ms);
+    return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_MAX_RUN, p_ms) > 0 );
 }
 
 
@@ -728,7 +728,7 @@ bool OMAxis::delayMoveStart(unsigned long p_ms) {
  */
 
 bool OMAxis::comLinePulse(ComLine p_com) {
-    return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_COMLINE, (uint8_t) p_com);
+    return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_COMLINE, (uint8_t) p_com) > 0 );
 }
 
 /** Determine if Node is Connected and Responding
@@ -741,7 +741,7 @@ bool OMAxis::comLinePulse(ComLine p_com) {
  */
 
 bool OMAxis::connected() {
-    return command(m_slaveAddr, OM_PCODE_PC, CMD_PC_NOOP);
+    return ( command(m_slaveAddr, OM_PCODE_PC, CMD_PC_NOOP) > 0 );
 }
 
 

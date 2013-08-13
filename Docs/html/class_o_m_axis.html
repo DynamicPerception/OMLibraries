@@ -71,6 +71,9 @@ $(document).ready(function(){initNavTree('class_o_m_axis.html','');});
 </div><!--header-->
 <div class="contents">
 
+<p>Complete control of nanoMoCo Devices on MoCoBus.  
+ <a href="class_o_m_axis.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_o_m_axis_8h_source.html">OMAxis.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for OMAxis:</div>
@@ -145,7 +148,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad6f1b6d8e7798da78c571651d8e935db"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_axis.html#ad6f1b6d8e7798da78c571651d8e935db">getBacklash</a> ()</td></tr>
 <tr class="memitem:ad9e14cd2ec4a120b7d01e59e85bb396b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_axis.html#ad9e14cd2ec4a120b7d01e59e85bb396b">getSteps</a> ()</td></tr>
 <tr class="memitem:a643f02dad0511dc6c679d85eeb3cf1f9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_axis.html#a643f02dad0511dc6c679d85eeb3cf1f9">getMaster</a> ()</td></tr>
-<tr><td colspan="2"><div class="groupHeader">OMMoCoMaster Library Methods</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">OMMoCoMaster Public Methods</div></td></tr>
 <tr class="memitem:a1594cfb596378e93d395227d2f72c97e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a1594cfb596378e93d395227d2f72c97e">command</a> (uint8_t p_addr, uint8_t p_cmd)</td></tr>
 <tr class="memitem:a5cbada05fa1336f193ce2b72dc965bd2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a5cbada05fa1336f193ce2b72dc965bd2">command</a> (uint8_t p_addr, uint8_t p_cmd, uint8_t p_arg)</td></tr>
 <tr class="memitem:a85331cf2ea27b0bd5d486abe5819b5b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a85331cf2ea27b0bd5d486abe5819b5b8">command</a> (uint8_t p_addr, uint8_t p_cmd, unsigned int p_arg)</td></tr>
@@ -168,6 +171,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>command</b> (uint8_t p
 int&#160;</td><td class="memItemRight" valign="bottom"><b>command</b> (uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, unsigned long p_arg3)</td></tr>
 <tr class="memitem:a69a920b8f27189941d1027a08f5907d6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69a920b8f27189941d1027a08f5907d6"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>command</b> (uint8_t p_Addr, uint8_t p_cmd, uint8_t p_arg1, uint8_t p_arg2, float p_arg3)</td></tr>
+<tr class="memitem:a2447568093ab53e134f84016f056ac69"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a2447568093ab53e134f84016f056ac69">broadcast</a> (<a class="el" href="_o_m_mo_co_defs_8h.html#a5a06a9ee616e4733cd8839e33a91ee8a">BroadCastType</a> p_cmd)</td></tr>
 <tr class="memitem:a84ef3ebbd7f6fd8ef56b3bb650077128"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a84ef3ebbd7f6fd8ef56b3bb650077128">responseType</a> ()</td></tr>
 <tr class="memitem:a0af3244752a69e70c5a6ee503c2d8165"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a0af3244752a69e70c5a6ee503c2d8165">responseLen</a> ()</td></tr>
 <tr class="memitem:aa67c81d20b16c2d014221cc1683c8bd0"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#aa67c81d20b16c2d014221cc1683c8bd0">responseData</a> ()</td></tr>
@@ -175,9 +179,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>command</b> (uint8_t p
 <tr class="memitem:a8e8ed3ae9b7dafa7f6e4b2e80d112fde"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a8e8ed3ae9b7dafa7f6e4b2e80d112fde">getVersion</a> (uint8_t p_addr)</td></tr>
 <tr class="memitem:a0d298f3c44e0f91000d59cc2e94382e1"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#a0d298f3c44e0f91000d59cc2e94382e1">getId</a> (uint8_t p_addr)</td></tr>
 <tr class="memitem:aaa162670404f285691dfc2efa3498110"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_master.html#aaa162670404f285691dfc2efa3498110">changeAddress</a> (uint8_t p_addr, uint8_t p_newAddr)</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2><a name="member-group"></a>
-OMMoCoBus Library Methods</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">OMMoCoBus Public Methods</div></td></tr>
 <tr class="memitem:a4e5fd9b0f4adda950d9c0b392216d4a6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a4e5fd9b0f4adda950d9c0b392216d4a6">address</a> ()</td></tr>
 <tr class="memitem:ab766533ac99363cb6d92a52357cfb7a1"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ab766533ac99363cb6d92a52357cfb7a1">buffer</a> ()</td></tr>
 <tr class="memitem:a490368905b48e8318734abe757983cec"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a490368905b48e8318734abe757983cec">bufferLen</a> ()</td></tr>
@@ -187,6 +189,12 @@ OMMoCoBus Library Methods</h2></td></tr>
 <tr class="memitem:a195ed57e431fce980589ed5b81bb25a1"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a195ed57e431fce980589ed5b81bb25a1">ntol</a> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:a15fe12677338c70ca39408946e56aa36"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a15fe12677338c70ca39408946e56aa36">ntoul</a> (uint8_t *p_dat)</td></tr>
 <tr class="memitem:a65b49619f92f96e915fe246f7f447a8b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a65b49619f92f96e915fe246f7f447a8b">ntof</a> (uint8_t *p_dat)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">OMMoCoBus Protected Methods</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>These methods can only be used within classes derived from <a class="el" href="class_o_m_mo_co_bus.html" title="Core MoCoBus Library.">OMMoCoBus</a> </p>
+</div></td></tr>
 <tr class="memitem:aa7503c9932e5dd118ac0a003ed729eb7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a> ()</td></tr>
 <tr class="memitem:ad576a49c41682e401f5ffff59b1e2c52"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a> ()</td></tr>
 <tr class="memitem:a537c8d98c67988983b9ba8824aa140a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader</a> (unsigned int p_addr, uint8_t p_code, uint8_t p_dlen)</td></tr>
@@ -197,8 +205,10 @@ OMMoCoBus Library Methods</h2></td></tr>
 <tr class="memitem:aae42ed90118f243e55aec3210804d078"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_m_mo_co_bus.html#aae42ed90118f243e55aec3210804d078">write</a> (long p_dat)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="class_o_m_axis.html">OMAxis</a> provides the primary interface for controlling nanoMoCo devices on an AVR platform.</p>
-<p>Only one <a class="el" href="class_o_m_axis.html">OMAxis</a> instance is required to speak to any number of devices. For most nanoMoCo-specific commands, you need only to specify the <a class="el" href="class_o_m_axis.html#a6776b5d30611f8c0d5768926acaf7943">target()</a> before issuing a command. Each command issued returns true or false indicating whether the remote device successfully received the command.</p>
+<div class="textblock"><p>Complete control of nanoMoCo Devices on MoCoBus. </p>
+<p><a class="el" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> provides the primary interface for controlling nanoMoCo devices on an AVR platform.</p>
+<p>Only one <a class="el" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> instance is required to speak to any number of devices. For most nanoMoCo-specific commands, you need only to specify the <a class="el" href="class_o_m_axis.html#a6776b5d30611f8c0d5768926acaf7943">target()</a> before issuing a command. Each command issued returns true or false indicating whether the remote device successfully received the command.</p>
+<p>See <a class="el" href="nanomoco.html">Controlling nanoMoCo Devices with OMAxis</a> for detailed information on how to talk to, and control your devices.</p>
 <p>The following provides a basic example of controlling a node via this class in an Arduino sketch:</p>
 <div class="fragment"><div class="line">    <span class="comment">// note: include all headers due to issues with Arduino build process</span></div>
 <div class="line"> </div>
@@ -208,7 +218,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <div class="line"> </div>
 <div class="line"> byte nodeAddr = 3;</div>
 <div class="line"> </div>
-<div class="line"> <a class="code" href="class_o_m_axis.html">OMAxis</a> axis = <a class="code" href="class_o_m_axis.html">OMAxis</a>(Serial);</div>
+<div class="line"> <a class="code" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> axis = <a class="code" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a>(Serial);</div>
 <div class="line"> </div>
 <div class="line"> <span class="keywordtype">void</span> setup() {</div>
 <div class="line">    Serial.begin(OM_SER_BPS);</div>
@@ -235,7 +245,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Copyright (c) 2012, 2013 Dynamic Perception LLC</p>
 <p>This software is shared under the GNU GPLv3 License </p>
 
-<p>Definition at line <a class="el" href="_o_m_axis_8h_source.html#l00140">140</a> of file <a class="el" href="_o_m_axis_8h_source.html">OMAxis.h</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_axis_8h_source.html#l00149">149</a> of file <a class="el" href="_o_m_axis_8h_source.html">OMAxis.h</a>.</p>
 </div><hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="ab4678ed2fd9d1be4666fc1d43deb7846"></a>
 <div class="memitem">
@@ -263,7 +273,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_o_m_mo_co_bus.html#a7d91d05587d86a2a0623cb15fc6ccf3b">OMMoCoBus</a>.</p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00252">252</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00265">265</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -357,6 +367,40 @@ OMMoCoBus Library Methods</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a2447568093ab53e134f84016f056ac69"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int broadcast </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="_o_m_mo_co_defs_8h.html#a5a06a9ee616e4733cd8839e33a91ee8a">BroadCastType</a>&#160;</td>
+          <td class="paramname"><em>p_cmd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inherited</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Broadcast a Command to All Nodes</p>
+<p>Sends a broadcast command to all nodes. Always returns true, as no nodes shall respond to a broadcast command.</p>
+<dl class="params"><dt>Parameters:</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p_cmd</td><td>A valid BroadCastType value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00034">34</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ab766533ac99363cb6d92a52357cfb7a1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -383,7 +427,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Check OM_SER_BUFLEN constant for maximum buffer length.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Pointer to packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00491">491</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00141">141</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -411,7 +455,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Retrieves the length of data, in bytes, currently stored in the packet data buffer.</p>
 <dl class="section return"><dt>Returns:</dt><dd>The length of data, in bytes, in the packet data buffer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00504">504</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00154">154</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -457,7 +501,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>-1 if an error occurred, or 1 if successful. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00377">377</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00390">390</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -549,7 +593,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00037">37</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00050">50</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -601,7 +645,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00059">59</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00072">72</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -653,7 +697,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00107">107</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00120">120</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -704,7 +748,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00130">130</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00143">143</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -764,7 +808,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00233">233</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00246">246</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -821,7 +865,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An integer with the packet code returned, or -1 for response timeout </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00082">82</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00095">95</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -1319,7 +1363,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>The device identifier </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00347">347</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00360">360</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1489,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Note: this method is not intended for direct use in Nodes, instead see <a class="el" href="class_o_m_mo_co_node.html#a1c69fdbee058f70035fc29a22b53f5a8">OMMoCoNode::check()</a> which is the correct way to check for a received command packet.</p>
 <dl class="section return"><dt>Returns:</dt><dd>Packet code, or 0 if not intended for us/error packet </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00143">143</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00265">265</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1558,7 +1602,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>The version of the device, or -1 on error. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00319">319</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00332">332</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -1629,19 +1673,19 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Received Packet was Broadcast</p>
 <p>Call after using <a class="el" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket()</a> to determine if the packet received was a broadcast packet.</p>
 <p>For example:</p>
-<div class="fragment"><div class="line">  uint8_t ret = <a class="code" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a>();</div>
-<div class="line">  </div>
-<div class="line">  <span class="keywordflow">if</span>( ret != 0 ) {</div>
-<div class="line">        <span class="keywordflow">if</span>( <a class="code" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a>() == <span class="keyword">true</span> ) {</div>
-<div class="line">                <span class="comment">// do something with the broadcast packet</span></div>
-<div class="line">        }</div>
-<div class="line">        <span class="keywordflow">else</span> {</div>
-<div class="line">                <span class="comment">// directed packet</span></div>
-<div class="line">        }</div>
-<div class="line">  }</div>
+<div class="fragment"><div class="line"> uint8_t ret = <a class="code" href="class_o_m_mo_co_bus.html#aa7503c9932e5dd118ac0a003ed729eb7">getPacket</a>();</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span>( ret != 0 ) {</div>
+<div class="line"> <span class="keywordflow">if</span>( <a class="code" href="class_o_m_mo_co_bus.html#ad576a49c41682e401f5ffff59b1e2c52">isBroadcast</a>() == <span class="keyword">true</span> ) {</div>
+<div class="line"> <span class="comment">// do something with the broadcast packet</span></div>
+<div class="line"> }</div>
+<div class="line"> <span class="keywordflow">else</span> {</div>
+<div class="line"> <span class="comment">// directed packet</span></div>
+<div class="line"> }</div>
+<div class="line"> }</div>
 </div><!-- fragment --><dl class="section return"><dt>Returns:</dt><dd>True if the previously received packet was a broadcast packet, false if directed to the specific device. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00386">386</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00508">508</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -1989,7 +2033,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A float </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00684">684</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00225">225</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2023,7 +2067,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A signed integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00626">626</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00167">167</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2057,7 +2101,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>A long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00669">669</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00210">210</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2091,7 +2135,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned integer </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00640">640</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00181">181</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2125,7 +2169,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>An unsigned long </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00654">654</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00195">195</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2274,7 +2318,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>You should always first use <a class="el" href="class_o_m_mo_co_master.html#a84ef3ebbd7f6fd8ef56b3bb650077128">responseType()</a> to determine whether or not response data was actually received before calling this method.</p>
 <dl class="section return"><dt>Returns:</dt><dd>A pointer to a character array holding the response data. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00290">290</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00303">303</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -2301,7 +2345,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Get Response Data Length</p>
 <dl class="section return"><dt>Returns:</dt><dd>The length of the response data, in bytes. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00303">303</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00316">316</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -2330,7 +2374,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STR</p>
 <dl class="section return"><dt>Returns:</dt><dd>Response data type or -1 if no response data received. </dd></dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00268">268</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_master_8cpp_source.html#l00281">281</a> of file <a class="el" href="_o_m_mo_co_master_8cpp_source.html">OMMoCoMaster.cpp</a>.</p>
 
 </div>
 </div>
@@ -2400,7 +2444,7 @@ OMMoCoBus Library Methods</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00335">335</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00457">457</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2548,7 +2592,7 @@ OMMoCoBus Library Methods</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Set Target Node Address for Subsequent Commands</p>
-<p>You must set a target node address before sending commands. This allows once instance of the <a class="el" href="class_o_m_axis.html">OMAxis</a> class to speak to any number of nanoMoCo devices.</p>
+<p>You must set a target node address before sending commands. This allows once instance of the <a class="el" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> class to speak to any number of nanoMoCo devices.</p>
 <p>For example:</p>
 <div class="fragment"><div class="line"> <span class="comment">// assume we have three devices at address 6, 7, and 8:</span></div>
 <div class="line"> </div>
@@ -2639,7 +2683,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00397">397</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00519">519</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2667,7 +2711,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00426">426</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00548">548</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2695,7 +2739,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00439">439</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00561">561</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2723,7 +2767,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00452">452</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00574">574</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2751,7 +2795,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <p>Write Data to Bus</p>
 <p>Writes packet data to the bus, should only ever be used after <a class="el" href="class_o_m_mo_co_bus.html#a537c8d98c67988983b9ba8824aa140a8">sendPacketHeader()</a>. </p>
 
-<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00467">467</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_o_m_mo_co_bus_8cpp_source.html#l00589">589</a> of file <a class="el" href="_o_m_mo_co_bus_8cpp_source.html">OMMoCoBus.cpp</a>.</p>
 
 </div>
 </div>
@@ -2765,7 +2809,7 @@ OMMoCoBus Library Methods</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_o_m_axis.html">OMAxis</a></li>
-    <li class="footer">Generated on Mon Aug 12 2013 17:24:00 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Tue Aug 13 2013 10:27:48 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>
