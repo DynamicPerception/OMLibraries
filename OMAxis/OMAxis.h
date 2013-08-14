@@ -554,10 +554,40 @@ private:
  @code
  
  if( Axis.connected() ) {
-    unsigned long runTime - Axis.getRunTime();
+    unsigned long runTime = Axis.getRunTime();
  }
  
  @endcode
+ 
+ @section nmsucfail Success and Failure of Communication
+ 
+ All communication over MoCoBus, except broadcast commands, is validated.  That is to say, when a command is sent to a node,
+ the node will respond with either the command being successfully received (not necessarily executed), or the command
+ resulted in an error (was not understood, incorrect arguments, etc.).  
+ 
+ As such, all OMAxis command methods return a bool indicating whether the command was successfully received, or not.  You
+ may, then, do checks like the following:
+ 
+ @code
+ if( Axis.expose(500) ) {
+    // command was accepted
+ }
+ else {
+    // command was rejected, or node is down
+ }
+ @endcode
+ 
+ While the low-level command() methods provided by OMMoCoMaster differentiate between node responses that indicate errors and timeouts,
+ the OMAxis methods do not.  If you wish to know the difference, check the connected() method which will always return true if the node
+ is connected and operating properly, and always return false if the node is not connected or is in an inoperable state.
+ 
+ 
+ @section nmconnect Connecting to Nodes and Issueing Commands
+ 
+ It is important that your nodes be powered on and fully booted before you attempt to contact them.  While it won't
+ harm the node to talk to it early, it may result in your commands not being successfully acted upon until complete
+ bootup.  Note that sending a command to a node while it's in the 8-second delay period during bootup will cause the
+ delay period to immediately end, and start-up to happen right away.
  
  */
 

@@ -235,14 +235,28 @@ Requesting Operational Status</h1>
 <p>You can request operational status from any nanoMoCo node by using the methods whose names start with 'get', e.g. getRunning().</p>
 <p>You should always check to see if the node is connected and responding, otherwise the results returned by these methods are not reliable.</p>
 <div class="fragment"><div class="line"> <span class="keywordflow">if</span>( Axis.<a class="code" href="class_o_m_axis.html#a59fc494d53391b27e2fd75cb750690d9">connected</a>() ) {</div>
-<div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> runTime - Axis.<a class="code" href="class_o_m_axis.html#a9bcb4f1baaaf870ceb86c96918ca3586">getRunTime</a>();</div>
+<div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> runTime = Axis.<a class="code" href="class_o_m_axis.html#a9bcb4f1baaaf870ceb86c96918ca3586">getRunTime</a>();</div>
 <div class="line"> }</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><h1><a class="anchor" id="nmsucfail"></a>
+Success and Failure of Communication</h1>
+<p>All communication over MoCoBus, except broadcast commands, is validated. That is to say, when a command is sent to a node, the node will respond with either the command being successfully received (not necessarily executed), or the command resulted in an error (was not understood, incorrect arguments, etc.).</p>
+<p>As such, all <a class="el" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> command methods return a bool indicating whether the command was successfully received, or not. You may, then, do checks like the following:</p>
+<div class="fragment"><div class="line"> <span class="keywordflow">if</span>( Axis.<a class="code" href="class_o_m_axis.html#ab4b56340ca1db562e1fc3138c517e534">expose</a>(500) ) {</div>
+<div class="line">    <span class="comment">// command was accepted</span></div>
+<div class="line"> }</div>
+<div class="line"> <span class="keywordflow">else</span> {</div>
+<div class="line">    <span class="comment">// command was rejected, or node is down</span></div>
+<div class="line"> }</div>
+</div><!-- fragment --><p>While the low-level command() methods provided by <a class="el" href="class_o_m_mo_co_master.html" title="MoCoBus Master Library.">OMMoCoMaster</a> differentiate between node responses that indicate errors and timeouts, the <a class="el" href="class_o_m_axis.html" title="Complete control of nanoMoCo Devices on MoCoBus.">OMAxis</a> methods do not. If you wish to know the difference, check the connected() method which will always return true if the node is connected and operating properly, and always return false if the node is not connected or is in an inoperable state.</p>
+<h1><a class="anchor" id="nmconnect"></a>
+Connecting to Nodes and Issueing Commands</h1>
+<p>It is important that your nodes be powered on and fully booted before you attempt to contact them. While it won't harm the node to talk to it early, it may result in your commands not being successfully acted upon until complete bootup. Note that sending a command to a node while it's in the 8-second delay period during bootup will cause the delay period to immediately end, and start-up to happen right away. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Aug 13 2013 10:27:47 for OpenMoCo AVR Libraries by
+    <li class="footer">Generated on Wed Aug 14 2013 13:14:07 for OpenMoCo AVR Libraries by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.1 </li>
   </ul>

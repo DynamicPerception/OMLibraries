@@ -11,7 +11,9 @@ var NAVTREE =
       [ "Expressive Programmed Moves", "nanomoco.html#nmprogramadv", null ],
       [ "Setting Easing Mode for Expressive Programmed Moves", "nanomoco.html#nmeasing", null ],
       [ "Synchronizing Multiple Nodes", "nanomoco.html#nmsynchro", null ],
-      [ "Requesting Operational Status", "nanomoco.html#nmstatus", null ]
+      [ "Requesting Operational Status", "nanomoco.html#nmstatus", null ],
+      [ "Success and Failure of Communication", "nanomoco.html#nmsucfail", null ],
+      [ "Connecting to Nodes and Issueing Commands", "nanomoco.html#nmconnect", null ]
     ] ],
     [ "The MoCoBus Protocol", "mocobus.html", [
       [ "Types of Devices", "mocobus.html#bustypes", null ],
