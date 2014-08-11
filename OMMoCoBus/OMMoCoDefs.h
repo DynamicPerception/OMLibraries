@@ -2,7 +2,7 @@
 
 MoCoBus Core Library Definitions
 
-OpenMoco nanoMoCo Core Engine Libraries 
+OpenMoco nanoMoCo Core Engine Libraries
 
 See www.openmoco.org for more information
 
@@ -30,9 +30,9 @@ See www.openmoco.org for more information
 
 
 /** @file OMMoCoDefs.h
- 
+
  MoCoBus Definitions
- 
+
  */
 
 // types of data responses which can be sent back
