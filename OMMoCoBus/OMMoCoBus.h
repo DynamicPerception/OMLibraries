@@ -2,7 +2,7 @@
 
 MoCoBus Core Library
 
-OpenMoco MoCoBus Core Libraries 
+OpenMoco MoCoBus Core Libraries
 
  See www.dynamicperception.com for more information
 
@@ -30,51 +30,52 @@ OpenMoco MoCoBus Core Libraries
 #include <util/delay.h>
 #include <inttypes.h>
 #include <Arduino.h>
-
+#include <AltSoftSerial.h>
 #include "OMMoCoDefs.h"
+#include <Stream.h>
 
 
 
-    
+
 /**
 
  @mainpage
- 
+
  This set of libraries provides several key components to aid in easily and
  quickly developing motion control applications using the nanoMoCo controller
- or for other Arduino-based devices which wish to use the MoCoBus protocol for 
+ or for other Arduino-based devices which wish to use the MoCoBus protocol for
  communicating.
- 
+
  Additionally, some libraries will assist with other devices not using the MoCoBus
  protocol, but wanting to integrate with key signalling on a MoCoBus network.
- 
+
  The following libraries are included:
- 
+
  <h2>OMAxis</h2>
  The OMAxis class provides complete control of up to 32 nanoMoCo devices connected
  via MoCoBus through a single object instance.  All high-level functionality and
  complete control of the connected devices is provided.
- 
+
  <br/><br/>
- 
+
  <h2>OMState</h2>
  The OMState class allows you to quickly and easily add a state engine to your
  firmware.  This class can be used with any arduino-based device to quickly and
  easily map states to actions and transition between them.
- 
+
  <br/><br/>
- 
+
  <h2>OMComHandler</h2>
  The OMComHandler class manages common-line relationships between devices on a MoCoBus
  network.
- 
+
  <br/><br/>
 
  <h2>OMCamera</h2>
  The OMCamera class provides easy, non-blocking control of a camera connected to
  a nanoMoCo or other Arduino device via opto-couplers.  It provides a rich feature-set
  with simple workflow designed to grealty reduce the amount of code written.
- 
+
  <br/><br/>
 
  <h2>OMMotor</h2>
@@ -83,107 +84,107 @@ OpenMoco MoCoBus Core Libraries
  sstep/direction stepper driver.  This class provides both continuous motion and
  motion with a specified number of steps, all without delay or blocking, designed
  to reduce the amount of code written for new applications.
- 
+
  <br/><br/>
 
  <h2>OMMoCoBus</h2>
  The OMMoCoBus class provides the core functionality needed for implementing
  the MoCoBus protocol on RS-485 networks.
- 
+
  <br/><br/>
 
  <h2>OMMoCoNode</h2>
  The OMMoCoNode class provides everything you need to quickly and easily implement
  a new node type on a MoCoBus network, requiring you only to write the code to
  handle your packet data.
- 
+
  <br /><br />
  For more high-level information, and tutorials, see the following pages:
- 
+
  \ref ommotion "Motion Capabilities"
- 
+
  \ref mocobus "The MoCoBus Protocol"
- 
+
  \ref omnode "Creating MoCoBus Node Devices"
- 
+
  \ref ommaster "Creating MoCoBus Master Devices"
- 
+
  */
- 
+
 /**
 
   @brief
   Core MoCoBus Library
-  
+
   The Core MoCoBus class provides all the basic capabilities needed for MoCoBus
   RS-485 masters and nodes using Hardware Serial output to a compatible RS-485
   driver.
-  
+
   This class should generally not be used directly in a node or master, instead
   you should be using the appropriate related class, such as OMMoCoNode. The
   Core MoCoBus library is intended for those authoring node and master classes
   or thosse wishing to port to a different UART interface.
-  
+
   Multiple OMMoCoBus objects may exist at the same time, as long as they use
   different hardware serial objects.
-  
+
 
   This library provides the core protocol handling methods necessary for masters
   or nodes on a MoCoBus network.
-  
+
   @section ombpinassign Pin Assignments
- 
+
   For porting to other chipsets, or for changing the default DE pin from Arduino 5 on the Atmega328p,
   you may define any of the following #define's before #include'ing this library.  The following
   defines are available, with their default values:
-  
+
 
   DE Pin Assignments
- 
+
  OMB_DEPIN      5
- 
+
  OMB_DEREG      PORTD
- 
+
  OMB_DEPFLAG    PORTD5
- 
- 
+
+
   Serial Handling Registers/Flags
- 
+
  OMB_SRDREG     UDR0
- 
+
  OMB_SRRFLAG    UDRE0
- 
+
  OMB_SRSREG     UCSR0A
- 
+
  OMB_SRTXFLAG   TXC0
 
- 
+
   @author C. A. Church
-  
+
   With contributions by Stanislav Perepelitsa
 
   (c) 2011-2012 Dynamic Perception LLC
-  
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   */
-  
-class OMMoCoBus {
-    
-public:
 
-	OMMoCoBus(HardwareSerial& c_serObj, unsigned int c_dAddr = 0);
+
+class OMMoCoBus {
+
+public:
+    OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr = 0);
 
 	unsigned int address();
 	void address(unsigned int p_addr);
@@ -192,18 +193,23 @@ public:
 	uint8_t bufferLen();
 
 	void addressCallback(void(*)(uint8_t));
-    
+
+		//sets the flag for software serial
+	void setSoftSerial(bool c_softSerial = 0);
+
 	int ntoi(uint8_t* p_dat);
 	unsigned int ntoui(uint8_t* p_dat);
 	long ntol(uint8_t* p_dat);
 	unsigned long ntoul(uint8_t* p_dat);
 	float ntof(uint8_t* p_dat);
-    
-protected:
 
 	uint8_t getPacket();
+
+protected:
+
+
 	bool isBroadcast();
-	
+
 	// send to address, response code, data length
 	void sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_dlen);
 
@@ -222,15 +228,17 @@ private:
 	uint8_t _targetUs();
 	void _flushSerial();
 
-	HardwareSerial* m_serObj;
+	Stream * m_serObj;
 
 	uint8_t m_serBuffer[OM_SER_BUFLEN];
 	unsigned int m_devAddr;
 	uint8_t m_bufSize;
-	
+
 	bool m_isBCast;
+	bool m_softSerial;
 
 };
+
 
 /**
 
@@ -317,7 +325,7 @@ private:
  of the device which the packet is destined for. At this time, only the least
  significant byte of this value is utilized - limiting the address values between
  0 and 255. The additional byte is reserved for future address expansion, if needed.
- 
+
  The address 0 is reserved for responses to Master nodes, and the address 1 is
  reserved for broadcast commands (see @ref busbcast "Broadcast Commands" below).
  This leaves the addresses 2-255 available for use by nodes.
@@ -371,21 +379,21 @@ private:
  packet in a session between a node and master.
 
  <center><img src="resppkt.png"></center>
- 
+
  @section busbcast Broadcast Commands
- 
+
  There are times, of course, where one will want to send a signal to all nodes
  and have them execute a common command at the same time.  Notably, for all nodes
  that support a programmitic operation (i.e. configure node, and then tell it
  to start operating based on configured parameters) you would want them to start
- at the same time, without having to send start commands to each individually. 
+ at the same time, without having to send start commands to each individually.
  Likewise, you'd want them to all stop at the same time.
- 
+
  MoCoBus supports a base set of broadcast commands, which any node type has the
  option of implementing.  All broadcast commands are response-less, that is -
  nodes will act on them, or not, but no response will be received by a master.
- 
- 
+
+
 
  */
 
