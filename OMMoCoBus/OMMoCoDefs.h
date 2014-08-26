@@ -2,7 +2,7 @@
 
 MoCoBus Core Library Definitions
 
-OpenMoco nanoMoCo Core Engine Libraries
+OpenMoco nanoMoCo Core Engine Libraries 
 
 See www.openmoco.org for more information
 
@@ -30,9 +30,9 @@ See www.openmoco.org for more information
 
 
 /** @file OMMoCoDefs.h
-
+ 
  MoCoBus Definitions
-
+ 
  */
 
 // types of data responses which can be sent back
@@ -62,6 +62,8 @@ enum {
 #define OM_SER_WAIT 100
 // command data buffer size in bytes
 #define OM_SER_BUFLEN 32
+// length of the command packet header, address, sub-address, packet code, and length
+#define OM_SER_PKT_PREAMBLE 10
 
 // return codes
 #define OM_SER_OK 1

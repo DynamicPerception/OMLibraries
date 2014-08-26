@@ -186,8 +186,14 @@ class OMMoCoBus {
 public:
     OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr = 0);
 
+	uint8_t addr;
+	uint8_t subaddr;
+	uint8_t incoming_packet[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
+
 	unsigned int address();
 	void address(unsigned int p_addr);
+
+	unsigned int subaddress();
 
 	uint8_t* buffer();
 	uint8_t bufferLen();
