@@ -1,14 +1,12 @@
-
-#include "OMMoCoBus.h"
-
 /*
 
+MoCoBus Core Library
 
-OpenMoco Core Libraries
+OpenMoco MoCoBus Core Libraries
 
-Author: C.A. Church
+ See www.dynamicperception.com for more information
 
-(c) 2011 Dynamic Perception LLC
+(c) 2011-2012 C.A. Church / Dynamic Perception LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,682 +21,386 @@ Author: C.A. Church
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 */
 
 
-/*
+#ifndef OMMOCOBUS_H_
+#define OMMOCOBUS_H_
 
-  ========================================
-  MoCoBus Core Library
-  ========================================
+#include <util/delay.h>
+#include <inttypes.h>
+#include <Arduino.h>
+#include <AltSoftSerial.h>
+#include "OMMoCoDefs.h"
+#include <Stream.h>
 
-*/
 
 
-
-/** @name OMMoCoBus Public Methods
-
- @{
- */
-
-
-/** Constructor
-
- Constructs a new instance of the class. Accepts a hardware serial object,
- and the current device address.  You may change the address later using address()
-
- Note: for masters, the address will always be 0, and for slaves the address
- must be greater than 1.
-
- @param c_serObj
- An Arduino HardwareSerial object
-
- @param c_dAddr
- The device address
-
- */
-
-
-OMMoCoBus::OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr ) {
-
-  m_serObj = c_serObj;
-  m_devAddr = c_dAddr;
-  m_bufSize = 0;
-  f_newAddr = 0;
-
-
-  pinMode(OMB_DEPIN, OUTPUT);
-  digitalWrite(OMB_DEPIN, LOW);
-
-}
-
-/** Set Software Serial
-
- Sets the software serial flag
-
-@param c_softSerial
- Software Serial flag
- */
-
-void OMMoCoBus::setSoftSerial(bool c_softSerial) {
-
-    m_softSerial = c_softSerial;
-
-}
-
-
-
-/** Get Address
-
- Gets the current address assigned to this node.
-
- @return
- Device address
- */
-
-unsigned int OMMoCoBus::address() {
-  return(m_devAddr);
-}
-
-/** Set Address
-
- Sets the current address assigned to this device
-
- @param p_addr
- Device address
- */
-
-void OMMoCoBus::address(unsigned int p_addr) {
-  m_devAddr = p_addr;
-
-  	// an address change occurred, call address change
-  	// callback if defined
-
-  if( f_newAddr != 0 )
-  	  f_newAddr(m_devAddr);
-
-}
-
-/** Set Address Change Callback
-
- This method sets the callback which will be called whenever an address
- change occurs.  This is highly useful for devices that wish to save
- their address to EEPROM so that it remains fixed between power cycles,
- especially when the address change command is received as part of the
- core MoCoBus protocol.
-
- The callback function pointer passed must accept a single argument
- of a single byte, which is the new address assigned to the device,
- and return void.
-
- @param p_Func
- A function pointer matching the template void function(byte);
-*/
-
-void OMMoCoBus::addressCallback(void(*p_Func)(uint8_t)) {
-	f_newAddr = p_Func;
-}
-
-
-/** Retrieve Packet Data Buffer
-
- Retrieves the complete packet data buffer (without the packet header) after a
- packet has been received from the bus.
-
- WARNING: This method returns a pointer to the -actual- buffer. Do not store
- this pointer between packets or attempt to modify it directly.
-
- Check OM_SER_BUFLEN constant for maximum buffer length.
-
- @return
- Pointer to packet data buffer
- */
-
-uint8_t* OMMoCoBus::buffer() {
-   return(m_serBuffer);
-}
-
-/** Retrieve Buffer Length
-
- Retrieves the length of data, in bytes, currently stored in the
- packet data buffer.
-
- @return
- The length of data, in bytes, in the packet data buffer
- */
-
-uint8_t OMMoCoBus::bufferLen() {
-  return(m_bufSize);
-}
-
-/** Convert Network-order Bytes to Integer
-
- @param p_dat
- A pointer to an array of bytes
-
- @return
- A signed integer
- */
-
-int OMMoCoBus::ntoi(uint8_t* p_dat) {
-	int ret = ((int) p_dat[0] << 8) + (int) p_dat[1];
-	return(ret);
-}
-
-/** Convert Network-order Bytes to Unsigned Integer
-
- @param p_dat
- A pointer to an array of bytes
-
- @return
- An unsigned integer
- */
-
-unsigned int OMMoCoBus::ntoui(uint8_t* p_dat) {
-	unsigned int ret = ((unsigned int) p_dat[0] << 8) + (unsigned int) p_dat[1];
-	return(ret);
-}
-
-/** Convert Network-order Bytes to Unsigned Long
-
- @param p_dat
- A pointer to an array of bytes
-
- @return
- An unsigned long
- */
-
-unsigned long OMMoCoBus::ntoul(uint8_t* p_dat) {
-	unsigned long ret  = (unsigned long) ( ((unsigned long) p_dat[0] << 24) + (unsigned long) p_dat[1] ) << 16;
-    ret |= (unsigned long) ( ( (unsigned long) p_dat[2] << 8 ) + ( (unsigned long) p_dat[3] ) );
-	return(ret);
-}
-
-/** Convert Network-order Bytes to Long
-
- @param p_dat
- A pointer to an array of bytes
-
- @return
- A long
- */
-
-long OMMoCoBus::ntol(uint8_t* p_dat) {
-	unsigned long ret  = (long) ( ((long) p_dat[0] << 24) + (long) p_dat[1] ) << 16;
-    ret |= (long) ( ( (long) p_dat[2] << 8 ) + ( (long) p_dat[3] ) );
-	return(ret);
-}
-
-/** Convert Network-order Bytes to Float
-
- @param p_dat
- A pointer to an array of bytes
-
- @return
- A float
- */
-
-float OMMoCoBus::ntof(uint8_t* p_dat) {
-	float ret;
-	unsigned long * _fl = (unsigned long *) (&ret);
-	*_fl  = (unsigned long) ( ((unsigned long) p_dat[0] << 8) + (unsigned long) p_dat[1] ) << 16;
-	*_fl |= (unsigned long) ( ( (unsigned long) p_dat[2] << 8 ) + ( (unsigned long) p_dat[3] ) );
-	return(ret);
-}
-
-
- // end public group
-
-/**
- @}
- */
-
-/** @name OMMoCoBus Protected Methods
-
- These methods can only be used within classes derived from OMMoCoBus
-
- @{
- */
-
-
-/** Get A Packet
-
- Gets a complete packet off of the bus, if available.
-
- If there is a complete packet received over the bus, and if it is destined
- for this device, this method will place the packet data into the buffer
- and return the packet code.
-
- Note: this method is not intended for direct use in Nodes, instead see
- OMMoCoNode::check() which is the correct way to check for a received
- command packet.
-
- @return
- Packet code, or 0 if not intended for us/error packet
-
- */
-
-uint8_t OMMoCoBus::getPacket() {
-
-    uint8_t command_val    = 0;
-    uint8_t com_byte_count = 0;
-    //uint8_t dat          = 0;
-    uint8_t ret            = 0;
-	uint8_t len			   = 0; // Length of the data section of the packet
-
-    m_isBCast = false;
-
-    bool not_us = false;
-
-	// we check serial.available() here even
-    // though this->_getNextByte() does, because
-    // a timeout is applied waiting for next command
-    // in this->_getNextByte() - since this is called
-    // every cycle of the main loop, we don't want
-    // to introduce a delay unless we know of a
-    // byte waiting to be read
-
-    int avail = m_serObj->available();
-
-    // serial does not have data in the buffer
-    if( avail <= 0 )
-        return(0);
-
-	// clear out any previous data in the packet array
-	memset(incoming_packet, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
-
-	// Get the first section of the packet, including header, subaddress,
-	// address, packet code, and data packet data length
-	for (byte i = 0; i < OM_SER_PKT_PREAMBLE; i++)
-	{
-		ret = this->_getNextByte(incoming_packet[i]);
-
-		if (ret != OM_SER_OK) {
-			// well, this is just embarassing
-			this->_flushSerial();
-			return(0);
-		}
-	}
-
-    // Check the data length and then save the rest of the packet
-    len = incoming_packet[LEN_POS];
-
-
-	// Get the rest of the packet data
-	for (byte i = DATA_POS; i < (DATA_POS + len); i++)
-	{
-		ret = this->_getNextByte(incoming_packet[i]);
-
-		if (ret != OM_SER_OK) {
-			// well, this is just embarassing
-			//this->_flushSerial();
-			return(0);
-		}
-	}
-
-	// is this packet intended for us?
-    uint8_t stat = this->_targetUs();
-
-    if(stat == OM_SER_ERR || stat == OM_SER_TIMEOUT) {
-        // got an error? timeout error, really.
-        this->_flushSerial();
-        return(0);
-    }
-    else if( stat == OM_SER_IS_BCAST ) {
-        // command was a broadcast command
-        m_isBCast = true;
-    }
-    else if( stat != OM_SER_OK ) {
-        // command was for someone else
-        // (but we need to read the rest of the data
-        // off the line to make sure we don't keep part of it
-        // in the buffer)
-        not_us = true;
-	}
-
-	// Save the command byte from the packet array
-	command_val = incoming_packet[COM_POS];
-
-
-    // check for overflow
-    // note: we will still be in error condition, as
-    // there will be values left in the serial buffer
-    // on the next read, from this command - so don't
-    // exceed it, eh?  This is just to prevent memory
-    // corruption.  It is not safe otherwise
-
-    if(com_byte_count > OM_SER_BUFLEN)
-        com_byte_count = OM_SER_BUFLEN;
-
-
-    // clear out any previous command data
-    memset(m_serBuffer, 0, sizeof(uint8_t) * OM_SER_BUFLEN);
-    m_bufSize = 0;
-
-
-    // populate command data buffer
-    for( int i = 0; i < len; i++ ) {
-        // get com_byte_count character values from the serial
-        // buffer
-		m_serBuffer[i] = incoming_packet[DATA_POS + i];
-        m_bufSize++;
-    }
-
-    if( not_us == true ) {
-        // the command was not intended for us
-        memset(m_serBuffer, 0, sizeof(uint8_t) * OM_SER_BUFLEN);
-        return(0);
-    }
-
-
-    return( command_val );
-}
-
-
-/** Send Packet Header
-
- Sends a complete packet header, given an address to target, a packet code to
- ssend, and the length of data that will be sent.
-
- This method is part of a low-level toolkit for creating MoCoBus handlers, and
- should not be used in part of a normal Node implementation.  Instead, see
- OMMoCoNode::response().
-
- If you send a packet header to the broadcast address (as defined by OM_SER_BCAST_ADDR),
- the method isBroadcast() will return true immediately after calling this method. You
- can use this in higher-level classes to determine if a response should be expected.
-
- A MoCoBus packet always starts with a 10-byte header with the following structure:
-
- <table border=1 width="80%">
- <tr>
- <td>0</td>
- <td>1</td>
- <td>2</td>
- <td>3</td>
- <td>4</td>
- <td>5</td>
- <td>6</td>
- <td>7</td>
- <td>8</td>
- <td>9</td>
- </tr>
- <tr>
- <td colspan=6><b>Break Sequence</b></td>
- <td colspan=2><b>Address</b></td>
- <td><b>Packet Code</b></td>
- <td><b>Data Len</b></td>
- </tr>
- <tr>
- <td>0</td>
- <td>0</td>
- <td>0</td>
- <td>0</td>
- <td>0</td>
- <td>255</td>
- <td colspan=2>0-65535</td>
- <td>0-255</td>
- <td>0-255</td>
- </tr>
- </table>
-
- Note that all multi-byte values sent using the MoCoBus specification are in
- Big-Endian (Network) byte order!
-
- There are two types of packets which may be sent on MoCoBus, and they are not
- differentiated except in the order in which they occur:
-
- Command Packet
-
- A command packet is sent by a Master, and may have up to 254 packet codes, from
- 1-255.  0 is never a valid packet code for a command packet.  Up to 255 data
- bytes may be included with the packet, as long as they do not include a sequence
- which corresponds to the break sequence noted above.
-
- Generally speaking, due to the limitation of 254 packet codes, the protocol for
- a specific node type will likely define a series of sub-codes for use as the
- first byte or set of bytes in the packet data.
-
-
- Response Packet
-
- A response packet is sent by a Node, in response to a command packet, back to
- the master.  It should only have two valid packet codes: 0 and 1, with 0 indicating
- an error occured processing the command and 1 indicating that the command
- was successfully completed.  Response packets may or may not contain actual
- packet data, this will depend on the specific implementation by the node.
-
-
- @param p_addr
- The device address to ssend the packet header to
-
- @param p_code
- The packet code to use
-
- @param p_dlen
- The packet data length, in bytes
-
- */
-
-void OMMoCoBus::sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_dlen) {
-
-	if( p_addr == OM_SER_BCAST_ADDR )
-		m_isBCast = true;
-	else
-		m_isBCast = false;
-
-    // start sequence of five nulls
-	for( uint8_t i = 0; i <= 4; i++ ) {
-		this->write((uint8_t) 0);
-	}
-
-    // start sequence termination
-	this->write((uint8_t) 255);
-
-    // target address
-	this->write(p_addr);
-
-    // command code or response code
-	this->write(p_code);
-
-    // data length
-	this->write(p_dlen);
-}
-
-/** Received Packet was Broadcast
-
- Call after using getPacket() to determine if the packet received was a
- broadcast packet.
-
- For example:
-
- @code
-
- uint8_t ret = getPacket();
-
- if( ret != 0 ) {
- if( isBroadcast() == true ) {
- // do something with the broadcast packet
- }
- else {
- // directed packet
- }
- }
- @endcode
-
- @return
- True if the previously received packet was a broadcast packet, false if
- directed to the specific device.
- */
-
-bool OMMoCoBus::isBroadcast() {
-
-	return( m_isBCast );
-}
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write(uint8_t p_dat) {
-
-    if (!m_softSerial) {
-        while (!(OMB_SRSREG & _BV(OMB_SRRFLAG)));
-
-        // sets the xmit pin high if needed
-        OMB_DEREG |= _BV(OMB_DEPFLAG);
-
-        // clear tx complete flag before write, just incase serial object doesn't
-        OMB_SRSREG |= _BV(OMB_SRTXFLAG);
-
-        // push out byte
-        OMB_SRDREG = p_dat;
-
-
-        while(!(OMB_SRSREG & _BV(OMB_SRTXFLAG)) );
-
-        _delay_us(OM_SER_CLEAR_TM);
-
-        //sets the xmit pin low if needed
-        OMB_DEREG &= ~_BV(OMB_DEPFLAG);
-
-    }
-
-    else {
-        m_serObj->write(p_dat);
-    }
-
-
-}
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write( unsigned int p_dat ) {
-
-    write( (uint8_t) (p_dat >> 8) );
-    write( (uint8_t) p_dat);
-
-}
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write( int p_dat ) {
-
-    write( (uint8_t) (p_dat >> 8) );
-    write( (uint8_t) p_dat);
-
-}
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write( unsigned long p_dat ) {
-
-    write( (uint8_t) (p_dat >> 24) );
-    write( (uint8_t) (p_dat >> 16) );
-    write( (uint8_t) (p_dat >> 8) );
-    write( (uint8_t) p_dat);
-
-}
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write( long p_dat ) {
-
-    write( (uint8_t) (p_dat >> 24) );
-    write( (uint8_t) (p_dat >> 16) );
-    write( (uint8_t) (p_dat >> 8) );
-    write( (uint8_t) p_dat);
-
-}
-
-
-uint8_t OMMoCoBus::_targetUs() {
-
-   uint8_t thsChar = 1;
-   uint8_t ret = 0;
-   const uint8_t HEADER_LEN = 6;
-   const uint8_t ADDR_POS = 7;
-
-   // Verify that the packet header is 00 00 00 00 00 FF
-   for (uint8_t i = 0; i < HEADER_LEN; i++)
-   {
-	   if (i < HEADER_LEN - 1)
-	   {
-		   // If one of the first five bytes is not zero, there's a header error
-		   if (incoming_packet[i] != 0)
-			   return(OM_SER_ERR);
-	   }
-	   if (i == HEADER_LEN - 1)
-	   {
-		   // If the sixth byte is not 255, there's a header error
-		   if (incoming_packet[i] != 255)
-			   return(OM_SER_ERR);
-	   }
-   }
-
-   // Get the address
-   addr = incoming_packet[ADDR_POS];
-
-   if (addr == OM_SER_BCAST_ADDR)
-	   return(OM_SER_IS_BCAST);
-   else if( addr != m_devAddr )
-	   return(OM_SER_NOT_US);
-
-  return(OM_SER_OK);
-
-}
-
-uint8_t OMMoCoBus::_getNextByte(uint8_t& p_data) {
-
-  uint8_t ret = OM_SER_OK;
-  uint8_t* p = (uint8_t*)(void*) &p_data;
-
-  if( m_serObj->available() > 0 ) {
-    *p = (uint8_t) m_serObj->read();
-  }
-  else {
-    unsigned long timer = millis();
-       // wait until we have data ready
-    while( m_serObj->available() < 1 ) {
-       if( millis() - timer > OM_SER_WAIT ) {
-         // timed out waiting for complete input
-         return( OM_SER_TIMEOUT );
-       }
-    }
-    *p = (uint8_t) m_serObj->read();
-  }
-
-
-  return(ret);
-}
-
-void OMMoCoBus::_flushSerial() {
- while( m_serObj->available() > 0 ) {
-    m_serObj->flush();
-  }
-}
 
 /**
 
- @}
+ @mainpage
+
+ This set of libraries provides several key components to aid in easily and
+ quickly developing motion control applications using the nanoMoCo controller
+ or for other Arduino-based devices which wish to use the MoCoBus protocol for
+ communicating.
+
+ Additionally, some libraries will assist with other devices not using the MoCoBus
+ protocol, but wanting to integrate with key signalling on a MoCoBus network.
+
+ The following libraries are included:
+
+ <h2>OMAxis</h2>
+ The OMAxis class provides complete control of up to 32 nanoMoCo devices connected
+ via MoCoBus through a single object instance.  All high-level functionality and
+ complete control of the connected devices is provided.
+
+ <br/><br/>
+
+ <h2>OMState</h2>
+ The OMState class allows you to quickly and easily add a state engine to your
+ firmware.  This class can be used with any arduino-based device to quickly and
+ easily map states to actions and transition between them.
+
+ <br/><br/>
+
+ <h2>OMComHandler</h2>
+ The OMComHandler class manages common-line relationships between devices on a MoCoBus
+ network.
+
+ <br/><br/>
+
+ <h2>OMCamera</h2>
+ The OMCamera class provides easy, non-blocking control of a camera connected to
+ a nanoMoCo or other Arduino device via opto-couplers.  It provides a rich feature-set
+ with simple workflow designed to grealty reduce the amount of code written.
+
+ <br/><br/>
+
+ <h2>OMMotor</h2>
+ The OMMotor class provides easy, non-blocking stepper motor control of a motor
+ connected to a nanoMoCo device, or other Arduino-based device with an attached
+ sstep/direction stepper driver.  This class provides both continuous motion and
+ motion with a specified number of steps, all without delay or blocking, designed
+ to reduce the amount of code written for new applications.
+
+ <br/><br/>
+
+ <h2>OMMoCoBus</h2>
+ The OMMoCoBus class provides the core functionality needed for implementing
+ the MoCoBus protocol on RS-485 networks.
+
+ <br/><br/>
+
+ <h2>OMMoCoNode</h2>
+ The OMMoCoNode class provides everything you need to quickly and easily implement
+ a new node type on a MoCoBus network, requiring you only to write the code to
+ handle your packet data.
+
+ <br /><br />
+ For more high-level information, and tutorials, see the following pages:
+
+ \ref ommotion "Motion Capabilities"
+
+ \ref mocobus "The MoCoBus Protocol"
+
+ \ref omnode "Creating MoCoBus Node Devices"
+
+ \ref ommaster "Creating MoCoBus Master Devices"
+
  */
 
+/**
+
+  @brief
+  Core MoCoBus Library
+
+  The Core MoCoBus class provides all the basic capabilities needed for MoCoBus
+  RS-485 masters and nodes using Hardware Serial output to a compatible RS-485
+  driver.
+
+  This class should generally not be used directly in a node or master, instead
+  you should be using the appropriate related class, such as OMMoCoNode. The
+  Core MoCoBus library is intended for those authoring node and master classes
+  or thosse wishing to port to a different UART interface.
+
+  Multiple OMMoCoBus objects may exist at the same time, as long as they use
+  different hardware serial objects.
+
+
+  This library provides the core protocol handling methods necessary for masters
+  or nodes on a MoCoBus network.
+
+  @section ombpinassign Pin Assignments
+
+  For porting to other chipsets, or for changing the default DE pin from Arduino 5 on the Atmega328p,
+  you may define any of the following #define's before #include'ing this library.  The following
+  defines are available, with their default values:
+
+
+  DE Pin Assignments
+
+ OMB_DEPIN      5
+
+ OMB_DEREG      PORTD
+
+ OMB_DEPFLAG    PORTD5
+
+
+  Serial Handling Registers/Flags
+
+ OMB_SRDREG     UDR0
+
+ OMB_SRRFLAG    UDRE0
+
+ OMB_SRSREG     UCSR0A
+
+ OMB_SRTXFLAG   TXC0
+
+
+  @author C. A. Church
+
+  With contributions by Stanislav Perepelitsa
+
+  (c) 2011-2012 Dynamic Perception LLC
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  */
+
+
+class OMMoCoBus {
+
+public:
+    OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr = 0);
+
+	uint8_t addr;
+	uint8_t subaddr;
+	uint8_t incoming_packet[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
+
+	unsigned int address();
+	void address(unsigned int p_addr);
+
+	unsigned int subaddress();
+
+	uint8_t* buffer();
+	uint8_t bufferLen();
+
+	void addressCallback(void(*)(uint8_t));
+
+		//sets the flag for software serial
+	void setSoftSerial(bool c_softSerial = 0);
+
+	int ntoi(uint8_t* p_dat);
+	unsigned int ntoui(uint8_t* p_dat);
+	long ntol(uint8_t* p_dat);
+	unsigned long ntoul(uint8_t* p_dat);
+	float ntof(uint8_t* p_dat);
+
+	uint8_t getPacket();
+
+protected:
+
+
+	bool isBroadcast();
+
+	// send to address, response code, data length
+	void sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_dlen);
+
+	// writing raw data (command or response contents)
+	void write(uint8_t p_dat);
+	void write(unsigned int p_dat);
+	void write(int p_dat);
+	void write(unsigned long p_dat);
+	void write(long p_dat);
+
+private:
+
+	void(*f_newAddr)(uint8_t);
+
+	uint8_t _getNextByte(uint8_t&);
+	uint8_t _targetUs();
+	void _flushSerial();
+
+	Stream * m_serObj;
+
+	uint8_t m_serBuffer[OM_SER_BUFLEN];
+	unsigned int m_devAddr;
+	uint8_t m_bufSize;
+
+	bool m_isBCast;
+	bool m_softSerial;
+
+};
+
+
+/**
+
+ @page mocobus  The MoCoBus Protocol
+
+ The MoCoBus protocol is designed for speaking to multiple devices connected
+ to the same bus.  All communication is handled in a sequence of structured
+ packets: master devices on the bus send commands, and node devices act and
+ respond to them.
+
+ While the MoCoBus AVR libraries are designed around RS-485 buses,
+ nearly any transport layer could be supported that allows for multiple independent
+ devices to exist on the same bus.  This protocol defines how commands and
+ responses are issued.
+
+ The MoCoBus protocol serves as a light-weight mechanism for
+ speaking to and controlling multiple devices running simple microprocessors.
+ It is intended to act as an in-between protocol where the complexities of
+ a full-weight TCP/IP implementation are undesireable or impossible to support,
+ yet the need for a robust transport with the ability to determine the successful
+ receipt of messages is required.
+
+ Like most protocols for use with directly connected devices, each device must
+ have an address assigned to it.
+
+ Much of this document will discuss the low-level implementation, including
+ packet structure and timing.  This document serves as the technical documentation
+ for the protocol its self, and those who wish to use the OpenMoCo AVR libraries
+ will find that the OMMoCoMaster and OMMoCoNode classes abstract these complexities
+ away and provide a simple interface via high-level methods.
+
+ @section bustypes Types of Devices
+
+ A bus is a series of devices all sharing a common set of communication wires.
+ All devices on a bus can speak to each other - but only one at a time.  Most devices
+ on a bus will be there to perform some specific activity, such as moving a motor. These
+ devices, in most cases, will be dedicated to the task they perform, and not to
+ providing a human interface - these are node devices.  They accept commands and
+ react to them.
+
+ Another type of device on the bus is one which provides a human interface, or
+ acts on behalf of some other interface to command these node devices.  These are
+ the master devices.
+
+ As only one device may speak at a time, initiating commands is left to the
+ master nodes.  Of course, this generally means only one master may be active at
+ any given time.
+
+ <center><img src="busmastnode.png"></center>
+
+ Each node device must be assigned a unique address - master devices may only
+ send commands and read responses, and therefore are all given the same
+ address of 0.
+
+ @section busproto The Basic Protocol
+
+ The basic protocol uses structured packets to communicate information between
+ nodes.  Each packet uses a predictable sequence of bytes that enables a microcontroller-based
+ device to quickly determine if the packet is intended for it, or not.
+
+ Every MoCoBus packet consists of up to two parts: the packet header, and the
+ packet data (payload).  Every packet must have a header, at a minimum, but additional
+ data beyond the header is not required.   The header is a ten-byte sequence and
+ consists of four key sections: the break sequence, the target address, the packet
+ code, and the data length.
+
+ <center><img src="pktheader.png"></center>
+
+ <b>The Break Sequence</b> is a series of bytes which indicates the start of a packet.
+ This sequence is always defined as five null bytes followed by the value 255 (or,
+ 0xFF).  As each device on a bus will see all traffic destined to any device on
+ the bus, the break sequence serves as an indicator that a packet has begun.  This
+ allows a node that is powered on in the middle of a command to another node, for
+ example, to quickly understand that it is missing part of the packet and to ignore
+ any further data until a proper start sequence is read.  In this way, one may
+ safely communicate with a device, no matter the current state of any other
+ device on the bus.  <i>As the break sequence is a reserved sequence of bytes, it
+ must never be repeated in the payload for a packet.  This is not of concern unless
+ you are sending a sequence of raw bytes greater than 4-bytes in length.  In such cases
+ one must take care to ensure that this sequence cannot be repeated - by padding
+ multi-byte values, or using ascii strings for example.</i>
+
+ <b>The Target Address</b> section is a two-byte value representing the address
+ of the device which the packet is destined for. At this time, only the least
+ significant byte of this value is utilized - limiting the address values between
+ 0 and 255. The additional byte is reserved for future address expansion, if needed.
+
+ The address 0 is reserved for responses to Master nodes, and the address 1 is
+ reserved for broadcast commands (see @ref busbcast "Broadcast Commands" below).
+ This leaves the addresses 2-255 available for use by nodes.
+
+ <b>Packet Code</b> is a special header section, it defines a particular code
+ for the packet which represents a command or response value to the target of
+ the packet.
+
+ <b>The Data Length</b> section specifies how many additional bytes of data accompany
+ the packet as data, or payload.  The maximum payload allowed per-packet is 32 bytes.
+ If zero is specified for a packet, no additional data bytes may follow.
+
+
+ <hr size=1 width="50%">
+
+ There are two core types of packets which can be sent: command packets and
+ response packets.
+
+ <b>Command Packets</b> are sent by a master device to a node device.  They
+ use the packet code to represent a primary command to the node.  They may also
+ include up to 32 bytes of additional data in the payload, and there is no explicit
+ structure to this payload (it is defined by the node and usually exposed to a
+ master through an interface class).  A command code sent by a master must be
+ greater than 0, and the command code 1 is reserved for core protocol commands
+ that every node device must support, such as identifier, version, and bus protocol
+ version.  This leaves 253 possible one-byte commands which can be sent to any
+ node.  For any node device type requiring more commands, sub-commands may be
+ sent as part of the data payload.  These packets are addressed to a specific
+ device, and that devices address appears in the address section.  All other
+ devices must accept, and then discard this packet.
+
+ <b>Response Packets</b> are sent by a node device to a master's command packet.
+ There are only two possible packet codes, in this case referred to as a <i>response
+ code</i>, allowed: 0 for error, and 1 for success.  All node devices must begin
+ transmitting their response to the master within 100mS, and each additional byte
+ in the response must come within 100mS of a previous byte, otherwise the node
+ will be timed out.
+
+ All response packets must be addressed to the address 0, which is reserved for
+ responses back to the master.
+
+ If a node wishes to send data in response to the master's command, it must add a
+ byte immediately following the payload length byte, which specifies which kind of
+ data the node is responding with.  This enables masters to quickly and easily
+ distinguish the response data, and enables nodes to offer different data responses
+ based on system conditions without requiring additional hand-shaking complexity.
+ Six key data types are available, all represented by constants.  For more information
+ on these constants, see @ref masterdata "Receiving Data from the Node" in the
+ Master tutorial. Note that the data type value byte must be included in the data
+ length.  The following diagram shows a hypothetical command packet and response
+ packet in a session between a node and master.
+
+ <center><img src="resppkt.png"></center>
+
+ @section busbcast Broadcast Commands
+
+ There are times, of course, where one will want to send a signal to all nodes
+ and have them execute a common command at the same time.  Notably, for all nodes
+ that support a programmitic operation (i.e. configure node, and then tell it
+ to start operating based on configured parameters) you would want them to start
+ at the same time, without having to send start commands to each individually.
+ Likewise, you'd want them to all stop at the same time.
+
+ MoCoBus supports a base set of broadcast commands, which any node type has the
+ option of implementing.  All broadcast commands are response-less, that is -
+ nodes will act on them, or not, but no response will be received by a master.
+
+
+
+ */
+
+#endif /* OMMOCOBUS_H_ */
