@@ -2,7 +2,7 @@
 
 MoCoBus Core Library Definitions
 
-OpenMoco nanoMoCo Core Engine Libraries 
+OpenMoco nanoMoCo Core Engine Libraries
 
 See www.openmoco.org for more information
 
@@ -30,9 +30,9 @@ See www.openmoco.org for more information
 
 
 /** @file OMMoCoDefs.h
- 
+
  MoCoBus Definitions
- 
+
  */
 
 // types of data responses which can be sent back
@@ -98,6 +98,17 @@ enum {
 #define OM_SER_COREID		2
 #define OM_SER_COREVER		3
 #define OM_SER_COREADDR		4
+
+
+
+// Position of the command code in the packet
+#define COM_POS  8
+
+// Position of the data length in the packet
+#define LEN_POS  9
+
+// Position of the beginning of the data section of the packet
+#define DATA_POS  10
 
 // commond broadcast commands
 

@@ -287,15 +287,6 @@ uint8_t OMMoCoBus::getPacket() {
     uint8_t ret            = 0;
 	uint8_t len			   = 0; // Length of the data section of the packet
 
-	// Position of the command code in the packet
-	const uint8_t COM_POS = 8;
-
-	// Position of the data length in the packet
-	const uint8_t LEN_POS = 9;
-
-	// Position of the beginning of the data section of the packet
-	const uint8_t DATA_POS = 10;
-
     m_isBCast = false;
 
     bool not_us = false;
@@ -317,30 +308,31 @@ uint8_t OMMoCoBus::getPacket() {
 	// clear out any previous data in the packet array
 	memset(incoming_packet, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
 
-	// Get the first section of the packet, including header, subaddress, 
+	// Get the first section of the packet, including header, subaddress,
 	// address, packet code, and data packet data length
 	for (byte i = 0; i < OM_SER_PKT_PREAMBLE; i++)
 	{
 		ret = this->_getNextByte(incoming_packet[i]);
-		
+
 		if (ret != OM_SER_OK) {
 			// well, this is just embarassing
-			//    this->_flushSerial();
+			this->_flushSerial();
 			return(0);
 		}
 	}
-	
-	// Check the data length and then save the rest of the packet
-	len = incoming_packet[LEN_POS];
+
+    // Check the data length and then save the rest of the packet
+    len = incoming_packet[LEN_POS];
+
 
 	// Get the rest of the packet data
-	for (byte i = DATA_POS; i < (LEN_POS + len); i++)
+	for (byte i = DATA_POS; i < (DATA_POS + len); i++)
 	{
 		ret = this->_getNextByte(incoming_packet[i]);
 
 		if (ret != OM_SER_OK) {
 			// well, this is just embarassing
-			//    this->_flushSerial();
+			//this->_flushSerial();
 			return(0);
 		}
 	}
@@ -350,7 +342,7 @@ uint8_t OMMoCoBus::getPacket() {
 
     if(stat == OM_SER_ERR || stat == OM_SER_TIMEOUT) {
         // got an error? timeout error, really.
-        //   this->_flushSerial();
+        this->_flushSerial();
         return(0);
     }
     else if( stat == OM_SER_IS_BCAST ) {
@@ -365,32 +357,9 @@ uint8_t OMMoCoBus::getPacket() {
         not_us = true;
 	}
 
-	USBSerial.print("The packet code value is: ");
-
 	// Save the command byte from the packet array
 	command_val = incoming_packet[COM_POS];
-	
-	USBSerial.println(command_val);
 
-    //// get command byte
-    //ret = this->_getNextByte(command_val);
-
-    //if ( ret != OM_SER_OK ) {
-    //    // well, this is just embarassing
-    //    //    this->_flushSerial();
-    //    return(0);
-    //}
-
-    //if( command_val > 0 ) {
-    //    // get data length (even if not our own command)
-    //    ret = this->_getNextByte(com_byte_count);
-
-    //    if ( ret != OM_SER_OK ) {
-    //        // well, this is just embarassing
-    //        //     this->_flushSerial();
-    //        return(0);
-    //    }
-    //}
 
     // check for overflow
     // note: we will still be in error condition, as
@@ -409,10 +378,10 @@ uint8_t OMMoCoBus::getPacket() {
 
 
     // populate command data buffer
-    for( int i = 0; i < com_byte_count; i++ ) {
+    for( int i = 0; i < len; i++ ) {
         // get com_byte_count character values from the serial
         // buffer
-		m_serBuffer[i] = incoming_packet[i];
+		m_serBuffer[i] = incoming_packet[DATA_POS + i];
         m_bufSize++;
     }
 
@@ -665,7 +634,7 @@ void OMMoCoBus::write( long p_dat ) {
 uint8_t OMMoCoBus::_targetUs() {
 
    uint8_t thsChar = 1;
-   uint8_t ret = this->_getNextByte(thsChar);
+   uint8_t ret = 0;
    const uint8_t HEADER_LEN = 6;
    const uint8_t ADDR_POS = 7;
 
@@ -693,78 +662,6 @@ uint8_t OMMoCoBus::_targetUs() {
 	   return(OM_SER_IS_BCAST);
    else if( addr != m_devAddr )
 	   return(OM_SER_NOT_US);
-
-
- //  // timeout? other error?
- //  if (ret != OM_SER_OK)
-	//   return(OM_SER_TIMEOUT);
-
-
- //    // if character is null...
- //  if( thsChar == 0 ) {
- //      // until we get enough nulls for a start command
- //      // or read something that isn't null...
-
- //    uint8_t nullCount = 0;
-
- //    while( nullCount < 5 && thsChar == 0 ) {
-	//nullCount++;
-
-	// // null count met
-	//if( nullCount == 5 )
-	//	break;
-
-	//ret = this->_getNextByte(thsChar);
-
-	//if( ret != OM_SER_OK )
-	//	return(OM_SER_TIMEOUT);
-
- //    }
-
- //      // did not receive a proper start sequence
- //    if( nullCount < 5 )
- //      return(OM_SER_ERR);
-
- //    thsChar = 0;
-
- //    ret = this->_getNextByte(thsChar);
-
- //    if( ret != OM_SER_OK )
- //    	     return(OM_SER_TIMEOUT);
-
- //    if( thsChar != 255 )
- //    	     return(OM_SER_ERR);
-
- //      // get target address
-
- //    unsigned int addr = 0;
- //    ret = this->_getNextByte(thsChar);
-
- //    if( ret != OM_SER_OK )
- //    	     return(OM_SER_TIMEOUT);
-
- //    addr = (unsigned int) thsChar << 8;
-
- //    ret = this->_getNextByte(thsChar);
-
- //    if( ret != OM_SER_OK )
- //    	     return(OM_SER_TIMEOUT);
-
- //    addr |= (unsigned int) thsChar;
-
- //      // is not destined for us?
-
- //      if( addr == OM_SER_BCAST_ADDR )
- //      	     return(OM_SER_IS_BCAST);
- //      else if( addr != m_devAddr )
- //    	     return(OM_SER_NOT_US);
-
- //  } // end if(thsChar == 0
-
- //  else {
- //       uint8_t invalid
- //      return(OM_SER_ERR);
- //  }
 
   return(OM_SER_OK);
 
@@ -804,5 +701,4 @@ void OMMoCoBus::_flushSerial() {
 
  @}
  */
-
 
