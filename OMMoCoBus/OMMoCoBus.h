@@ -188,7 +188,6 @@ public:
 
 	uint8_t addr;
 	uint8_t subaddr;
-	uint8_t incoming_packet[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
 
 	unsigned int address();
 	void address(unsigned int p_addr);
@@ -215,9 +214,11 @@ protected:
 
 
 	bool isBroadcast();
+	bool notUs();
 
 	// send to address, response code, data length
-	void sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_dlen);
+	void sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen);
+	void sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen);
 
 	// writing raw data (command or response contents)
 	void write(uint8_t p_dat);
@@ -237,10 +238,12 @@ private:
 	Stream * m_serObj;
 
 	uint8_t m_serBuffer[OM_SER_BUFLEN];
+	uint8_t m_incomingPacket[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
 	unsigned int m_devAddr;
 	uint8_t m_bufSize;
 
 	bool m_isBCast;
+	bool m_notUs;
 	bool m_softSerial;
 
 };

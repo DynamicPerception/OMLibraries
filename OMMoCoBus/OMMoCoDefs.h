@@ -55,6 +55,7 @@ enum {
 // bus 'broadcast' address
 #define OM_SER_BCAST_ADDR	1
 
+
  // timeout in milliseconds
 #define OM_SER_MASTER_TIMEOUT  100
 
@@ -119,7 +120,9 @@ enum BroadCastType {
         /** Stop Program Execution */
     OM_BCAST_STOP  = 2,
         /** Pause Program Execution */
-    OM_BCAST_PAUSE = 3
+    OM_BCAST_PAUSE = 3,
+        /** Set Default Address Execution */
+    OM_BCAST_SET_ADDRESS = 4
 };
 
 

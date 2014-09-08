@@ -247,6 +247,25 @@ float OMMoCoBus::ntof(uint8_t* p_dat) {
 	return(ret);
 }
 
+/** Retrieve Packet Data Buffer
+
+ Retrieves the complete packet data buffer (without the packet header) after a
+ packet has been received from the bus.
+
+ WARNING: This method returns a pointer to the -actual- buffer. Do not store
+ this pointer between packets or attempt to modify it directly.
+
+ Check OM_SER_BUFLEN constant for maximum buffer length.
+
+ @return
+ Pointer to entire packet data
+ */
+/*
+uint8_t* OMMoCoBus::packet() {
+   return(m_incomingPacket);
+}
+*/
+
 
  // end public group
 
@@ -275,7 +294,7 @@ float OMMoCoBus::ntof(uint8_t* p_dat) {
  command packet.
 
  @return
- Packet code, or 0 if not intended for us/error packet
+ Packet code, 255 if not intended for us, or 0 if error packet
 
  */
 
@@ -283,13 +302,12 @@ uint8_t OMMoCoBus::getPacket() {
 
     uint8_t command_val    = 0;
     uint8_t com_byte_count = 0;
-    //uint8_t dat          = 0;
     uint8_t ret            = 0;
 	uint8_t len			   = 0; // Length of the data section of the packet
 
     m_isBCast = false;
 
-    bool not_us = false;
+    m_notUs = false;
 
 	// we check serial.available() here even
     // though this->_getNextByte() does, because
@@ -306,13 +324,13 @@ uint8_t OMMoCoBus::getPacket() {
         return(0);
 
 	// clear out any previous data in the packet array
-	memset(incoming_packet, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
+	memset(m_incomingPacket, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
 
 	// Get the first section of the packet, including header, subaddress,
 	// address, packet code, and data packet data length
 	for (byte i = 0; i < OM_SER_PKT_PREAMBLE; i++)
 	{
-		ret = this->_getNextByte(incoming_packet[i]);
+		ret = this->_getNextByte(m_incomingPacket[i]);
 
 		if (ret != OM_SER_OK) {
 			// well, this is just embarassing
@@ -322,17 +340,17 @@ uint8_t OMMoCoBus::getPacket() {
 	}
 
     // Check the data length and then save the rest of the packet
-    len = incoming_packet[LEN_POS];
+    len = m_incomingPacket[LEN_POS];
 
 
 	// Get the rest of the packet data
 	for (byte i = DATA_POS; i < (DATA_POS + len); i++)
 	{
-		ret = this->_getNextByte(incoming_packet[i]);
+		ret = this->_getNextByte(m_incomingPacket[i]);
 
 		if (ret != OM_SER_OK) {
 			// well, this is just embarassing
-			//this->_flushSerial();
+			this->_flushSerial();
 			return(0);
 		}
 	}
@@ -354,11 +372,13 @@ uint8_t OMMoCoBus::getPacket() {
         // (but we need to read the rest of the data
         // off the line to make sure we don't keep part of it
         // in the buffer)
-        not_us = true;
+        m_notUs = true;
 	}
 
+	this->_flushSerial();
+
 	// Save the command byte from the packet array
-	command_val = incoming_packet[COM_POS];
+	command_val = m_incomingPacket[COM_POS];
 
 
     // check for overflow
@@ -381,17 +401,16 @@ uint8_t OMMoCoBus::getPacket() {
     for( int i = 0; i < len; i++ ) {
         // get com_byte_count character values from the serial
         // buffer
-		m_serBuffer[i] = incoming_packet[DATA_POS + i];
+		m_serBuffer[i] = m_incomingPacket[DATA_POS + i];
         m_bufSize++;
     }
-
-    if( not_us == true ) {
+/*
+    if( m_notUs == true ) {
         // the command was not intended for us
         memset(m_serBuffer, 0, sizeof(uint8_t) * OM_SER_BUFLEN);
-        return(0);
     }
 
-
+*/
     return( command_val );
 }
 
@@ -426,7 +445,8 @@ uint8_t OMMoCoBus::getPacket() {
  </tr>
  <tr>
  <td colspan=6><b>Break Sequence</b></td>
- <td colspan=2><b>Address</b></td>
+ <td><b>Sub-address</b></td>
+ <td><b>Address</b></td>
  <td><b>Packet Code</b></td>
  <td><b>Data Len</b></td>
  </tr>
@@ -437,7 +457,8 @@ uint8_t OMMoCoBus::getPacket() {
  <td>0</td>
  <td>0</td>
  <td>255</td>
- <td colspan=2>0-65535</td>
+ <td>0-255</td>
+ <td>0-255</td>
  <td>0-255</td>
  <td>0-255</td>
  </tr>
@@ -481,7 +502,7 @@ uint8_t OMMoCoBus::getPacket() {
 
  */
 
-void OMMoCoBus::sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_dlen) {
+void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen) {
 
 	if( p_addr == OM_SER_BCAST_ADDR )
 		m_isBCast = true;
@@ -498,6 +519,41 @@ void OMMoCoBus::sendPacketHeader(unsigned int p_addr, uint8_t p_code, uint8_t p_
 
     // target address
 	this->write(p_addr);
+
+	// sub address
+	this->write(p_subaddr);
+
+    // command code or response code
+	this->write(p_code);
+
+    // data length
+	this->write(p_dlen);
+}
+
+
+
+void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen) {
+
+	if( p_addr == OM_SER_BCAST_ADDR )
+		m_isBCast = true;
+	else
+		m_isBCast = false;
+
+    // start sequence of five nulls
+	for( uint8_t i = 0; i <= 4; i++ ) {
+		this->write((uint8_t) 0);
+	}
+
+    // start sequence termination
+	this->write((uint8_t) 255);
+
+
+	// sub address (defualt 0)
+	this->write((uint8_t)0);
+
+	// target address
+	this->write(p_addr);
+
 
     // command code or response code
 	this->write(p_code);
@@ -537,6 +593,39 @@ bool OMMoCoBus::isBroadcast() {
 	return( m_isBCast );
 }
 
+
+/** Received Packet was Broadcast
+
+ Call after using getPacket() to determine if the packet received was a
+ broadcast packet.
+
+ For example:
+
+ @code
+
+ uint8_t ret = getPacket();
+
+ if( ret != 0 ) {
+ if( isBroadcast() == true ) {
+ // do something with the broadcast packet
+ }
+ else {
+ // directed packet
+ }
+ }
+ @endcode
+
+ @return
+ True if the previously received packet was a broadcast packet, false if
+ directed to the specific device.
+ */
+
+bool OMMoCoBus::notUs() {
+
+	return( m_notUs );
+}
+
+
 /** Write Data to Bus
 
  Writes packet data to the bus, should only ever be used after sendPacketHeader().
@@ -545,7 +634,14 @@ bool OMMoCoBus::isBroadcast() {
 
 void OMMoCoBus::write(uint8_t p_dat) {
 
+
     if (!m_softSerial) {
+
+            OMB_DEREG |= _BV(OMB_DEPFLAG);
+            m_serObj->write(p_dat);
+            OMB_DEREG &= ~_BV(OMB_DEPFLAG);
+
+        /*
         while (!(OMB_SRSREG & _BV(OMB_SRRFLAG)));
 
         // sets the xmit pin high if needed
@@ -564,6 +660,8 @@ void OMMoCoBus::write(uint8_t p_dat) {
 
         //sets the xmit pin low if needed
         OMB_DEREG &= ~_BV(OMB_DEPFLAG);
+        */
+
 
     }
 
@@ -634,7 +732,7 @@ void OMMoCoBus::write( long p_dat ) {
 uint8_t OMMoCoBus::_targetUs() {
 
    uint8_t thsChar = 1;
-   uint8_t ret = 0;
+   uint8_t ret = m_incomingPacket[0];
    const uint8_t HEADER_LEN = 6;
    const uint8_t ADDR_POS = 7;
 
@@ -644,19 +742,21 @@ uint8_t OMMoCoBus::_targetUs() {
 	   if (i < HEADER_LEN - 1)
 	   {
 		   // If one of the first five bytes is not zero, there's a header error
-		   if (incoming_packet[i] != 0)
+		   if (m_incomingPacket[i] != 0)
 			   return(OM_SER_ERR);
 	   }
 	   if (i == HEADER_LEN - 1)
 	   {
 		   // If the sixth byte is not 255, there's a header error
-		   if (incoming_packet[i] != 255)
+		   if (m_incomingPacket[i] != 255)
 			   return(OM_SER_ERR);
 	   }
    }
 
    // Get the address
-   addr = incoming_packet[ADDR_POS];
+   addr = m_incomingPacket[ADDR_POS];
+   subaddr = m_incomingPacket[ADDR_POS-1];
+
 
    if (addr == OM_SER_BCAST_ADDR)
 	   return(OM_SER_IS_BCAST);

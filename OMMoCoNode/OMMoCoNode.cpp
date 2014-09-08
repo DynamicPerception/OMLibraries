@@ -199,7 +199,7 @@ void OMMoCoNode::response(bool p_stat, char* p_resp, int p_len) {
  Pointer to a function taking two arguments and returning void.
  */
 
-void OMMoCoNode::setHandler( void(*p_Func)(uint8_t, uint8_t*) ) {
+void OMMoCoNode::setHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t*) ) {
 	f_cmdHandler = p_Func;
 }
 
@@ -242,8 +242,21 @@ void OMMoCoNode::setHandler( void(*p_Func)(uint8_t, uint8_t*) ) {
 
  */
 
-void OMMoCoNode::setBCastHandler( void(*p_Func)(uint8_t, uint8_t*) ) {
+void OMMoCoNode::setBCastHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t*) ) {
 	f_bcastHandler = p_Func;
+}
+
+/** Set Not Us Callback Handler
+
+ Sets the handler to be called from check() when a packet is received that isn't for
+ device's address.  This is to allow for a command to be rebroadcasted on a different node.
+ Specifically for the NMX where a command is received over bluetooth and is to be
+ broadcast over the MoCoBus and vice versa.
+
+ */
+
+void OMMoCoNode::setNotUsHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t*) ) {
+	f_notUsHandler = p_Func;
 }
 
 /** Check for Packet Received
@@ -274,31 +287,36 @@ uint8_t OMMoCoNode::check() {
 
 
 
-	uint8_t command = getPacket();
+	uint8_t command = this->getPacket();
 
 		// no packet available
 	if( command == 0 )
 		return(0);
 
+		//Handle packets received that isn't for this device
+    if (this->notUs()){
+        f_notUsHandler(addr, subaddr, command, bufferLen(), buffer());
+        return(0);
+    }
+
 		// command OM_SER_BASECOM is reserved for core protocol commands.
 		// We handle these automatically for the node.
-
-	if( ! isBroadcast() && command == OM_SER_BASECOM ) {
+	if( ! this->isBroadcast() && command == OM_SER_BASECOM ) {
 		_coreProtocol(this->buffer());
 		return(0);
 	}
 	else {
 		// we have a command code which is higher than 1,
 		// send to the supplied handler.
-		if( f_bcastHandler != 0 && isBroadcast() ) {
+		if( f_bcastHandler != 0 && this->isBroadcast() ) {
 				// a callback is assigned, and this is a
 				// broadcast command
-			f_bcastHandler(command, this->buffer());
+			f_bcastHandler(this->subaddr, command, this->buffer());
 		}
-		else if( f_cmdHandler != 0 && ! isBroadcast() ) {
+		else if( f_cmdHandler != 0 && ! this->isBroadcast() ) {
 				// a callback is assigned, call callback
 				// with command code and payload
-			f_cmdHandler(command, this->buffer());
+			f_cmdHandler(this->subaddr, command, this->buffer());
 		}
 	}
 
@@ -351,6 +369,22 @@ void OMMoCoNode::_coreProtocol( uint8_t* p_buf ) {
 		// error
 		response(false);
 	}
+
+}
+
+
+void OMMoCoNode::sendPacket(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_command, uint8_t p_bufLen, uint8_t* p_buf){
+    //response(true);
+    //sendPacketHeader(OM_SER_MASTER, true, 0);
+    sendPacketHeader(p_addr, p_subaddr, p_command, p_bufLen);
+	//this->write((uint8_t) R_STR);
+
+
+		// send each character as a byte
+	for( int i = 0; i < p_bufLen; i++ )
+		this->write( (uint8_t) p_buf[i] );
+
+
 
 }
 

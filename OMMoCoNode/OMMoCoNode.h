@@ -94,16 +94,20 @@ public:
 	void response(bool p_stat, float p_resp);
 	void response(bool p_stat, char* p_resp, int p_len);
 
-	void setHandler(void(*)(uint8_t, uint8_t*));
-	void setBCastHandler(void(*)(uint8_t, uint8_t*));
+	void sendPacket(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_command, uint8_t p_bufLen, uint8_t* p_buf);
+
+	void setHandler(void(*)(uint8_t, uint8_t, uint8_t*));
+	void setNotUsHandler(void(*)(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t*));
+	void setBCastHandler(void(*)(uint8_t, uint8_t, uint8_t*));
 
 	unsigned int version();
 	char* id();
 
 
 private:
-	void(*f_cmdHandler)(uint8_t,uint8_t*);
-	void(*f_bcastHandler)(uint8_t,uint8_t*);
+	void(*f_cmdHandler)(uint8_t, uint8_t, uint8_t*);
+	void(*f_notUsHandler)(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t*);
+	void(*f_bcastHandler)(uint8_t, uint8_t,uint8_t*);
 
 	unsigned int m_ver;
 	char* m_id;
