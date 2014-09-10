@@ -89,6 +89,11 @@ void OMCamera::_init() {
 
 	m_focusShut = false;
 
+	delay = 1;
+	enable = false;
+	maxShots = 0;
+	repeat = 0;
+
 	m_timeExp  = 100;
 	m_timeFoc  = 0;
 	m_timeWait = 0;
@@ -212,6 +217,8 @@ void OMCamera::stop() {
 	// timer from continuing to trigger and getting stuck in
 	// a loop.
 
+
+  MsTimer2::stop();
 
   uint8_t code = 0;
 

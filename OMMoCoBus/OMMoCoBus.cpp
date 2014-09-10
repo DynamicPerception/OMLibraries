@@ -547,13 +547,11 @@ void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen)
     // start sequence termination
 	this->write((uint8_t) 255);
 
-
-	// sub address (defualt 0)
-	this->write((uint8_t)0);
-
 	// target address
 	this->write(p_addr);
 
+	// sub address (defualt 0)
+	this->write((uint8_t)0);
 
     // command code or response code
 	this->write(p_code);
@@ -733,19 +731,19 @@ uint8_t OMMoCoBus::_targetUs() {
 
    uint8_t thsChar = 1;
    uint8_t ret = m_incomingPacket[0];
-   const uint8_t HEADER_LEN = 6;
-   const uint8_t ADDR_POS = 7;
+   const uint8_t HEADER_LEN = 5;
+   const uint8_t ADDR_POS = 6;
 
    // Verify that the packet header is 00 00 00 00 00 FF
-   for (uint8_t i = 0; i < HEADER_LEN; i++)
+   for (uint8_t i = 0; i <= HEADER_LEN; i++)
    {
-	   if (i < HEADER_LEN - 1)
+	   if (i < HEADER_LEN )
 	   {
 		   // If one of the first five bytes is not zero, there's a header error
 		   if (m_incomingPacket[i] != 0)
 			   return(OM_SER_ERR);
 	   }
-	   if (i == HEADER_LEN - 1)
+	   if (i == HEADER_LEN )
 	   {
 		   // If the sixth byte is not 255, there's a header error
 		   if (m_incomingPacket[i] != 255)
@@ -755,7 +753,7 @@ uint8_t OMMoCoBus::_targetUs() {
 
    // Get the address
    addr = m_incomingPacket[ADDR_POS];
-   subaddr = m_incomingPacket[ADDR_POS-1];
+   subaddr = m_incomingPacket[ADDR_POS+1];
 
 
    if (addr == OM_SER_BCAST_ADDR)

@@ -409,6 +409,8 @@ public:
 
 	void setHandler(void(*)(uint8_t));
 
+	unsigned int curSamplePeriod();
+
 	void maxStepRate(unsigned int);
 	unsigned int maxStepRate();
 
@@ -542,8 +544,8 @@ private:
 
     volatile unsigned long m_curOffCycles;
 	float m_curCycleErr;
-	unsigned int m_curSampleRate;
-	unsigned int m_cyclesPerSpline;
+	static unsigned int m_curSampleRate;
+	static unsigned int m_cyclesPerSpline;
 	volatile unsigned long m_curSpline;
 	unsigned long m_totalSplines;
 

@@ -75,6 +75,9 @@ OMMotorFunctions::s_splineCal OMMotorFunctions::m_splinePlanned = { 0.0, 0.0, 0.
 
 */
 
+unsigned int OMMotorFunctions::m_curSampleRate = 200;
+unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
+
 /** Constructor
 
   Creates a new instance of the OMMotorFunctions class. Sets all control outputs to the
@@ -86,53 +89,51 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 		// set pin states
 
 
-m_asyncSteps = 0;
-m_contSpd = 100.0;
-m_stepsMoved = 0;
-m_Steps = 0;
-m_totalSteps = 0;
-m_curSpline = 0;
-m_totalSplines = 0;
-m_curOffCycles = 0;
-m_curSampleRate = 200;
-m_cyclesPerSpline = 5;
-m_curCycleErr = 0.0;
-m_homePos = 0;
+    m_asyncSteps = 0;
+    m_contSpd = 100.0;
+    m_stepsMoved = 0;
+    m_Steps = 0;
+    m_totalSteps = 0;
+    m_curSpline = 0;
+    m_totalSplines = 0;
+    m_curOffCycles = 0;
+    m_curCycleErr = 0.0;
+    m_homePos = 0;
 
-m_curPlanSpd = 0;
-m_curPlanErr = 0.0;
-m_curPlanSplines = 0;
-m_curPlanSpline = 0;
-m_planDir = false;
+    m_curPlanSpd = 0;
+    m_curPlanErr = 0.0;
+    m_curPlanSplines = 0;
+    m_curPlanSpline = 0;
+    m_planDir = false;
 
-m_asyncWasdir = false;
-m_curDir = false;
-m_backCheck = false;
-m_motEn = false;
-m_motCont = false;
-m_motSleep = false;
-m_isRun = false;
+    m_asyncWasdir = false;
+    m_curDir = false;
+    m_backCheck = false;
+    m_motEn = false;
+    m_motCont = false;
+    m_motSleep = false;
+    m_isRun = false;
 
-m_curMs = 1;
-m_backAdj = 0;
-m_easeType = OM_MOT_LINEAR;
+    m_curMs = 1;
+    m_backAdj = 0;
+    m_easeType = OM_MOT_LINEAR;
 
 
-m_splineOne.acTm = 0.0;
-m_splineOne.dcTm = 0.0;
-m_splineOne.crTm = 0.0;
-m_splineOne.topSpeed = 0.0;
-m_splineOne.dcStart = 0.0;
-m_splineOne.travel = 0.0;
+    m_splineOne.acTm = 0.0;
+    m_splineOne.dcTm = 0.0;
+    m_splineOne.crTm = 0.0;
+    m_splineOne.topSpeed = 0.0;
+    m_splineOne.dcStart = 0.0;
+    m_splineOne.travel = 0.0;
 
-m_splinePlanned.acTm = 0.0;
-m_splinePlanned.dcTm = 0.0;
-m_splinePlanned.crTm = 0.0;
-m_splinePlanned.topSpeed = 0.0;
-m_splinePlanned.dcStart = 0.0;
-m_splinePlanned.travel = 0.0;
+    m_splinePlanned.acTm = 0.0;
+    m_splinePlanned.dcTm = 0.0;
+    m_splinePlanned.crTm = 0.0;
+    m_splinePlanned.topSpeed = 0.0;
+    m_splinePlanned.dcStart = 0.0;
+    m_splinePlanned.travel = 0.0;
 
-m_refresh = true;
+    m_refresh = true;
 
 
     m_stp = p_stp;
@@ -153,6 +154,7 @@ m_refresh = true;
 	mtpc_start	  = false;
 	mt_plan		  = false;
 	motorDelay        = 0;
+	autoPause     = false;
 
 
 	pinMode(m_stp, OUTPUT);
@@ -816,6 +818,18 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 
 }
 
+/** Get Current Sample Period
+
+ Returns the current sample rate of the motor.
+
+ @return
+ Sample period in microseconds
+ */
+
+unsigned int OMMotorFunctions::curSamplePeriod() {
+    return( m_curSampleRate );
+}
+
 /** Get Maximum Stepping Rate
 
  Returns the current maximum stepping rate in steps per second.
@@ -1228,7 +1242,6 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
             mvMS = 50.0;
         }
 
-
             // one spline point per ms, like normal.
         m_totalSplines = (unsigned long) mvMS;
 
@@ -1522,6 +1535,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
       }
 
 
+
   }
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
@@ -1642,17 +1656,30 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
    	   totSplines = m_curPlanSplines;
    }
 
+    USBSerial.print("p_time: ");
+    USBSerial.print(p_Time);
    _setTravelConst(thisSpline);
 
 	// pre-calculate values for spline interpolation
    thisSpline->acTm = (float) p_Accel / (float) p_Time;
+   USBSerial.print(" acTm: ");
+    USBSerial.print(thisSpline->acTm);
    thisSpline->dcTm = (float) p_Decel / (float) p_Time;
+   USBSerial.print(" dcTm: ");
+    USBSerial.print(thisSpline->dcTm);
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
+   USBSerial.print(" crTm: ");
+    USBSerial.print(thisSpline->crTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
+   USBSerial.print(" dcStart: ");
+    USBSerial.print(thisSpline->dcStart);
 
    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
+      USBSerial.print(" velocity: ");
+    USBSerial.print(velocity);
    thisSpline->topSpeed = (velocity * thisSpline->crTm) / ( totSplines * thisSpline->crTm );
-
+      USBSerial.print(" topSpeed: ");
+    USBSerial.println(thisSpline->topSpeed);
 
 }
 

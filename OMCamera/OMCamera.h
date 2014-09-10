@@ -197,10 +197,10 @@ public:
 
 	void setHandler(void(*)(uint8_t));
 
-	unsigned long cameraMaxShots;
-	unsigned long cameraDelay;
-	uint8_t cameraRepeat;
-	bool cameraEnable;
+	unsigned long maxShots;
+	unsigned long delay;
+	bool repeat;
+	bool enable;
 
 	void expose();
 	void expose(unsigned long p_time);
