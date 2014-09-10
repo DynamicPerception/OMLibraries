@@ -1656,30 +1656,16 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
    	   totSplines = m_curPlanSplines;
    }
 
-    USBSerial.print("p_time: ");
-    USBSerial.print(p_Time);
    _setTravelConst(thisSpline);
 
 	// pre-calculate values for spline interpolation
    thisSpline->acTm = (float) p_Accel / (float) p_Time;
-   USBSerial.print(" acTm: ");
-    USBSerial.print(thisSpline->acTm);
    thisSpline->dcTm = (float) p_Decel / (float) p_Time;
-   USBSerial.print(" dcTm: ");
-    USBSerial.print(thisSpline->dcTm);
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
-   USBSerial.print(" crTm: ");
-    USBSerial.print(thisSpline->crTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
-   USBSerial.print(" dcStart: ");
-    USBSerial.print(thisSpline->dcStart);
 
    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
-      USBSerial.print(" velocity: ");
-    USBSerial.print(velocity);
    thisSpline->topSpeed = (velocity * thisSpline->crTm) / ( totSplines * thisSpline->crTm );
-      USBSerial.print(" topSpeed: ");
-    USBSerial.println(thisSpline->topSpeed);
 
 }
 
