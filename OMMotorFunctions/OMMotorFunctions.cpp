@@ -100,6 +100,14 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_curCycleErr = 0.0;
     m_homePos = 0;
 
+
+    //trial vairables
+    m_nextOffCycles = 0;
+    m_nextCycleErr = 0.0;
+    m_nextPlanSpd = 0;
+    m_nextPlanErr = 0.0;
+
+
     m_curPlanSpd = 0;
     m_curPlanErr = 0.0;
     m_curPlanSplines = 0;
@@ -166,6 +174,9 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
 	m_calcMove = false;
 	m_maxSpeed = 1000;
+
+	splineReady = false;
+	endOfMove = false;
 
 
 void(*f_motSignal)(uint8_t) = 0;
@@ -292,12 +303,13 @@ void OMMotorFunctions::dir( bool p_Dir ) {
   // only do anything if we're changing directions
 
   if( p_Dir != m_curDir ) {
-   digitalWrite( m_dir, p_Dir);
+
+    digitalWrite( m_dir, p_Dir);
    	// enable backlash compensation
-   m_backCheck = true;
+    m_backCheck = true;
    	// set new dir value
-   m_curDir = p_Dir;
-   m_asyncWasdir = m_curDir;
+    m_curDir = p_Dir;
+    m_asyncWasdir = m_curDir;
   }
 
 }
@@ -814,7 +826,7 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 		// stepping samples are there for one 1mS?  This is what
 		// limits us to a minimum of 500 steps per second rate
 
-	m_cyclesPerSpline = 1000 / m_curSampleRate;
+	m_cyclesPerSpline = (MS_PER_SPLINE * 1000) / m_curSampleRate;
 
 }
 
@@ -1118,7 +1130,7 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Dist, unsigned long p_Ti
 	}
 
 
-	m_totalSplines = p_Time;
+	m_totalSplines = p_Time / MS_PER_SPLINE;
 
 		// prep spline variables
 	_initSpline(false, p_Dist, p_Time, p_Accel, p_Decel);
@@ -1169,6 +1181,8 @@ void OMMotorFunctions::move() {
 
 
 void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
+
+    USBSerial.println("Moving");
 
 
 		// if motor is disabled, do nothing
@@ -1243,7 +1257,7 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
         }
 
             // one spline point per ms, like normal.
-        m_totalSplines = (unsigned long) mvMS;
+        m_totalSplines = (unsigned long) mvMS / MS_PER_SPLINE;
 
             // prep spline variables
         _initSpline(false, p_Steps, mvMS, adTm/2, adTm/2);
@@ -1275,6 +1289,8 @@ void OMMotorFunctions::stop() {
         // set motors not moving in async mode
       m_isRun = false;
       m_refresh = true;
+      endOfMove = false;
+      splineReady = false;
 
         // set sleep state for drivers if needed
       if( sleep() )
@@ -1526,12 +1542,12 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
 
-     theFunctions->m_curOffCycles = (unsigned long) off_time;
-     theFunctions->m_curCycleErr = off_time - (unsigned long) off_time;
+     theFunctions->m_nextOffCycles = (unsigned long) off_time;
+     theFunctions->m_nextCycleErr = off_time - (unsigned long) off_time;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-      if( theFunctions->m_curCycleErr > 1.0 ) {
-          theFunctions->m_curCycleErr = 0.0;
+      if( theFunctions->m_nextCycleErr > 1.0 ) {
+          theFunctions->m_nextCycleErr = 0.0;
       }
 
 
@@ -1540,14 +1556,14 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
   	  	// steps per shot
-  	theFunctions->m_curPlanSpd = (unsigned long) curSpd;
+  	theFunctions->m_nextPlanSpd = (unsigned long) curSpd;
   		// of course, this tends to leave some fractional steps on the floor
-  	theFunctions->m_curPlanErr += curSpd - (unsigned long) curSpd;
+  	theFunctions->m_nextPlanErr += curSpd - (unsigned long) curSpd;
 
   		// .. so we compensate for the error to catch up...
-  	if( theFunctions->m_curPlanErr >= 1.0 ) {
-  		theFunctions->m_curPlanErr -= 1.0;
-  		theFunctions->m_curPlanSpd++;
+  	if( theFunctions->m_nextPlanErr >= 1.0 ) {
+  		theFunctions->m_nextPlanErr -= 1.0;
+  		theFunctions->m_nextPlanSpd++;
   	}
 
   	// TODO: correct for one step left behind in some planned calculations
@@ -1576,26 +1592,26 @@ void OMMotorFunctions::_quadEasing(bool p_Plan, float p_tmPos, OMMotorFunctions*
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
 
-     theFunctions->m_curOffCycles = (unsigned long) off_time;
-     theFunctions->m_curCycleErr = off_time - theFunctions->m_curOffCycles;
+     theFunctions->m_nextOffCycles = (unsigned long) off_time;
+     theFunctions->m_nextCycleErr = off_time - theFunctions->m_curOffCycles;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-     if( theFunctions->m_curCycleErr > 1.0 ) {
-        theFunctions->m_curCycleErr = 0.0;
+     if( theFunctions->m_nextCycleErr > 1.0 ) {
+        theFunctions->m_nextCycleErr = 0.0;
      }
 
   }
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
   	  	// steps per shot
-  	theFunctions->m_curPlanSpd = (unsigned long) curSpd;
+  	theFunctions->m_nextPlanSpd = (unsigned long) curSpd;
   		// of course, this tends to leave some fractional steps on the floor
-  	theFunctions->m_curPlanErr += curSpd - (unsigned long) curSpd;
+  	theFunctions->m_nextPlanErr += curSpd - (unsigned long) curSpd;
 
   		// .. so we compensate for the error to catch up...
-  	if( theFunctions->m_curPlanErr >= 1.0 ) {
-  		theFunctions->m_curPlanErr -= 1.0;
-  		theFunctions->m_curPlanSpd++;
+  	if( theFunctions->m_nextPlanErr >= 1.0 ) {
+  		theFunctions->m_nextPlanErr -= 1.0;
+  		theFunctions->m_nextPlanSpd++;
   	}
 
   	// TODO: correct for one step left behind in some planned calculations
@@ -1664,6 +1680,16 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
 
+   USBSerial.print("Accel Time: ");
+   USBSerial.print(thisSpline->acTm);
+    USBSerial.print(" Decel Time: ");
+   USBSerial.print(thisSpline->dcTm);
+   USBSerial.print(" cruise Time: ");
+   USBSerial.print(thisSpline->crTm);
+   USBSerial.print(" decel start time: ");
+   USBSerial.println(thisSpline->dcStart);
+
+
    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
    thisSpline->topSpeed = (velocity * thisSpline->crTm) / ( totSplines * thisSpline->crTm );
 
@@ -1701,6 +1727,45 @@ void OMMotorFunctions::checkRefresh(){
       }
 }
 
+
+
+
+void OMMotorFunctions::updateSpline(){
+
+    if (splineReady == false){
+
+        if( m_curSpline + 1 >= m_totalSplines ) {
+                    // hey, look at that - we're at the end of our spline (and
+                    // we haven't finished our last step either, otherwise we
+                    // wouldn't get here...)
+
+          endOfMove = true;
+        } else {// end if( m_curSpline...
+
+                // move to the next point in the current spline.
+            //m_curSpline++;
+            float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
+
+                // get new off cycle timing for the next point in the spline
+            f_easeFunc(false, tmPos, this); //goes to a new function?
+            m_totalCyclesTaken = 0;
+
+            endOfMove = false;
+
+                    // we don't stop here, as we still need to check the off-time
+                    // between steps, based on our current spline point
+
+             // end if( m_asyncSteps > 0 && totalCyclesTaken...
+        }
+        splineReady = true;
+    }
+
+
+}
+
+
+
+
 /** checkStep
 
 Check to see if the motor needs to take a step
@@ -1709,7 +1774,141 @@ Check to see if the motor needs to take a step
 
 
 
-bool OMMotorFunctions::checkStep(){
+bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
+    if (m_curOffCycles == 0){
+        m_curOffCycles = m_nextOffCycles;
+        m_curCycleErr = m_nextCycleErr;
+        m_curPlanErr = m_nextPlanErr;
+        m_curPlanSpd = m_nextPlanSpd;
+        m_curSpline++;
+        m_totalCyclesTaken = 0;
+        splineReady = false;
+    }
+
+    if( m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
+
+        if (endOfMove){
+
+            int i = m_stepsTaken;
+            USBSerial.print("Steps moved!! ");
+            USBSerial.println(i);
+
+
+            if( m_stepsTaken < m_asyncSteps ) {
+              // we really should be taking any steps we're missing. (if asked to
+              // move a specific distance.) positioning errors can add up over
+              // multiple moves, and we shouldn't leave expected steps on the
+              // cutting-room floor even if we have exceeded the destination time
+
+              // TODO: multiple final steps will happen at the fastest step rate,
+              // whether or not the motor can handle this!  We really shouldn't be
+              // more than one step shy of our target, however, unless one specifies
+              // a move that requires a step rate higher than the maximum step rate,
+              // which is just painful.
+
+              m_totalCyclesTaken--; //??????? why
+              m_stepsTaken++;
+              _updateMotorHome( (uint8_t) 1);
+                // bring step pin low - this allows us to
+                // hit one step per ISR run rate. (Timing is important
+                // we hit minimum high pulse time in the instructions above
+                // this line)
+              return (true);
+          }
+
+            // we've reached the end of our anticipated time.  Go ahead and finish
+            // everything up, and stop the timer. (we should only get here when a
+            // last step had to be taken above.)
+
+          m_stepsTaken = 0;
+          m_curSpline = 0;
+          m_totalCyclesTaken = 0;
+          m_cycleErrAccumulated = 0.0;
+          m_cyclesLow = 0;
+
+          stop();
+          return (false);
+
+        }
+
+
+        //update spline data
+        m_curOffCycles = m_nextOffCycles;
+        m_curCycleErr = m_nextCycleErr;
+        m_curPlanErr = m_nextPlanErr;
+        m_curPlanSpd = m_nextPlanSpd;
+        m_curSpline++;
+        m_totalCyclesTaken = 0;
+        splineReady = false;
+
+
+    }
+
+    m_totalCyclesTaken++;
+
+    if( m_cycleErrAccumulated >= 1.0 ) {
+
+
+            // check the error rate (fractions of a cycle that
+            // were accumulated - if at least one full cycle, add
+            // an additional delay cycle to get overall movement
+            // timing as close to exact as is possible
+
+            m_cycleErrAccumulated -= 1.0;
+                 // run an extra cycle low
+            return (false);
+    }
+
+            // increase lowcycle counter after applying error correction, as we
+            // don't want to take the next step too fast
+
+    m_cyclesLow++;
+
+    if( m_cyclesLow >= m_curOffCycles ) {
+            // we've had enough low cycles, ok to trigger next step
+
+            // if we hit the step count requested for this move,
+            // or if we have hit the maximum stepping point,
+            // stop now - don't overshoot
+          if( (m_totalSteps > 0 && m_stepsMoved >= m_totalSteps) || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
+            int i = m_stepsTaken;
+            USBSerial.print("Steps moved ");
+            USBSerial.println(i);
+
+              m_stepsTaken = 0;
+              m_cycleErrAccumulated = 0.0;
+              m_cyclesLow = 0;
+              stop();
+          } else {
+
+              m_cyclesLow = 0;
+              m_stepsTaken++;
+
+              _updateMotorHome(1);
+
+               // accumulate cycle off time errors
+               // once per complete cycle (fractions of
+               // off cycles are included in the calculated
+               // speed)
+
+              m_cycleErrAccumulated += m_curCycleErr;
+
+              return(true);
+
+          }
+
+
+    } // end if( cyclesLow...
+
+    return(false);
+}
+
+
+/*
+
+bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
+
+    //USBSerial.println(m_curOffCycles);
 
     if( m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
 
@@ -1829,3 +2028,170 @@ bool OMMotorFunctions::checkStep(){
 
 
 
+
+
+/** checkStep
+
+Check to see if the motor needs to take a step
+
+*/
+
+/*
+
+bool OMMotorFunctions::cyclesOffCurrentSpline(bool p_cyclesOffNext){
+
+    m_curSpline
+
+    if (p_cyclesOffNext == 0){
+
+        // get new off cycle timing for the next point in the spline
+        float tmPos = (float) m_curSpline / (float) m_totalSplines;
+        f_easeFunc(false, tmPos, this, 0);
+
+
+    } else {
+        m_cyclesOff[0] = m_cyclesOff[1];
+    }
+}
+
+unsigned long OMMotorFunctions::cyclesOffInOneSpline(unsigned long p_cyclesOff){
+
+    if (p_cyclesOff == 0){
+
+        // get new off cycle timing for the next point in the spline
+        float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
+        f_easeFunc(false, tmPos, this, 1);
+
+    } else {
+        m_cyclesOff[1] = m_cyclesOff[2];
+    }
+}
+
+unsigned long OMMotorFunctions::cyclesOffInTwoSpline(unsigned long p_cyclesOff){
+
+    // get new off cycle timing for the next point in the spline
+    float tmPos = ((float) m_curSpline + 2.0) / (float) m_totalSplines;
+    f_easeFunc(false, tmPos, this, 2);
+
+}
+
+{
+
+    if( m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
+
+          // we are ready for the next point in the spline,
+          // run speed calculations
+
+        if( m_curSpline == m_totalSplines ) {
+                    // hey, look at that - we're at the end of our spline (and
+                    // we haven't finished our last step either, otherwise we
+                    // wouldn't get here...)
+
+          if( m_stepsTaken < m_asyncSteps ) {
+              // we really should be taking any steps we're missing. (if asked to
+              // move a specific distance.) positioning errors can add up over
+              // multiple moves, and we shouldn't leave expected steps on the
+              // cutting-room floor even if we have exceeded the destination time
+
+              // TODO: multiple final steps will happen at the fastest step rate,
+              // whether or not the motor can handle this!  We really shouldn't be
+              // more than one step shy of our target, however, unless one specifies
+              // a move that requires a step rate higher than the maximum step rate,
+              // which is just painful.
+
+              m_totalCyclesTaken--; //??????? why
+              m_stepsTaken++;
+              _updateMotorHome( (uint8_t) 1);
+                // bring step pin low - this allows us to
+                // hit one step per ISR run rate. (Timing is important
+                // we hit minimum high pulse time in the instructions above
+                // this line)
+              return (true);
+          }
+
+            // we've reached the end of our anticipated time.  Go ahead and finish
+            // everything up, and stop the timer. (we should only get here when a
+            // last step had to be taken above.)
+
+          m_stepsTaken = 0;
+          m_curSpline = 0;
+          m_totalCyclesTaken = 0;
+          m_cycleErrAccumulated = 0.0;
+          m_cyclesLow = 0;
+
+          stop();
+          return (false);
+        } // end if( m_curSpline...
+
+            // move to the next point in the current spline.
+        m_curSpline++;
+        float tmPos = (float) m_curSpline / (float) m_totalSplines;
+
+            // get new off cycle timing for the next point in the spline
+        f_easeFunc(false, tmPos, this); //goes to a new function?
+        m_totalCyclesTaken = 0;
+
+
+
+            // we don't stop here, as we still need to check the off-time
+            // between steps, based on our current spline point
+
+    } // end if( m_asyncSteps > 0 && totalCyclesTaken...
+
+    m_totalCyclesTaken++;
+
+    if( m_cycleErrAccumulated >= 1.0 ) {
+
+
+            // check the error rate (fractions of a cycle that
+            // were accumulated - if at least one full cycle, add
+            // an additional delay cycle to get overall movement
+            // timing as close to exact as is possible
+
+            m_cycleErrAccumulated -= 1.0;
+                 // run an extra cycle low
+            return (false);
+    }
+
+            // increase lowcycle counter after applying error correction, as we
+            // don't want to take the next step too fast
+
+    m_cyclesLow++;
+
+    if( m_cyclesLow >= m_curOffCycles ) {
+            // we've had enough low cycles, ok to trigger next step
+
+            // if we hit the step count requested for this move,
+            // or if we have hit the maximum stepping point,
+            // stop now - don't overshoot
+          if( (m_totalSteps > 0 && m_stepsMoved >= m_totalSteps) || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
+              m_stepsTaken = 0;
+              m_cycleErrAccumulated = 0.0;
+              m_cyclesLow = 0;
+              stop();
+          } else {
+
+              m_cyclesLow = 0;
+              m_stepsTaken++;
+
+              _updateMotorHome(1);
+
+               // accumulate cycle off time errors
+               // once per complete cycle (fractions of
+               // off cycles are included in the calculated
+               // speed)
+
+              m_cycleErrAccumulated += m_curCycleErr;
+
+              return(true);
+
+          }
+
+
+    } // end if( cyclesLow...
+
+    return(false);
+}
+
+
+*/
