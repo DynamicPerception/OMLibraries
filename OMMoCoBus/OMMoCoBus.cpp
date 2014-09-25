@@ -698,16 +698,39 @@ void OMMoCoBus::write( int p_dat ) {
 
 /** Write Data to Bus
 
+Writes packet data to the bus, should only ever be used after sendPacketHeader().
+
+The
+
+*/
+
+void OMMoCoBus::write(unsigned long p_dat) {
+
+	write((uint8_t)(p_dat >> 24));
+	write((uint8_t)(p_dat >> 16));
+	write((uint8_t)(p_dat >> 8));
+	write((uint8_t)p_dat);
+
+}
+
+/** Write Data to Bus
+
  Writes packet data to the bus, should only ever be used after sendPacketHeader().
+
+ The 
 
  */
 
-void OMMoCoBus::write( unsigned long p_dat ) {
+void OMMoCoBus::write( float p_dat ) {
 
-    write( (uint8_t) (p_dat >> 24) );
-    write( (uint8_t) (p_dat >> 16) );
-    write( (uint8_t) (p_dat >> 8) );
-    write( (uint8_t) p_dat);
+	// Convert float to fixed point with two decimal places stored as an unsigned long.
+	// This value must be divided by 100 on the receiving side to get the intended float.
+	unsigned long fixed_point = p_dat * 100; 
+
+	write( (uint8_t) (fixed_point >> 24));
+	write( (uint8_t) (fixed_point >> 16));
+	write( (uint8_t) (fixed_point >> 8));
+	write( (uint8_t) fixed_point);
 
 }
 

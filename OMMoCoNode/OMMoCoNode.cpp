@@ -154,9 +154,10 @@ void OMMoCoNode::response(bool p_stat, unsigned long p_resp) {
 
 void OMMoCoNode::response(bool p_stat, float p_resp) {
 		// 5 bytes returned to master (type + data size)
+	
 	sendPacketHeader(OM_SER_MASTER, p_stat, 5);
 	this->write((uint8_t) R_FLOAT);
-	this->write((unsigned long) p_resp);
+	this->write(p_resp);
 }
 
 /** Send Response Data to Master
