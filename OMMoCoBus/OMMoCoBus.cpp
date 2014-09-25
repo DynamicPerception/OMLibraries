@@ -711,34 +711,6 @@ void OMMoCoBus::write( unsigned long p_dat ) {
 
 }
 
-
-
-/** Write Data to Bus
-
- Writes packet data to the bus, should only ever be used after sendPacketHeader().
-
- */
-
-void OMMoCoBus::write( float p_dat ) {
-
-    USBSerial.print("float is: ");
-    USBSerial.print(p_dat);
-
-    int * ptr = (int *) (& p_dat) ;
-
-    USBSerial.print(" int is: ");
-    USBSerial.print((uint8_t) (*ptr >> 24));
-    USBSerial.print((uint8_t) (*ptr >> 16));
-    USBSerial.print((uint8_t) (*ptr >> 8));
-    USBSerial.println((uint8_t) (*ptr));
-
-    write( (uint8_t) (*ptr >> 24) );
-    write( (uint8_t) (*ptr >> 16) );
-    write( (uint8_t) (*ptr >> 8) );
-    write( (uint8_t) *ptr);
-
-}
-
 /** Write Data to Bus
 
  Writes packet data to the bus, should only ever be used after sendPacketHeader().
