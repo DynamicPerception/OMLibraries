@@ -1545,8 +1545,8 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
     curSpd = thisSpline->topSpeed * (1.0 - ((p_tmPos - thisSpline->acTm - thisSpline->crTm)/ thisSpline->dcTm));
   }
 
-  USBSerial.print("curSpd: ");
-  USBSerial.println(curSpd);
+  //USBSerial.print("curSpd: ");
+ // USBSerial.println(curSpd);
 
 
   if( ! p_Plan ) {
@@ -1566,7 +1566,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
       if( theFunctions->m_nextCycleErr > 1.0 ) {
           theFunctions->m_nextCycleErr = 0.0;
       }
-
+/*
       float i = theFunctions->m_nextOffCycles;
       USBSerial.print(" next off Cycles: ");
       USBSerial.print(i);
@@ -1576,7 +1576,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
       USBSerial.print(" error per spline: ");
       i = theFunctions->m_nextCycleErr;
       USBSerial.println(i);
-
+*/
 
 
   }
@@ -1799,7 +1799,10 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
         m_totalCyclesTaken = 0;
         splineReady = false;
     }
-
+/*
+    int i = m_curOffCycles;
+    USBSerial.println(i);
+*/
     if( m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
 
         if (endOfMove){
