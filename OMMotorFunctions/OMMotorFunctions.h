@@ -41,8 +41,10 @@ See www.openmoco.org for more information
 #define OM_MOT_BEGIN	3
 
 #define OM_MOT_LINEAR 	4
-#define OM_MOT_QUAD	5
+#define OM_MOT_QUAD	    5
 #define OM_MOT_QUADINV	6
+
+#define MS_PER_SPLINE   10
 
 
 /**
@@ -424,7 +426,7 @@ public:
 	bool continuous();
 
 	void contSpeed(float);
-	unsigned int contSpeed();
+	float contSpeed();
 
 	bool running();
 
@@ -477,6 +479,11 @@ public:
     uint8_t mtpc;
     uint8_t mtpc_start;
     uint8_t mt_plan;
+
+    void updateSpline();
+    bool splineReady;
+    bool endOfMove;
+
 
 
 private:
@@ -539,6 +546,12 @@ private:
 	unsigned long m_asyncDo;
 	volatile unsigned long m_stepsMoved;
 	unsigned long m_totalSteps;
+
+
+    unsigned long m_nextOffCycles;
+    float m_nextCycleErr;
+    float m_nextPlanErr;
+    unsigned long m_nextPlanSpd;
 
 
 
