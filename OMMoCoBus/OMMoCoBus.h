@@ -226,6 +226,7 @@ protected:
 	void write(int p_dat);
 	void write(unsigned long p_dat);
 	void write(long p_dat);
+	void write(float p_dat);
 
 private:
 
