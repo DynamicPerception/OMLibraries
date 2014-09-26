@@ -90,7 +90,8 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
 
     m_asyncSteps = 0;
-    m_contSpd = 100.0;
+    m_contSpd = 0;
+    m_desiredContSpd = 100.0;
     m_stepsMoved = 0;
     m_Steps = 0;
     m_totalSteps = 0;
@@ -99,9 +100,9 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_curOffCycles = 0;
     m_curCycleErr = 0.0;
     m_homePos = 0;
+    m_contAccelRate = 20.0;
 
-
-    //trial vairables
+    //variables for the next spline
     m_nextOffCycles = 0;
     m_nextCycleErr = 0.0;
     m_nextPlanSpd = 0;
@@ -116,6 +117,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
     m_asyncWasdir = false;
     m_curDir = false;
+    m_switchDir = false;
     m_backCheck = false;
     m_motEn = false;
     m_motCont = false;
@@ -299,8 +301,7 @@ bool OMMotorFunctions::dir() {
 
 void OMMotorFunctions::dir( bool p_Dir ) {
 
-
-  // only do anything if we're changing directions
+// only do anything if we're changing directions
 
   if( p_Dir != m_curDir ) {
 
@@ -585,6 +586,7 @@ void motorCallback( byte code ) {
 
 void OMMotorFunctions::continuous(bool p_En) {
 	m_motCont = p_En;
+	_updateContSpeed();
 }
 
 /** Get Continuous Motion Value
@@ -624,16 +626,67 @@ void OMMotorFunctions::contSpeed(float p_Speed) {
 
 	if( p_Speed > maxStepRate() )
 		return;
+    m_desiredContSpd = p_Speed;
+}
 
-	m_contSpd = p_Speed;
+/** Update Continous Speed
 
-	float curSpd = m_contSpd / 1000;  //steps per ms
+Updates the next spline for continous speed. This is a linear acceleration and deceleration.
 
-	     // figure out how many cycles we delay after each step
+*/
+
+
+void OMMotorFunctions::_updateContSpeed(){
+
+    if (m_switchDir){
+
+        //decelerate until your within half of the m_contAccelRate step/sec of stop
+        m_contSpd -= m_contAccelRate;
+
+        if (m_contSpd <= (m_contAccelRate/2)){
+            //don't want to set it zero as that will give us an infinite off_time
+            m_contSpd = 0.01;
+            m_switchDir = false;
+            dir(!m_curDir);
+        }
+
+
+        //calculate the next spline's off cycles and off cycles error
+        float curSpd = m_contSpd / (1000.0 / MS_PER_SPLINE);  //steps per spline
+
+        // figure out how many cycles we delay after each step
+        float off_time = m_cyclesPerSpline / (curSpd);
+
+        m_nextOffCycles = (unsigned long) off_time;
+        m_nextCycleErr = off_time - (unsigned long) off_time;
+
+        return;
+
+    }
+
+    //current speed is less than the desired speed
+    if (m_contSpd <= (m_desiredContSpd - m_contAccelRate)){
+
+        m_contSpd += m_contAccelRate;
+
+    //current speed is greater than the desired speed
+    } else if (m_contSpd >= (m_desiredContSpd + m_contAccelRate)){
+
+        m_contSpd -= m_contAccelRate;
+
+    //we're within 25 steps/second of the desired speed, close enough to jump to desired
+    } else {
+        m_contSpd = m_desiredContSpd;
+    }
+
+    //calculate the next spline's off cycles and off cycles error
+    float curSpd = m_contSpd / (1000.0 / MS_PER_SPLINE);  //steps per spline
+
+         // figure out how many cycles we delay after each step
     float off_time = m_cyclesPerSpline / (curSpd);
 
-    m_curOffCycles = (unsigned long) off_time;
-    m_curCycleErr = off_time - (unsigned long) off_time;
+    m_nextOffCycles = (unsigned long) off_time;
+    m_nextCycleErr = off_time - (unsigned long) off_time;
 }
 
 /** Get Continuous Motion Speed
@@ -1182,8 +1235,6 @@ void OMMotorFunctions::move() {
 
 void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
-    USBSerial.println("Moving");
-
 
 		// if motor is disabled, do nothing
    if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
@@ -1197,9 +1248,15 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
    if( p_Steps == 0 && continuous() ) {
        // continuous motion mode
+
        if( ! running() ) {
        	       m_asyncSteps = 0;
        	       _stepsAsync(p_Dir, (unsigned long) 0);
+
+        //if switching directions while the motor's running
+       } else if( p_Dir != m_curDir ) {
+            m_switchDir = true;
+            return;
        }
 
        _fireCallback(OM_MOT_BEGIN);
@@ -1241,27 +1298,27 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = ( maxStepRate() > maxSpeed() ) ? maxSpeed() : maxStepRate();
 
-        USBSerial.print("mSPeed: ");
-        USBSerial.print(mSpeed);
+        //USBSerial.print("mSPeed: ");
+        //USBSerial.print(mSpeed);
 
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
 
         rampSteps *= 2.0;
-        USBSerial.print(" rampSteps: ");
-        USBSerial.print(rampSteps);
+        //USBSerial.print(" rampSteps: ");
+        //USBSerial.print(rampSteps);
         //calculated cruise time
         float crTm = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
-        USBSerial.print(" cruise time: ");
-        USBSerial.print(crTm);
+        //USBSerial.print(" cruise time: ");
+        //USBSerial.print(crTm);
         //calculate acceleration and deceleration time
         float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
-        USBSerial.print(" adTm: ");
-        USBSerial.print(adTm);
+        //USBSerial.print(" adTm: ");
+       // USBSerial.print(adTm);
 
         float mvMS = (crTm + adTm);// + 1.0;
 
-        USBSerial.print(" mvMs: ");
-        USBSerial.println(mvMS);
+        //USBSerial.print(" mvMs: ");
+        //USBSerial.println(mvMS);
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -1304,6 +1361,7 @@ void OMMotorFunctions::stop() {
       m_refresh = true;
       endOfMove = false;
       splineReady = false;
+      m_contSpd = 0.0;
 
         // set sleep state for drivers if needed
       if( sleep() )
@@ -1751,26 +1809,35 @@ void OMMotorFunctions::updateSpline(){
 
     if (splineReady == false){
 
-        if( m_curSpline + 1 >= m_totalSplines ) {
-                    // hey, look at that - we're at the end of our spline (and
-                    // we haven't finished our last step either, otherwise we
-                    // wouldn't get here...)
+        //If it's in continuous mode accel/decel until desired spd
+        if (continuous()){
 
-            endOfMove = true;
-        } else {// end if( m_curSpline...
+            _updateContSpeed();
 
-                // move to the next point in the current spline.
-            float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
 
-                // get new off cycle timing for the next point in the spline
-            f_easeFunc(false, tmPos, this); //goes to a new function?
+        } else { //Calculate next spline while not in continous mode
 
-            endOfMove = false;
+            if( m_curSpline + 1 >= m_totalSplines ) {
+                        // hey, look at that - we're at the end of our spline (and
+                        // we haven't finished our last step either, otherwise we
+                        // wouldn't get here...)
 
-                    // we don't stop here, as we still need to check the off-time
-                    // between steps, based on our current spline point
+                endOfMove = true;
+            } else {// end if( m_curSpline...
 
-             // end if( m_asyncSteps > 0 && totalCyclesTaken...
+                    // move to the next point in the current spline.
+                float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
+
+                    // get new off cycle timing for the next point in the spline
+                f_easeFunc(false, tmPos, this); //goes to a new function?
+
+                endOfMove = false;
+
+                        // we don't stop here, as we still need to check the off-time
+                        // between steps, based on our current spline point
+
+                 // end if( m_asyncSteps > 0 && totalCyclesTaken...
+            }
         }
         splineReady = true;
     }
@@ -1799,15 +1866,13 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
         m_totalCyclesTaken = 0;
         splineReady = false;
     }
-/*
-    int i = m_curOffCycles;
-    USBSerial.println(i);
-*/
-    if( m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
+
+
+
+    if( m_totalCyclesTaken >= m_cyclesPerSpline) { //m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
 
         if (endOfMove){
 
-            int i = m_stepsTaken;
 
 
             if( m_stepsTaken < m_asyncSteps ) {
@@ -1862,14 +1927,15 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
 
     m_totalCyclesTaken++;
 
-    if( m_cycleErrAccumulated >= 1.0 ) {
+    if( m_cycleErrAccumulated >= 1.00 ) {
+
 
             // check the error rate (fractions of a cycle that
             // were accumulated - if at least one full cycle, add
             // an additional delay cycle to get overall movement
             // timing as close to exact as is possible
+            m_cycleErrAccumulated -= 1.00;
 
-            m_cycleErrAccumulated -= 1.0;
                  // run an extra cycle low
             return (false);
     }
@@ -1880,6 +1946,7 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
     m_cyclesLow++;
 
     if( m_cyclesLow >= m_curOffCycles ) {
+
             // we've had enough low cycles, ok to trigger next step
 
             // if we hit the step count requested for this move,
@@ -1908,6 +1975,7 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
               return(true);
 
           }
+
 
 
     } // end if( cyclesLow...

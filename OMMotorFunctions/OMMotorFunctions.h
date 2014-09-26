@@ -481,7 +481,7 @@ public:
     uint8_t mt_plan;
 
     void updateSpline();
-    bool splineReady;
+    volatile bool splineReady;
     bool endOfMove;
 
 
@@ -524,6 +524,8 @@ private:
 	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float);
 	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float);
 
+    void _updateContSpeed();
+
 	unsigned int m_maxSpeed;
 
 	bool m_backCheck;
@@ -533,6 +535,7 @@ private:
 	bool m_isRun;
 	bool m_asyncWasdir;
 	bool m_curDir;
+	bool m_switchDir;
     bool m_refresh;
 
 
@@ -540,7 +543,7 @@ private:
 	float m_cycleErrAccumulated;
     unsigned long m_cyclesLow;
     unsigned long m_stepsTaken;
-    unsigned long m_totalCyclesTaken;
+    volatile unsigned long m_totalCyclesTaken;
 
 	unsigned long m_asyncSteps;
 	unsigned long m_asyncDo;
@@ -556,21 +559,23 @@ private:
 
 
     volatile unsigned long m_curOffCycles;
-	float m_curCycleErr;
+	volatile float m_curCycleErr;
 	static unsigned int m_curSampleRate;
 	static unsigned int m_cyclesPerSpline;
 	volatile unsigned long m_curSpline;
 	unsigned long m_totalSplines;
 
-	unsigned long m_curPlanSpd;
+	volatile unsigned long m_curPlanSpd;
 	unsigned long m_curPlanSplines;
 	unsigned long m_curPlanSpline;
-	float m_curPlanErr;
+	volatile float m_curPlanErr;
 	bool m_planDir;
 
 	unsigned long m_Steps;
 	unsigned int m_asyncCspd;
 	float m_contSpd;
+	float m_desiredContSpd;
+	float m_contAccelRate;
 
 	volatile long m_homePos;
 
@@ -581,7 +586,6 @@ private:
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(bool, float, OMMotorFunctions*);
 	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float);
-
 
 
 	bool m_calcMove;
