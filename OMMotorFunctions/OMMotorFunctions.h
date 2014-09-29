@@ -425,6 +425,9 @@ public:
 	void continuous(bool);
 	bool continuous();
 
+	void contAccel(float);
+	float contAccel();
+
 	void contSpeed(float);
 	float contSpeed();
 

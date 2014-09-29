@@ -629,6 +629,39 @@ void OMMotorFunctions::contSpeed(float p_Speed) {
     m_desiredContSpd = p_Speed;
 }
 
+/** Set Continuous Motion Speed Acceleration
+
+ Sets the current continuous motion acceleration, in steps per second^2. Must be a positive float
+ value greater than 0.0.
+
+
+ @param p_Speed
+ Steps per second^2
+ */
+
+void OMMotorFunctions::contAccel(float p_Accel) {
+
+	if( p_Accel <= 0.0 )
+		return;
+    m_contAccelRate = p_Accel/(1000.0 / MS_PER_SPLINE);  //convert to steps/spline
+}
+
+/** Get Continuous Motion Speed Acceleration
+
+ Sets the current continuous motion acceleration, in steps per second^2. Must be a positive float
+ value greater than 0.0.
+
+
+ @return
+ Steps per second^2
+ */
+
+float OMMotorFunctions::contAccel() {
+
+	return(m_contAccelRate * (1000.0 / MS_PER_SPLINE));
+}
+
+
 /** Update Continous Speed
 
 Updates the next spline for continous speed. This is a linear acceleration and deceleration.
