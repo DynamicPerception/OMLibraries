@@ -439,8 +439,8 @@ public:
 	void steps(unsigned long);
 	unsigned long steps();
 
-	void maxSteps(unsigned long);
-	unsigned long maxSteps();
+	void maxSteps(long);
+	long maxSteps();
 
 	unsigned long stepsMoved();
 
@@ -457,6 +457,27 @@ public:
 
 	void home();
 	void homeSet();
+	void endPosSet();
+	long endPos();
+	void startPos(long);
+	long startPos();
+	void stopPos(long);
+	long stopPos();
+
+	void moveTo(long);
+	void moveToStart();
+	void moveToStop();
+	void moveToEnd();
+
+	void planType(uint8_t);
+	uint8_t planType();
+	void planIntervalLength(unsigned long);
+	unsigned long planIntervalLength();
+	void planAccelLength(unsigned long);
+	unsigned long planAccelLength();
+	void planDecelLength(unsigned long);
+	unsigned long planDecelLength();
+	void programMove();
 
 	void easing(uint8_t);
 	uint8_t easing();
@@ -581,6 +602,9 @@ private:
 	float m_contAccelRate;
 
 	volatile long m_homePos;
+	long m_endPos;
+	long m_startPos;
+	long m_stopPos;
 
 	uint8_t m_curMs;
 	uint8_t m_backAdj;

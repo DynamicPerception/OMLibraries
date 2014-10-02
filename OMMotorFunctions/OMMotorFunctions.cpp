@@ -788,7 +788,7 @@ unsigned long OMMotorFunctions::steps() {
   Maximum steps to move
   */
 
-void OMMotorFunctions::maxSteps(unsigned long p_Steps) {
+void OMMotorFunctions::maxSteps(long p_Steps) {
 	m_totalSteps = p_Steps;
 }
 
@@ -800,7 +800,7 @@ void OMMotorFunctions::maxSteps(unsigned long p_Steps) {
   Maximum Steps to Move
   */
 
-unsigned long OMMotorFunctions::maxSteps() {
+long OMMotorFunctions::maxSteps() {
 	return(m_totalSteps);
 }
 
@@ -1215,6 +1215,8 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Dist, unsigned long p_Ti
 		return;
 	}
 
+    USBSerial.print("Time is: ");
+    USBSerial.println(p_Time);
 
 	m_totalSplines = p_Time / MS_PER_SPLINE;
 
@@ -1547,7 +1549,7 @@ void OMMotorFunctions::_updateMotorHome(int p_Steps) {
 
 }
 
-/** Set Home
+/** Set Home Position
 
  Sets the current position of the motor as the home position.
 
@@ -1555,6 +1557,83 @@ void OMMotorFunctions::_updateMotorHome(int p_Steps) {
 
 void OMMotorFunctions::homeSet() {
 	m_homePos = 0;
+}
+
+/** Set Limit Position
+
+ Sets the current position of the motor as its limit. The motor cannnot move past m_limitPos
+ away from the m_homePos.
+
+ */
+
+void OMMotorFunctions::endPosSet() {
+	m_endPos = m_homePos;
+}
+
+/** Get Limit Position
+
+ Gets the limit position. The motor cannnot move past m_limitPos steps
+ away from the m_homePos.
+
+ @return
+ A signed long, steps away from the home position that the limit of the travel is.
+
+ */
+
+long OMMotorFunctions::endPos() {
+	return(m_endPos);
+}
+
+/** Set Start Position
+
+ Sets the motor's start position.
+
+ @param p_steps
+ A signed long, steps away from home that the location of the start position
+
+ */
+
+void OMMotorFunctions::startPos(long p_steps) {
+	m_startPos = p_steps;
+}
+
+/** Get Start Position
+
+ Gets the motor's start position
+
+ @return
+ A signed long, steps away from home that the location of the start position
+
+ */
+
+long OMMotorFunctions::startPos() {
+	return(m_startPos);
+}
+
+/** Set End Position
+
+ Sets the motor's end position
+
+ @param p_steps
+ A signed long, steps away from home that the location of the end position
+
+ */
+
+void OMMotorFunctions::stopPos(long p_steps) {
+	m_stopPos = p_steps;
+}
+
+/** Get End Position
+
+ Gets the motor's end position
+
+ @return
+ A signed long, steps away from home that the location of the end position
+
+ */
+
+long OMMotorFunctions::stopPos() {
+	return(m_stopPos);
 }
 
 /** Distance from Home
@@ -1586,13 +1665,94 @@ long OMMotorFunctions::homeDistance() {
 
 void OMMotorFunctions::home() {
 
- if( homeDistance() == 0 )
+    moveTo(0);
+
+}
+
+/** Send Motor to Start Pos
+
+ Send motor to start position immediately.
+
+ This method will not stop any ongoing move, but it will immediately send
+ the motor back to its home position, and will result in an aborted move.
+
+ Like other moves, this move is non-blocking and will trigger the callback
+ to be executed with the OM_MOT_DONE argument when the send to home move
+ is completed.
+ */
+
+void OMMotorFunctions::moveToStart() {
+
+    if (m_startPos == 0)
+        return;
+
+    moveTo(m_startPos);
+
+}
+
+/** Send Motor to Stop Pos
+
+ Send motor to stop position immediately.
+
+ This method will not stop any ongoing move, but it will immediately send
+ the motor back to its home position, and will result in an aborted move.
+
+ Like other moves, this move is non-blocking and will trigger the callback
+ to be executed with the OM_MOT_DONE argument when the send to home move
+ is completed.
+ */
+
+void OMMotorFunctions::moveToStop() {
+
+    if (m_stopPos == 0)
+        return;
+
+    moveTo(m_stopPos );
+
+}
+
+/** Send Motor to Stop Pos
+
+ Send motor to stop position immediately.
+
+ This method will not stop any ongoing move, but it will immediately send
+ the motor back to its home position, and will result in an aborted move.
+
+ Like other moves, this move is non-blocking and will trigger the callback
+ to be executed with the OM_MOT_DONE argument when the send to home move
+ is completed.
+ */
+
+void OMMotorFunctions::moveToEnd() {
+
+    if (m_endPos == 0)
+        return;
+
+    moveTo(m_endPos );
+
+}
+
+/** Send Motor to Position
+
+ Send motor to given position immediately using a simple move.
+
+ This method will not stop any ongoing move, but it will immediately send
+ the motor back to its home position, and will result in an aborted move.
+
+ Like other moves, this move is non-blocking and will trigger the callback
+ to be executed with the OM_MOT_DONE argument when the send to home move
+ is completed.
+ */
+
+void OMMotorFunctions::moveTo(long p_pos) {
+
+ if( homeDistance() == p_pos )
      return;
 
  m_refresh = true;
 
  bool thsDir  = false;
- long goToPos = m_homePos;
+ long goToPos = m_homePos - p_pos;  //detemine how many steps needed
 
 	// negative value means move in
 	// positive direction
@@ -1602,11 +1762,167 @@ void OMMotorFunctions::home() {
 	thsDir = true;
  }
 
-
- 	// there is no need to re-set m_homePos, as travelling in the
- 	// specified direction will correct the recorded steps
-
  move(thsDir, goToPos);
+
+}
+
+/** Set Plan Type
+
+Variable to identify if a plan move is set and what type it is. mtpc = 0 (no plan),
+mtpc = 1 (SMS), mtpc = 2 (continuous).
+
+*/
+
+void OMMotorFunctions::planType(uint8_t p_type){
+
+    mtpc = p_type;
+}
+
+/** Get Plan Type
+
+Variable to identify if a plan move is set and what type it is. mtpc = 0 (no plan),
+mtpc = 1 (SMS), mtpc = 2 (continuous).
+
+ @return
+ A byte, representing the plan move type. mtpc = 0 (no plan),
+ mtpc = 1 (SMS), mtpc = 2 (continuous).
+
+*/
+
+uint8_t OMMotorFunctions::planType(){
+
+    return(mtpc);
+}
+
+/** Set Plan Interval Lenth (either shots or time depending)
+
+Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+*/
+
+void OMMotorFunctions::planIntervalLength(unsigned long p_length){
+
+    mtpc_arrive = p_length;
+}
+
+/** Get Plan Interval Lenth (either shots or time depending)
+
+Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+ @return
+ An unsigned long, representing the plan interval length in time (ms) or shots. If mtpc = 1
+ then it's shots, if mtpc = 2 then it's time (ms).
+
+*/
+
+unsigned long OMMotorFunctions::planIntervalLength(){
+
+    return(mtpc_arrive);
+}
+
+/** Set Plan Acceleration Length (either shots or time depending)
+
+Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+*/
+
+void OMMotorFunctions::planAccelLength(unsigned long p_accel){
+
+    mtpc_accel = p_accel;
+}
+
+/** Get Plan Acceleration Length (either shots or time depending)
+
+Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+ @return
+ An unsigned long, representing the plan interval acceleration in time (ms) or shots. If mtpc = 1
+ then it's shots, if mtpc = 2 then it's time (ms).
+
+*/
+
+unsigned long OMMotorFunctions::planAccelLength(){
+
+    return(mtpc_accel);
+}
+
+/** Set Plan Deceleration Length (either shots or time depending)
+
+Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+*/
+
+void OMMotorFunctions::planDecelLength(unsigned long p_decel){
+
+    mtpc_decel = p_decel;
+}
+
+/** Get Plan Deceleration Length (either shots or time depending)
+
+Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
+to determine if it's the number of shots or time. If mtpc == 1 then shots, if
+mtpc == 2 then time.
+
+ @return
+ An unsigned long, representing the plan interval deceleration in time (ms) or shots. If mtpc = 1
+ then it's shots, if mtpc = 2 then it's time (ms).
+
+*/
+
+unsigned long OMMotorFunctions::planDecelLength(){
+
+    return(mtpc_decel);
+}
+
+
+/** Do a program move
+
+Move from the current position to stopPos using the planned moved parameters.
+
+*/
+
+void OMMotorFunctions::programMove(){
+
+    if (mtpc == 0)  //no planned move set
+        return;
+
+    if( m_homePos == m_stopPos )    //already at stop point
+        return;
+
+    bool thsDir  = false;
+    long goToPos = m_homePos - m_stopPos;  //detemine how many steps needed
+
+	// negative value means move in
+	// positive direction
+     if( goToPos < 0 ) {
+        goToPos *= -1;
+        thsDir = true;
+     }
+
+
+    if (mtpc == 1){
+        if( mtpc == false){
+            plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel)
+            mtpc_start = true;
+        }
+        planRun();
+    } else {
+        if( mtpc_start == false ) {
+           // a planned continuous move has not been started...
+           mtpc_start = true;
+           move(thsDir, goToPos, mtpc_arrive, mtpc_accel, mtpc_decel);
+       }
+    }
 
 }
 
@@ -1635,9 +1951,6 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
   else {
     curSpd = thisSpline->topSpeed * (1.0 - ((p_tmPos - thisSpline->acTm - thisSpline->crTm)/ thisSpline->dcTm));
   }
-
-  //USBSerial.print("curSpd: ");
- // USBSerial.println(curSpd);
 
 
   if( ! p_Plan ) {
@@ -1985,7 +2298,7 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
             // if we hit the step count requested for this move,
             // or if we have hit the maximum stepping point,
             // stop now - don't overshoot
-          if( (m_totalSteps > 0 && m_stepsMoved >= m_totalSteps) || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
+          if( (m_totalSteps < 0 && m_homePos <= m_totalSteps) || (m_totalSteps > 0 && m_homePos >= m_totalSteps) || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
               m_cycleErrAccumulated = 0.0;
