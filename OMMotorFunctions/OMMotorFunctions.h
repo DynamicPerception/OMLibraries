@@ -455,7 +455,6 @@ public:
 	void planRun(); //used move
     void planReverse(); //used move
 
-	void home();
 	void homeSet();
 	void endPosSet();
 	long endPos();
@@ -463,16 +462,18 @@ public:
 	long startPos();
 	void stopPos(long);
 	long stopPos();
+	long currentPos();
 
 	void moveTo(long);
 	void moveToStart();
 	void moveToStop();
 	void moveToEnd();
+	void home();
 
 	void planType(uint8_t);
 	uint8_t planType();
-	void planIntervalLength(unsigned long);
-	unsigned long planIntervalLength();
+	void planTravelLength(unsigned long);
+	unsigned long planTravelLength();
 	void planAccelLength(unsigned long);
 	unsigned long planAccelLength();
 	void planDecelLength(unsigned long);
@@ -482,12 +483,13 @@ public:
 	void easing(uint8_t);
 	uint8_t easing();
 
-	long homeDistance();
+
 
     void checkRefresh();
     bool checkStep();
 
-    unsigned long motorDelay;
+    void planLeadIn(unsigned int);
+    unsigned int planLeadIn();
 
     int stpreg;
     int stpflg;
@@ -605,6 +607,8 @@ private:
 	long m_endPos;
 	long m_startPos;
 	long m_stopPos;
+
+	unsigned int m_planLeadIn;
 
 	uint8_t m_curMs;
 	uint8_t m_backAdj;

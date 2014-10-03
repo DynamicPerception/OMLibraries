@@ -162,8 +162,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 	mtpc_decel        = 0;
 	mtpc		  = false;
 	mtpc_start	  = false;
-	mt_plan		  = false;
-	motorDelay        = 0;
+	m_planLeadIn      = 0;
 	autoPause     = false;
 
 
@@ -1636,7 +1635,7 @@ long OMMotorFunctions::stopPos() {
 	return(m_stopPos);
 }
 
-/** Distance from Home
+/** Current Position
 
  Returns the number of steps and direction back to the home position.
 
@@ -1646,7 +1645,7 @@ long OMMotorFunctions::stopPos() {
  whereas positive represents that many steps in the true ddirection from home.
 */
 
-long OMMotorFunctions::homeDistance() {
+long OMMotorFunctions::currentPos() {
 	return(m_homePos);
 }
 
@@ -1674,7 +1673,7 @@ void OMMotorFunctions::home() {
  Send motor to start position immediately.
 
  This method will not stop any ongoing move, but it will immediately send
- the motor back to its home position, and will result in an aborted move.
+ the motor back to its start position, and will result in an aborted move.
 
  Like other moves, this move is non-blocking and will trigger the callback
  to be executed with the OM_MOT_DONE argument when the send to home move
@@ -1695,7 +1694,7 @@ void OMMotorFunctions::moveToStart() {
  Send motor to stop position immediately.
 
  This method will not stop any ongoing move, but it will immediately send
- the motor back to its home position, and will result in an aborted move.
+ the motor back to its stop position, and will result in an aborted move.
 
  Like other moves, this move is non-blocking and will trigger the callback
  to be executed with the OM_MOT_DONE argument when the send to home move
@@ -1711,12 +1710,12 @@ void OMMotorFunctions::moveToStop() {
 
 }
 
-/** Send Motor to Stop Pos
+/** Send Motor to End Pos
 
- Send motor to stop position immediately.
+ Send motor to end position immediately.
 
  This method will not stop any ongoing move, but it will immediately send
- the motor back to its home position, and will result in an aborted move.
+ the motor back to its end position, and will result in an aborted move.
 
  Like other moves, this move is non-blocking and will trigger the callback
  to be executed with the OM_MOT_DONE argument when the send to home move
@@ -1746,13 +1745,13 @@ void OMMotorFunctions::moveToEnd() {
 
 void OMMotorFunctions::moveTo(long p_pos) {
 
- if( homeDistance() == p_pos )
+ if( currentPos() == p_pos )
      return;
 
  m_refresh = true;
 
  bool thsDir  = false;
- long goToPos = m_homePos - p_pos;  //detemine how many steps needed
+ long goToPos = currentPos() - p_pos;  //detemine how many steps needed
 
 	// negative value means move in
 	// positive direction
@@ -1794,7 +1793,7 @@ uint8_t OMMotorFunctions::planType(){
     return(mtpc);
 }
 
-/** Set Plan Interval Lenth (either shots or time depending)
+/** Set Plan Travel Lenth (either shots or time depending)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
 to determine if it's the number of shots or time. If mtpc == 1 then shots, if
@@ -1802,24 +1801,24 @@ mtpc == 2 then time.
 
 */
 
-void OMMotorFunctions::planIntervalLength(unsigned long p_length){
+void OMMotorFunctions::planTravelLength(unsigned long p_length){
 
     mtpc_arrive = p_length;
 }
 
-/** Get Plan Interval Lenth (either shots or time depending)
+/** Get Plan Travel Lenth (either shots or time depending)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
 to determine if it's the number of shots or time. If mtpc == 1 then shots, if
 mtpc == 2 then time.
 
  @return
- An unsigned long, representing the plan interval length in time (ms) or shots. If mtpc = 1
+ An unsigned long, representing the plan travel length in time (ms) or shots. If mtpc = 1
  then it's shots, if mtpc = 2 then it's time (ms).
 
 */
 
-unsigned long OMMotorFunctions::planIntervalLength(){
+unsigned long OMMotorFunctions::planTravelLength(){
 
     return(mtpc_arrive);
 }
@@ -1884,6 +1883,33 @@ unsigned long OMMotorFunctions::planDecelLength(){
     return(mtpc_decel);
 }
 
+/** Set Shots Lead In
+
+Sets the planned number of shots for lead in. This is the number of shots taken before the motor
+begins its move.
+
+*/
+
+void OMMotorFunctions::planLeadIn(unsigned int p_shots){
+
+    m_planLeadIn = p_shots;
+}
+
+/** Get Shots Lead In
+
+Gets the planned number of shots for lead in. This is the number of shots taken before the motor
+begins its move.
+
+ @return
+ An unsigned int, representing the plan interval deceleration in time (ms) or shots. If mtpc = 1
+ then it's shots, if mtpc = 2 then it's time (ms).
+
+*/
+
+unsigned int OMMotorFunctions::planLeadIn(){
+
+    return(m_planLeadIn);
+}
 
 /** Do a program move
 
@@ -1912,7 +1938,7 @@ void OMMotorFunctions::programMove(){
 
     if (mtpc == 1){
         if( mtpc == false){
-            plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel)
+            plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel);
             mtpc_start = true;
         }
         planRun();
