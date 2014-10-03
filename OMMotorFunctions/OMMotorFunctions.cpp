@@ -100,6 +100,9 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_curOffCycles = 0;
     m_curCycleErr = 0.0;
     m_homePos = 0;
+    m_endPos = 0;
+    m_startPos = 0;
+    m_stopPos = 0;
     m_contAccelRate = 20.0;
 
     //variables for the next spline
@@ -1558,18 +1561,17 @@ void OMMotorFunctions::homeSet() {
 	m_homePos = 0;
 }
 
-/** Set Limit Position
+/** Set End Position
 
- Sets the current position of the motor as its limit. The motor cannnot move past m_limitPos
- away from the m_homePos.
+ Sets the motor's end position.
 
  */
 
-void OMMotorFunctions::endPosSet() {
-	m_endPos = m_homePos;
+void OMMotorFunctions::endPos(long p_steps) {
+	m_endPos = p_steps;
 }
 
-/** Get Limit Position
+/** Get End Position
 
  Gets the limit position. The motor cannnot move past m_limitPos steps
  away from the m_homePos.
@@ -1633,6 +1635,16 @@ void OMMotorFunctions::stopPos(long p_steps) {
 
 long OMMotorFunctions::stopPos() {
 	return(m_stopPos);
+}
+
+/** Set Current Position
+
+ Sets the current position in steps away from home.
+
+*/
+
+void OMMotorFunctions::currentPos(long p_steps) {
+	m_homePos = p_steps;
 }
 
 /** Current Position

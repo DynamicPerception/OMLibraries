@@ -456,12 +456,13 @@ public:
     void planReverse(); //used move
 
 	void homeSet();
-	void endPosSet();
+	void endPos(long);
 	long endPos();
 	void startPos(long);
 	long startPos();
 	void stopPos(long);
 	long stopPos();
+	void currentPos(long);
 	long currentPos();
 
 	void moveTo(long);
