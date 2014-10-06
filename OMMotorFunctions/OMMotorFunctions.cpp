@@ -1124,14 +1124,13 @@ void OMMotorFunctions::planRun() {
 		return;
 	}
 
-
 	m_curPlanSpline++;
 
 		// get steps to move for next movement
 	float tmPos = (float) m_curPlanSpline / (float) m_curPlanSplines;
 
 	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
-	move(m_planDir, m_curPlanSpd);
+	move(m_planDir, m_nextPlanSpd);//m_curPlanSpd);
 
 }
 
@@ -1780,8 +1779,8 @@ void OMMotorFunctions::moveTo(long p_pos) {
 
 /** Set Plan Type
 
-Variable to identify if a plan move is set and what type it is. mtpc = 0 (no plan),
-mtpc = 1 (SMS), mtpc = 2 (continuous).
+Variable to identify if a plan move is set and what type it is.
+mtpc = 0 (SMS), mtpc = 1 (continuous).
 
 */
 
@@ -1792,12 +1791,11 @@ void OMMotorFunctions::planType(uint8_t p_type){
 
 /** Get Plan Type
 
-Variable to identify if a plan move is set and what type it is. mtpc = 0 (no plan),
-mtpc = 1 (SMS), mtpc = 2 (continuous).
+Variable to identify if a plan move is set and what type it is.
+mtpc = 0 (SMS), mtpc = 1 (continuous).
 
  @return
- A byte, representing the plan move type. mtpc = 0 (no plan),
- mtpc = 1 (SMS), mtpc = 2 (continuous).
+ A byte, representing the plan move type. mtpc = 0 (SMS), mtpc = 1 (continuous).
 
 */
 
@@ -1809,8 +1807,7 @@ uint8_t OMMotorFunctions::planType(){
 /** Set Plan Travel Lenth (either shots or time depending)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1822,12 +1819,11 @@ void OMMotorFunctions::planTravelLength(unsigned long p_length){
 /** Get Plan Travel Lenth (either shots or time depending)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
  @return
- An unsigned long, representing the plan travel length in time (ms) or shots. If mtpc = 1
- then it's shots, if mtpc = 2 then it's time (ms).
+ An unsigned long, representing the plan travel length in time (ms) or shots. If mtpc = 0
+ then it's shots, if mtpc = 1 then it's time (ms).
 
 */
 
@@ -1839,8 +1835,7 @@ unsigned long OMMotorFunctions::planTravelLength(){
 /** Set Plan Acceleration Length (either shots or time depending)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1852,12 +1847,11 @@ void OMMotorFunctions::planAccelLength(unsigned long p_accel){
 /** Get Plan Acceleration Length (either shots or time depending)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
  @return
- An unsigned long, representing the plan interval acceleration in time (ms) or shots. If mtpc = 1
- then it's shots, if mtpc = 2 then it's time (ms).
+ An unsigned long, representing the plan interval acceleration in time (ms) or shots.
+ If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1869,8 +1863,7 @@ unsigned long OMMotorFunctions::planAccelLength(){
 /** Set Plan Deceleration Length (either shots or time depending)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1882,12 +1875,11 @@ void OMMotorFunctions::planDecelLength(unsigned long p_decel){
 /** Get Plan Deceleration Length (either shots or time depending)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc == 1 then shots, if
-mtpc == 2 then time.
+to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
 
  @return
- An unsigned long, representing the plan interval deceleration in time (ms) or shots. If mtpc = 1
- then it's shots, if mtpc = 2 then it's time (ms).
+ An unsigned long, representing the plan interval deceleration in time (ms) or shots.
+ If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1914,8 +1906,8 @@ Gets the planned number of shots for lead in. This is the number of shots taken 
 begins its move.
 
  @return
- An unsigned int, representing the plan interval deceleration in time (ms) or shots. If mtpc = 1
- then it's shots, if mtpc = 2 then it's time (ms).
+ An unsigned int, representing the plan interval deceleration in time (ms) or shots.
+ If mtpc = 0 then shots, mtpc = 1 then time.
 
 */
 
@@ -1932,8 +1924,6 @@ Move from the current position to stopPos using the planned moved parameters.
 
 void OMMotorFunctions::programMove(){
 
-    if (mtpc == 0)  //no planned move set
-        return;
 
     if( m_homePos == m_stopPos )    //already at stop point
         return;
@@ -1949,8 +1939,8 @@ void OMMotorFunctions::programMove(){
      }
 
 
-    if (mtpc == 1){
-        if( mtpc == false){
+    if (mtpc == 0){
+        if( mtpc_start == false){
             plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel);
             mtpc_start = true;
         }
@@ -2339,8 +2329,8 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
             // stop now - don't overshoot
           int temp = (m_curDir == 1 ? 1: -1);
 
-          if( (m_endPos < 0 && ((m_homePos + temp) <= m_endPos || (m_homePos + temp) >= 0))
-             || (m_endPos > 0 && ((m_homePos + temp) >= m_endPos || (m_homePos + temp) <= 0))
+          if( (m_endPos < 0 && ((m_homePos + temp) < m_endPos || (m_homePos + temp) > 0))
+             || (m_endPos > 0 && ((m_homePos + temp) > m_endPos || (m_homePos + temp) < 0))
              || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
