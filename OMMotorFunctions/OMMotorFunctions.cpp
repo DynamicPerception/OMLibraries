@@ -1276,6 +1276,7 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 		// if motor is disabled, do nothing
    if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
 		_fireCallback(OM_MOT_DONE);
+		USBSerial.println("NOT ENABLE!");
 		return;
    }
 
@@ -2336,11 +2337,19 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
             // if we hit the step count requested for this move,
             // or if we have hit the maximum stepping point,
             // stop now - don't overshoot
-          if( (m_totalSteps < 0 && m_homePos <= m_totalSteps) || (m_totalSteps > 0 && m_homePos >= m_totalSteps) || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
+          int temp = (m_curDir == 1 ? 1: -1);
+
+          if( (m_endPos < 0 && ((m_homePos + temp) <= m_endPos || (m_homePos + temp) >= 0))
+             || (m_endPos > 0 && ((m_homePos + temp) >= m_endPos || (m_homePos + temp) <= 0))
+             || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
               m_cycleErrAccumulated = 0.0;
               m_cyclesLow = 0;
+              USBSerial.print("End Pos: ");
+              USBSerial.print(endPos());
+              USBSerial.print(" Current Pos: ");
+              USBSerial.print(currentPos());
               stop();
           } else {
 
