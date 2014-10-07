@@ -260,10 +260,17 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
         // adjust marker for home!
 
     if( wasMs != m_curMs ) {
-        if( wasMs > m_curMs )
+        if( wasMs > m_curMs ){
             m_homePos /= (wasMs / m_curMs);
-        else
+            m_startPos /= (wasMs / m_curMs);
+            m_stopPos /= (wasMs / m_curMs);
+            m_endPos /= (wasMs / m_curMs);
+        } else {
             m_homePos *= (m_curMs / wasMs);
+            m_startPos *= (m_curMs / wasMs);
+            m_stopPos *= (m_curMs / wasMs);
+            m_endPos *= (m_curMs / wasMs);
+        }
     }
 
 }
@@ -2264,7 +2271,7 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
 
               m_totalCyclesTaken--; //??????? why
               m_stepsTaken++;
-              _updateMotorHome( (uint8_t) 1);
+              _updateMotorHome(1);
                 // bring step pin low - this allows us to
                 // hit one step per ISR run rate. (Timing is important
                 // we hit minimum high pulse time in the instructions above
