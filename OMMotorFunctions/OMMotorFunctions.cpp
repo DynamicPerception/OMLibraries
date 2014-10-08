@@ -1137,7 +1137,10 @@ void OMMotorFunctions::planRun() {
 	float tmPos = (float) m_curPlanSpline / (float) m_curPlanSplines;
 
 	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
-	move(m_planDir, m_nextPlanSpd);//m_curPlanSpd);
+	unsigned long i = m_curPlanSpd;
+	//USBSerial.print("Current steps being run: ");
+	//USBSerial.println(i);
+	move(m_planDir, m_curPlanSpd);
 
 }
 
@@ -1223,9 +1226,6 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Dist, unsigned long p_Ti
 		return;
 	}
 
-    USBSerial.print("Time is: ");
-    USBSerial.println(p_Time);
-
 	m_totalSplines = p_Time / MS_PER_SPLINE;
 
 		// prep spline variables
@@ -1282,7 +1282,6 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 		// if motor is disabled, do nothing
    if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
 		_fireCallback(OM_MOT_DONE);
-		USBSerial.println("NOT ENABLE!");
 		return;
    }
 
@@ -1342,27 +1341,19 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = ( maxStepRate() > maxSpeed() ) ? maxSpeed() : maxStepRate();
 
-        //USBSerial.print("mSPeed: ");
-        //USBSerial.print(mSpeed);
 
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
 
         rampSteps *= 2.0;
-        //USBSerial.print(" rampSteps: ");
-        //USBSerial.print(rampSteps);
+
         //calculated cruise time
         float crTm = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
-        //USBSerial.print(" cruise time: ");
-        //USBSerial.print(crTm);
+
         //calculate acceleration and deceleration time
         float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
-        //USBSerial.print(" adTm: ");
-       // USBSerial.print(adTm);
+
 
         float mvMS = (crTm + adTm);// + 1.0;
-
-        //USBSerial.print(" mvMs: ");
-        //USBSerial.println(mvMS);
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -2006,31 +1997,19 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
       if( theFunctions->m_nextCycleErr > 1.0 ) {
           theFunctions->m_nextCycleErr = 0.0;
       }
-/*
-      float i = theFunctions->m_nextOffCycles;
-      USBSerial.print(" next off Cycles: ");
-      USBSerial.print(i);
-      USBSerial.print(" cycles per spline: ");
-      i = theFunctions->m_cyclesPerSpline;
-      USBSerial.print(i);
-      USBSerial.print(" error per spline: ");
-      i = theFunctions->m_nextCycleErr;
-      USBSerial.println(i);
-*/
-
 
   }
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
   	  	// steps per shot
-  	theFunctions->m_nextPlanSpd = (unsigned long) curSpd;
+  	theFunctions->m_curPlanSpd = (unsigned long) curSpd;
   		// of course, this tends to leave some fractional steps on the floor
-  	theFunctions->m_nextPlanErr += curSpd - (unsigned long) curSpd;
+  	theFunctions->m_curPlanErr += curSpd - (unsigned long) curSpd;
 
   		// .. so we compensate for the error to catch up...
-  	if( theFunctions->m_nextPlanErr >= 1.0 ) {
-  		theFunctions->m_nextPlanErr -= 1.0;
-  		theFunctions->m_nextPlanSpd++;
+  	if( theFunctions->m_curPlanErr >= 1.0 ) {
+  		theFunctions->m_curPlanErr -= 1.0;
+  		theFunctions->m_curPlanSpd++;
   	}
 
   	// TODO: correct for one step left behind in some planned calculations
@@ -2071,14 +2050,14 @@ void OMMotorFunctions::_quadEasing(bool p_Plan, float p_tmPos, OMMotorFunctions*
   else {
   	  	// for planned shoot-move-shoot calculations, we need whole
   	  	// steps per shot
-  	theFunctions->m_nextPlanSpd = (unsigned long) curSpd;
+  	theFunctions->m_curPlanSpd = (unsigned long) curSpd;
   		// of course, this tends to leave some fractional steps on the floor
-  	theFunctions->m_nextPlanErr += curSpd - (unsigned long) curSpd;
+  	theFunctions->m_curPlanErr += curSpd - (unsigned long) curSpd;
 
   		// .. so we compensate for the error to catch up...
-  	if( theFunctions->m_nextPlanErr >= 1.0 ) {
-  		theFunctions->m_nextPlanErr -= 1.0;
-  		theFunctions->m_nextPlanSpd++;
+  	if( theFunctions->m_curPlanErr >= 1.0 ) {
+  		theFunctions->m_curPlanErr -= 1.0;
+  		theFunctions->m_curPlanSpd++;
   	}
 
   	// TODO: correct for one step left behind in some planned calculations
@@ -2343,10 +2322,10 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
               m_stepsTaken = 0;
               m_cycleErrAccumulated = 0.0;
               m_cyclesLow = 0;
-              USBSerial.print("End Pos: ");
-              USBSerial.print(endPos());
-              USBSerial.print(" Current Pos: ");
-              USBSerial.print(currentPos());
+              //USBSerial.print("End Pos: ");
+              //USBSerial.print(endPos());
+              //USBSerial.print(" Current Pos: ");
+              //USBSerial.print(currentPos());
               stop();
           } else {
 
