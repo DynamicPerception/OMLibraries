@@ -557,7 +557,6 @@ private:
 
 	bool m_backCheck;
 	bool m_motEn;
-	bool m_motCont;
 	bool m_motSleep;
 	bool m_isRun;
 	bool m_asyncWasdir;

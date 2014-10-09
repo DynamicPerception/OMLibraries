@@ -29,51 +29,6 @@ See www.openmoco.org for more information
 
 #include "OMMotorFunctions.h"
 
-// initialize static members
-
-
-/*
-void(*OMMotorFunctions::f_motSignal)(uint8_t) = 0;
-void(*OMMotorFunctions::f_easeFunc)(bool, float) = 0;
-float(*OMMotorFunctions::f_easeCal)(OMMotorFunctions::s_splineCal*, float) = 0;
-
-unsigned long OMMotorFunctions::m_asyncSteps = 0;
-float OMMotorFunctions::m_contSpd = 100.0;
-volatile unsigned long OMMotorFunctions::m_stepsMoved = 0;
-unsigned long OMMotorFunctions::m_Steps = 0;
-unsigned long OMMotorFunctions::m_totalSteps = 0;
-volatile unsigned long OMMotorFunctions::m_curSpline = 0;
-unsigned long OMMotorFunctions::m_totalSplines = 0;
-volatile unsigned long OMMotorFunctions::m_curOffCycles = 0;
-unsigned int OMMotorFunctions::m_curSampleRate = 200;
-unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
-float OMMotorFunctions::m_curCycleErr = 0.0;
-volatile long OMMotorFunctions::m_homePos = 0;
-
-unsigned long OMMotorFunctions::m_curPlanSpd = 0;
-float OMMotorFunctions::m_curPlanErr = 0.0;
-unsigned long OMMotorFunctions::m_curPlanSplines = 0;
-unsigned long OMMotorFunctions::m_curPlanSpline = 0;
-bool OMMotorFunctions::m_planDir = false;
-
-bool OMMotorFunctions::m_asyncWasdir = false;
-bool OMMotorFunctions::m_curDir = false;
-bool OMMotorFunctions::m_backCheck = false;
-bool OMMotorFunctions::m_motEn = true;
-bool OMMotorFunctions::m_motCont = false;
-bool OMMotorFunctions::m_motSleep = false;
-bool OMMotorFunctions::m_isRun = false;
-bool OMMotorFunctions::m_refresh = false;
-
-uint8_t OMMotorFunctions::m_curMs = 1;
-uint8_t OMMotorFunctions::m_backAdj = 0;
-uint8_t OMMotorFunctions::m_easeType = OM_MOT_LINEAR;
-
-
-OMMotorFunctions::s_splineCal OMMotorFunctions::m_splineOne = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-OMMotorFunctions::s_splineCal OMMotorFunctions::m_splinePlanned = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-*/
 
 unsigned int OMMotorFunctions::m_curSampleRate = 200;
 unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
@@ -123,7 +78,6 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_switchDir = false;
     m_backCheck = false;
     m_motEn = false;
-    m_motCont = false;
     m_motSleep = false;
     m_isRun = false;
 
@@ -505,110 +459,6 @@ void OMMotorFunctions::sleep(bool p_En) {
 
 bool OMMotorFunctions::sleep() {
 	return(m_motSleep);
-}
-
-/** Set Continuous Motion Mode
-
-  Enables or disables continuous motion mode.
-
-  In continuous motion mode, the motor will run continuously at the specified
-  speed until either a stop() request is received, or maxSteps() are
-  reached.  When continuous mode is disabled, the motor only moves the distance
-  specified by steps() or passed via the two-argument form of move().
-
-  Note: you may adjust the currently moving speed at any time, using contSpeed().
-
-  Of additional note: when in continous mode, the callback will be executed
-  immediately and passed the OM_MOT_DONE value when calling move(),
-  indicating that you are free to do other activities while the motor is moving.
-
-  Below is an example of performing a continuous motion move, with a maxSteps()
-  value set.  The motor will move at a speed of 1,000 steps/second, and will
-  automatically stop its self after 5,000 steps have been taken.  Once the motor
-  is stopped, the steps moved value is cleared out, and we're ready to move again.
-
-  @code
-#include "TimerOne.h"
-#include "OMMotorFunctions.h"
-
-OMMotorFunctions Motor = OMMotorFunctions();
-
-unsigned int max_steps = 5000;
-
-void setup() {
-
-  Motor.enable(true);
-  Motor.sleep(true);
-
-  Motor.continuous(true);
-  Motor.contSpeed(1000);
-  Motor.maxSteps(5000);
-
-  Motor.setHandler(motorCallback);
-
-  Serial.begin(19200);
-
-}
-
-void loop() {
-
- if( ! Motor.running() ) {
-
-  delay(1000);
-  Serial.println("Clearing Motor");
-  Motor.clear();
-  Serial.println("Starting Continuous Motion!");
-  Motor.move();
-
- }
-  else {
-
-    Serial.print("Moved: ");
-    unsigned long smoved = Motor.stepsMoved();
-    Serial.println(smoved, DEC);
-
-    delay(1000);
-
-  }
-
-}
-
-void motorCallback( byte code ) {
-
-  if( code == OM_MOT_DONE ) {
-    Serial.println("Got Done!");
-    Serial.print("Moved: ");
-    unsigned long smoved = Motor.stepsMoved();
-    Serial.println(smoved, DEC);
-  }
-  else {
-    Serial.println("Got Begin!");
-  }
-}
-
-@endcode
-
-  @param p_En
-  Enable (true) or Disable (false() continuous motion
-
-  */
-
-void OMMotorFunctions::continuous(bool p_En) {
-	m_motCont = p_En;
-	_updateContSpeed();
-}
-
-/** Get Continuous Motion Value
-
-  Returns the current continuous motion value.
-
-  @return
-  Enabled (true), or Disabled (false)
-  */
-
-
-bool OMMotorFunctions::continuous() {
-	return(m_motCont);
 }
 
 /** Set Continuous Motion Speed
@@ -1026,7 +876,16 @@ void OMMotorFunctions::plan(unsigned long p_Shots, bool p_Dir, unsigned long p_D
 	m_curPlanSplines = p_Shots;
 	m_curPlanSpline = 0;
 	m_planDir = p_Dir;
-
+/*
+    USBSerial.print("Shots: ");
+    USBSerial.print(p_Shots);
+    USBSerial.print(" Dist: ");
+    USBSerial.print(p_Dist);
+    USBSerial.print(" Accel: ");
+    USBSerial.print(p_Accel);
+    USBSerial.print(" Decel: ");
+    USBSerial.println(p_Decel);
+    */
 			// prep spline variables (using planned mode)
 	_initSpline(true, p_Dist, p_Shots, p_Accel, p_Decel);
 
@@ -1289,7 +1148,9 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 	// to allow manual moves that are not continuous
 	// when motor is set in continuous mode
 
-   if( p_Steps == 0 && continuous() ) {
+   if( p_Steps == 0 ) {
+
+        _updateContSpeed();
        // continuous motion mode
 
        if( ! running() ) {
@@ -1692,9 +1553,6 @@ void OMMotorFunctions::home() {
 
 void OMMotorFunctions::moveToStart() {
 
-    if (m_startPos == 0)
-        return;
-
     moveTo(m_startPos);
 
 }
@@ -1713,8 +1571,6 @@ void OMMotorFunctions::moveToStart() {
 
 void OMMotorFunctions::moveToStop() {
 
-    if (m_stopPos == 0)
-        return;
 
     moveTo(m_stopPos );
 
@@ -2004,7 +1860,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
   	  	// steps per shot
   	theFunctions->m_curPlanSpd = (unsigned long) curSpd;
   		// of course, this tends to leave some fractional steps on the floor
-  	theFunctions->m_curPlanErr += curSpd - (unsigned long) curSpd;
+  	theFunctions->m_curPlanErr += (curSpd - (unsigned long) curSpd);
 
   		// .. so we compensate for the error to catch up...
   	if( theFunctions->m_curPlanErr >= 1.0 ) {
@@ -2171,7 +2027,7 @@ void OMMotorFunctions::updateSpline(){
     if (splineReady == false){
 
         //If it's in continuous mode accel/decel until desired spd
-        if (continuous()){
+        if (m_asyncSteps == 0){
 
             _updateContSpeed();
 
@@ -2221,8 +2077,6 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
     if (m_curOffCycles == 0){
         m_curOffCycles = m_nextOffCycles;
         m_curCycleErr = m_nextCycleErr;
-        m_curPlanErr = m_nextPlanErr;
-        m_curPlanSpd = m_nextPlanSpd;
         m_curSpline++;
         m_totalCyclesTaken = 0;
         splineReady = false;
@@ -2277,8 +2131,6 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
         //update spline data
         m_curOffCycles = m_nextOffCycles;
         m_curCycleErr = m_nextCycleErr;
-        m_curPlanErr = m_nextPlanErr;
-        m_curPlanSpd = m_nextPlanSpd;
         m_curSpline++;
         m_totalCyclesTaken = 0;
         splineReady = false;
