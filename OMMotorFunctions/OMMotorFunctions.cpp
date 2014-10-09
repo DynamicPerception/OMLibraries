@@ -187,25 +187,26 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
   uint8_t wasMs = m_curMs;
   m_curMs       = p_Div;
 
-  switch( p_Div ) {
-    case 2:
-      s1 = true;
-      break;
-    case 4:
-      s2 = true;
-      break;
-    case 8:
-      s1 = true;
-      s2 = true;
-      break;
-    case 16:
-      s1 = true;
-      s2 = true;
-      s3 = true;
-      break;
-    default:
-      break;
-  }
+    switch( p_Div ) {
+        case 2:
+            s1 = true;
+            break;
+        case 4:
+            s2 = true;
+            break;
+        case 8:
+            s1 = true;
+            s2 = true;
+            break;
+        case 16:
+            s1 = true;
+            s2 = true;
+            s3 = true;
+            break;
+        default:
+            return;
+            break;
+    }
 
   digitalWrite(m_ms1, s1);
   digitalWrite(m_ms2, s2);
@@ -219,11 +220,13 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
             m_startPos /= (wasMs / m_curMs);
             m_stopPos /= (wasMs / m_curMs);
             m_endPos /= (wasMs / m_curMs);
+            m_backAdj /= (wasMs / m_curMs);
         } else {
             m_homePos *= (m_curMs / wasMs);
             m_startPos *= (m_curMs / wasMs);
             m_stopPos *= (m_curMs / wasMs);
             m_endPos *= (m_curMs / wasMs);
+            m_backAdj *= (m_curMs / wasMs);
         }
     }
 
@@ -370,7 +373,7 @@ void OMMotorFunctions::_fireCallback(uint8_t p_Param) {
  Backlash compensation amount
  */
 
-uint8_t OMMotorFunctions::backlash() {
+unsigned int OMMotorFunctions::backlash() {
 	return(m_backAdj);
 }
 
@@ -388,7 +391,7 @@ uint8_t OMMotorFunctions::backlash() {
 
   */
 
-void OMMotorFunctions::backlash(uint8_t p_Back) {
+void OMMotorFunctions::backlash(unsigned int p_Back) {
 	m_backAdj = p_Back;
 }
 
@@ -1174,18 +1177,6 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
     if( maxStepRate() > 5000 )
    	   maxStepRate(5000);
 
-	// check for backlash compensation
-    if( m_backCheck == true ) {
-   	   p_Steps += backlash();
-   	   m_backCheck = false;
-    }
-
-    // not in continuous motion mode
-   // nothing to do
-   if( p_Steps == 0 ) {
-   	   _fireCallback(OM_MOT_DONE);
-   	   return;
-   }
 
    if( ! m_calcMove ) {
 
@@ -1263,8 +1254,6 @@ void OMMotorFunctions::stop() {
       if( sleep() )
         digitalWrite(m_slp, OM_MOT_SSTATE);
 
-        // re-set to original direction
-      dir( m_asyncWasdir );
 
       	// signal completion
       _fireCallback(OM_MOT_DONE);
@@ -1276,6 +1265,12 @@ void OMMotorFunctions::_stepsAsync( bool p_Dir, unsigned long p_Steps ) {
 
      m_asyncWasdir = dir();
      dir( p_Dir );
+
+	// check for backlash compensation
+    if( m_backCheck == true ) {
+   	   p_Steps += backlash();
+   	   m_backCheck = false;
+    }
 
 	 // is async control not already running?
 	 if( ! running() ) {

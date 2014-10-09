@@ -406,8 +406,8 @@ public:
 	void dir(bool);
 	bool dir();
 
-	void backlash(uint8_t);
-	uint8_t backlash();
+	void backlash(unsigned int);
+	unsigned int backlash();
 
 	void setHandler(void(*)(uint8_t));
 
@@ -611,7 +611,7 @@ private:
 	unsigned int m_planLeadIn;
 
 	uint8_t m_curMs;
-	uint8_t m_backAdj;
+	unsigned int m_backAdj;
 	uint8_t m_easeType;
 
 	void(*f_motSignal)(uint8_t);
