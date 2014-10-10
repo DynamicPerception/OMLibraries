@@ -511,20 +511,27 @@ public:
     volatile bool splineReady;
     bool endOfMove;
 
-
-
-private:
-		// variables for pre-calculated
-		// spline formula values
-
-	struct s_splineCal {
+    	struct s_splineCal {
 		float acTm;
 		float dcTm;
 		float crTm;
 		float topSpeed;
 		float dcStart;
 		float travel;
+		float acStep;
+		float dcStep;
+		unsigned long acTravel;
+		unsigned long dcTravel;
+		unsigned long crTravel;
 	};
+
+
+
+
+private:
+		// variables for pre-calculated
+		// spline formula values
+
 
 	int m_stp;
 	int m_slp;

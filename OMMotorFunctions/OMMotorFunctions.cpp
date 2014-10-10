@@ -92,6 +92,9 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_splineOne.topSpeed = 0.0;
     m_splineOne.dcStart = 0.0;
     m_splineOne.travel = 0.0;
+    m_splineOne.acTravel = 0;
+    m_splineOne.dcTravel = 0;
+    m_splineOne.crTravel = 0;
 
     m_splinePlanned.acTm = 0.0;
     m_splinePlanned.dcTm = 0.0;
@@ -99,6 +102,9 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_splinePlanned.topSpeed = 0.0;
     m_splinePlanned.dcStart = 0.0;
     m_splinePlanned.travel = 0.0;
+    m_splinePlanned.acTravel = 0;
+    m_splinePlanned.dcTravel = 0;
+    m_splinePlanned.crTravel = 0;
 
     m_refresh = true;
 
@@ -184,10 +190,9 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
   bool s2 = false;
   bool s3 = false;
 
-  uint8_t wasMs = m_curMs;
-  m_curMs       = p_Div;
-
     switch( p_Div ) {
+        case 1:
+            break;
         case 2:
             s1 = true;
             break;
@@ -208,12 +213,16 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
             break;
     }
 
+  uint8_t wasMs = m_curMs;
+  m_curMs       = p_Div;
+
+
+
   digitalWrite(m_ms1, s1);
   digitalWrite(m_ms2, s2);
   digitalWrite(m_ms3, s3);
 
-        // adjust marker for home!
-
+    // adjust marker for home!
     if( wasMs != m_curMs ) {
         if( wasMs > m_curMs ){
             m_homePos /= (wasMs / m_curMs);
@@ -879,7 +888,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, bool p_Dir, unsigned long p_D
 	m_curPlanSplines = p_Shots;
 	m_curPlanSpline = 0;
 	m_planDir = p_Dir;
-/*
+
     USBSerial.print("Shots: ");
     USBSerial.print(p_Shots);
     USBSerial.print(" Dist: ");
@@ -888,7 +897,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, bool p_Dir, unsigned long p_D
     USBSerial.print(p_Accel);
     USBSerial.print(" Decel: ");
     USBSerial.println(p_Decel);
-    */
+
 			// prep spline variables (using planned mode)
 	_initSpline(true, p_Dist, p_Shots, p_Accel, p_Decel);
 
@@ -996,12 +1005,12 @@ void OMMotorFunctions::planRun() {
 	m_curPlanSpline++;
 
 		// get steps to move for next movement
-	float tmPos = (float) m_curPlanSpline / (float) m_curPlanSplines;
+	float tmPos = ((float) m_curPlanSpline) / (float) m_curPlanSplines;
 
 	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
 	unsigned long i = m_curPlanSpd;
-	//USBSerial.print("Current steps being run: ");
-	//USBSerial.println(i);
+	USBSerial.print("Current steps being run: ");
+	USBSerial.println(i);
 	move(m_planDir, m_curPlanSpd);
 
 }
@@ -1863,6 +1872,43 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
   		theFunctions->m_curPlanSpd++;
   	}
 
+    USBSerial.print("p_tmPos: ");
+    USBSerial.print(p_tmPos);
+    USBSerial.print(" acTm: ");
+    float i = thisSpline->acTm;
+    USBSerial.print(i);
+    USBSerial.print(" dcStart: ");
+    i = thisSpline->dcStart;
+    USBSerial.print(i);
+    unsigned long x = theFunctions->m_curPlanSpd;
+  	//make sure we don't overshoot the steps required for the move for each section
+  	if( p_tmPos <= thisSpline->acTm ){
+        USBSerial.print(" past dist: ");
+
+        USBSerial.print(x);
+
+        theFunctions->m_curPlanSpd = thisSpline->acStep * theFunctions->m_curPlanSpline;
+        if (theFunctions->m_curPlanSpd >= thisSpline->acTravel || p_tmPos == thisSpline->acTm )
+            theFunctions->m_curPlanSpd = thisSpline->acTravel;
+        thisSpline->acTravel -= theFunctions->m_curPlanSpd;
+        USBSerial.print(" acTravel: ");
+        USBSerial.print(thisSpline->acTravel);
+  	} else if (p_tmPos <= thisSpline->dcStart ) {
+        if (theFunctions->m_curPlanSpd > thisSpline->crTravel || p_tmPos == thisSpline->dcStart)
+            theFunctions->m_curPlanSpd = thisSpline->crTravel;
+        thisSpline->crTravel -= theFunctions->m_curPlanSpd;
+  	} else {
+  	    theFunctions->m_curPlanSpd = thisSpline->dcStep * theFunctions->m_curPlanSpline;
+        if (theFunctions->m_curPlanSpd > thisSpline->dcTravel || p_tmPos == 1.0)
+            theFunctions->m_curPlanSpd = thisSpline->dcTravel;
+        thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
+  	}
+
+    USBSerial.print(" curPlanSpd: ");
+    x = theFunctions->m_curPlanSpd;
+    USBSerial.println(x);
+
+
   	// TODO: correct for one step left behind in some planned calculations
   	// (ending one step short b/c not enough error accumulates)
   }
@@ -1963,13 +2009,17 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
    OMMotorFunctions::s_splineCal *thisSpline = &m_splineOne;
    unsigned long totSplines = m_totalSplines;
 
+
+
    if( p_Plan == true ) {
    	   	// work with plan parameters
    	   thisSpline = &m_splinePlanned;
    	   totSplines = m_curPlanSplines;
+
    }
 
    _setTravelConst(thisSpline);
+
 
 	// pre-calculate values for spline interpolation
    thisSpline->acTm = (float) p_Accel / (float) p_Time;
@@ -1977,8 +2027,27 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
 
+
+
+    thisSpline->acTravel = (unsigned long)(thisSpline->acTm/thisSpline->travel * (p_Steps));
+    thisSpline->dcTravel = (unsigned long)(thisSpline->dcTm/thisSpline->travel * (p_Steps));
+    thisSpline->crTravel = ((unsigned long)p_Steps - thisSpline->acTravel - thisSpline->dcTravel);
+
+    unsigned long acSteps = 0;
+    unsigned long dcSteps = 0;
+
+    for (int i = 0; i < p_Accel; i++){
+        acSteps+= i+1;
+    }
+     for (int i = 0; i < p_Decel; i++){
+        dcSteps+= i+1;
+    }
+
+    thisSpline->acStep = (float)thisSpline->acTravel  / ((float)acSteps);
+    thisSpline->dcStep = (float)thisSpline->dcTravel  / ((float)dcSteps);
+
    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
-   thisSpline->topSpeed = (velocity ) / ( totSplines );
+   thisSpline->topSpeed = (float)thisSpline->crTravel / (thisSpline->crTm * (float)p_Time);  //(velocity ) / ( totSplines );
 
 }
 
