@@ -1179,6 +1179,20 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
        return;
    }
 
+    //check to see if there's a direction change
+    m_asyncWasdir = dir();
+    dir( p_Dir );
+
+	// check for backlash compensation
+    if( m_backCheck == true ) {
+   	   p_Steps += backlash();
+   	   if (dir() == 0)
+            m_homePos +=backlash();
+       else
+            m_homePos -=backlash();
+   	   m_backCheck = false;
+    }
+
    	// continuous allows higher stepping rate
    	// so clamp back down if not doing a continuous
    	// move
@@ -1272,14 +1286,6 @@ void OMMotorFunctions::stop() {
  // execute an async move, when specifying a direction
 void OMMotorFunctions::_stepsAsync( bool p_Dir, unsigned long p_Steps ) {
 
-     m_asyncWasdir = dir();
-     dir( p_Dir );
-
-	// check for backlash compensation
-    if( m_backCheck == true ) {
-   	   p_Steps += backlash();
-   	   m_backCheck = false;
-    }
 
 	 // is async control not already running?
 	 if( ! running() ) {
@@ -1421,6 +1427,10 @@ void OMMotorFunctions::_updateMotorHome(int p_Steps) {
  */
 
 void OMMotorFunctions::homeSet() {
+    if (m_endPos != 0)
+        m_endPos -= m_homePos;
+    m_startPos -= m_homePos;
+    m_stopPos -= m_homePos;
 	m_homePos = 0;
 }
 
@@ -2047,7 +2057,7 @@ void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_T
     thisSpline->dcStep = (float)thisSpline->dcTravel  / ((float)dcSteps);
 
    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
-   thisSpline->topSpeed = (float)thisSpline->crTravel / (thisSpline->crTm * (float)p_Time);  //(velocity ) / ( totSplines );
+   thisSpline->topSpeed = (velocity ) / ( totSplines ); //(float)thisSpline->crTravel / (thisSpline->crTm * (float)p_Time);  //;
 
 }
 

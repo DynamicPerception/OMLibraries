@@ -511,7 +511,7 @@ public:
     volatile bool splineReady;
     bool endOfMove;
 
-    	struct s_splineCal {
+    struct s_splineCal {
 		float acTm;
 		float dcTm;
 		float crTm;
