@@ -36,15 +36,17 @@ See www.openmoco.org for more information
 #define OM_MOT_SSTATE	HIGH
 #define OM_MOT_SAFE	10
 
-#define OM_MOT_DONE 	1
-#define OM_MOT_MOVING 	2
-#define OM_MOT_BEGIN	3
+#define OM_MOT_DONE 	 1
+#define OM_MOT_MOVING 	 2
+#define OM_MOT_BEGIN	 3
 
-#define OM_MOT_LINEAR 	4
-#define OM_MOT_QUAD	    5
-#define OM_MOT_QUADINV	6
+#define OM_MOT_LINEAR 	 4
+#define OM_MOT_QUAD	     5
+#define OM_MOT_QUADINV	 6
 
-#define MS_PER_SPLINE   10
+#define OM_MOT_DONE_PLAN 7
+
+#define MS_PER_SPLINE    10
 
 
 /**
@@ -471,6 +473,9 @@ public:
 	void moveToEnd();
 	void home();
 
+	bool programDone();
+	void programDone(bool);
+
 	void planType(uint8_t);
 	uint8_t planType();
 	void planTravelLength(unsigned long);
@@ -540,6 +545,10 @@ private:
     int m_ms2;
     int m_ms3;
 
+    bool m_programDone;
+
+
+
 
     s_splineCal m_splineOne;
     s_splineCal m_splinePlanned;
@@ -555,8 +564,8 @@ private:
 
 	void _setTravelConst(OMMotorFunctions::s_splineCal*);
 
-	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float);
-	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float);
+	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
+	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
 
     void _updateContSpeed();
 
@@ -570,6 +579,7 @@ private:
 	bool m_curDir;
 	bool m_switchDir;
     bool m_refresh;
+    bool m_motCont;
 
 
 	//movement variables
@@ -623,7 +633,7 @@ private:
 
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(bool, float, OMMotorFunctions*);
-	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float);
+	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
 
 
 	bool m_calcMove;
