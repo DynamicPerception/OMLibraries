@@ -497,13 +497,27 @@ bool OMMotorFunctions::sleep() {
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
 
-	if( p_Speed > maxStepRate() )
+	if( p_Speed > maxStepRate() || p_Speed < 0.0 )
 		return;
-    if (p_Speed == 0.0){
-        stop();
-        return;
+
+    if(!running()){
+        m_contSpd = p_Speed;
+        m_desiredContSpd = p_Speed;
+    } else {
+        m_desiredContSpd = p_Speed;
     }
-    m_desiredContSpd = p_Speed;
+}
+
+/** Get Continuous Motion Speed
+
+  Returns the current continuous motion speed.
+
+  @return
+  Steps per second
+  */
+
+float OMMotorFunctions::contSpeed() {
+	return(m_contSpd);
 }
 
 
@@ -595,7 +609,7 @@ void motorCallback( byte code ) {
 
 void OMMotorFunctions::continuous(bool p_En) {
 	m_motCont = p_En;
-	_updateContSpeed();
+	//_updateContSpeed();
 }
 
 /** Get Continuous Motion Value
@@ -659,6 +673,8 @@ void OMMotorFunctions::_updateContSpeed(){
 
     if (m_switchDir){
 
+
+
         //decelerate until your within half of the m_contAccelRate step/sec of stop
         m_contSpd -= m_contAccelRate;
 
@@ -668,6 +684,7 @@ void OMMotorFunctions::_updateContSpeed(){
             m_switchDir = false;
             dir(!m_curDir);
         }
+
 
 
         //calculate the next spline's off cycles and off cycles error
@@ -683,6 +700,15 @@ void OMMotorFunctions::_updateContSpeed(){
 
     }
 
+    //compensate for any backlash
+    if( m_backCheck == true ) {
+   	   if (dir() == 0)
+            m_homePos +=backlash();
+       else
+            m_homePos -=backlash();
+   	   m_backCheck = false;
+    }
+
     //current speed is less than the desired speed
     if (m_contSpd <= (m_desiredContSpd - m_contAccelRate)){
 
@@ -696,6 +722,8 @@ void OMMotorFunctions::_updateContSpeed(){
     //we're within 25 steps/second of the desired speed, close enough to jump to desired
     } else {
         m_contSpd = m_desiredContSpd;
+        if (m_desiredContSpd == 0.0 || m_contSpd == 0.0)
+            stop();
     }
 
     //calculate the next spline's off cycles and off cycles error
@@ -706,18 +734,6 @@ void OMMotorFunctions::_updateContSpeed(){
 
     m_nextOffCycles = (unsigned long) off_time;
     m_nextCycleErr = off_time - (unsigned long) off_time;
-}
-
-/** Get Continuous Motion Speed
-
-  Returns the current continuous motion speed.
-
-  @return
-  Steps per second
-  */
-
-float OMMotorFunctions::contSpeed() {
-	return(m_contSpd);
 }
 
 /** Motor Running?
@@ -1258,15 +1274,15 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 		_fireCallback(OM_MOT_DONE);
 		return;
    }
+   if (contSpeed() == 0.0)
+        return;
  /*
    USBSerial.print("Dir: ");
    USBSerial.print(p_Dir);
    USBSerial.print(" p_steps: ");
    USBSerial.println(p_Steps);
 */
-   //check to see if there's a direction change
-    m_asyncWasdir = dir();
-    dir( p_Dir );
+
 
 	// note: the check on p_Steps is required
 	// to allow manual moves that are not continuous
@@ -1274,20 +1290,15 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
    if( p_Steps == 0 && continuous() ) {
 
-        if( m_backCheck == true ) {
-            if (dir() == 0)
-                m_homePos +=backlash();
-            else
-                m_homePos -=backlash();
-            m_backCheck = false;
-        }
 
         _updateContSpeed();
        // continuous motion mode
 
        if( ! running() ) {
-       	       m_asyncSteps = 0;
-       	       _stepsAsync(p_Dir, (unsigned long) 0);
+            m_asyncWasdir = dir();
+            dir( p_Dir );
+            m_asyncSteps = 0;
+            _stepsAsync(p_Dir, (unsigned long) 0);
 
         //if switching directions while the motor's running
        } else if( p_Dir != m_curDir ) {
@@ -1298,6 +1309,9 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
        _fireCallback(OM_MOT_BEGIN);
        return;
    }
+      //check to see if there's a direction change
+    m_asyncWasdir = dir();
+    dir( p_Dir );
 
 	// check for backlash compensation
     if( m_backCheck == true ) {
@@ -1330,7 +1344,7 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
         _setTravelConst(&m_splineOne);
 
-        unsigned int mSpeed = ( maxStepRate() > maxSpeed() ) ? maxSpeed() : maxStepRate();
+        unsigned int mSpeed = contSpeed();
 
 
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
@@ -1388,7 +1402,7 @@ void OMMotorFunctions::stop() {
       endOfMove = false;
       splineReady = false;
       m_motCont = false;
-      m_contSpd = 0.0;
+      //m_contSpd = 0.0;
 
         // set sleep state for drivers if needed
       if( sleep() )
@@ -1982,7 +1996,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
   if( p_tmPos <= thisSpline->acTm ) {
     curSpd = thisSpline->topSpeed * ( p_tmPos / thisSpline->acTm);
   }
-  else if( p_tmPos <= thisSpline->dcStart ) {
+  else if( p_tmPos < thisSpline->dcStart ) {
     curSpd = thisSpline->topSpeed;
   }
   else {
@@ -2172,7 +2186,7 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
         if( p_tmPos < thisSpline->acTm ) {
             p_tmPos = p_tmPos / thisSpline->acTm;
             curSpd = thisSpline->topSpeed * p_tmPos * p_tmPos;
-        } else if( p_tmPos <= thisSpline->dcStart ) {
+        } else if( p_tmPos < thisSpline->dcStart ) {
             curSpd = thisSpline->topSpeed;
         } else {
             p_tmPos = 1.0 - (p_tmPos - thisSpline->acTm - thisSpline->crTm) / thisSpline->dcTm;
@@ -2202,7 +2216,7 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
         if( p_tmPos < thisSpline->acTm ) {
             p_tmPos = 1.0 - (p_tmPos / thisSpline->acTm);
             curSpd = thisSpline->topSpeed - (thisSpline->topSpeed * p_tmPos * p_tmPos);
-        } else if( p_tmPos <= thisSpline->dcStart ) {
+        } else if( p_tmPos < thisSpline->dcStart ) {
             curSpd = thisSpline->topSpeed;
         } else {
             p_tmPos = (p_tmPos - thisSpline->acTm - thisSpline->crTm) / thisSpline->dcTm;
@@ -2336,7 +2350,6 @@ void OMMotorFunctions::checkRefresh(){
 void OMMotorFunctions::updateSpline(){
 
     if (splineReady == false){
-
         //If it's in continuous mode accel/decel until desired spd
         if (continuous()){
 
@@ -2366,6 +2379,8 @@ void OMMotorFunctions::updateSpline(){
 
                  // end if( m_asyncSteps > 0 && totalCyclesTaken...
             }
+            unsigned long i = m_nextOffCycles;
+
         }
         splineReady = true;
     }
