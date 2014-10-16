@@ -46,7 +46,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
     m_asyncSteps = 0;
     m_contSpd = 0;
-    m_desiredContSpd = 100.0;
+    m_desiredContSpd = 1000.0;
     m_stepsMoved = 0;
     m_Steps = 0;
     m_totalSteps = 0;
@@ -500,12 +500,8 @@ void OMMotorFunctions::contSpeed(float p_Speed) {
 	if( p_Speed > maxStepRate() || p_Speed < 0.0 )
 		return;
 
-    if(!running()){
-        m_contSpd = p_Speed;
         m_desiredContSpd = p_Speed;
-    } else {
-        m_desiredContSpd = p_Speed;
-    }
+
 }
 
 /** Get Continuous Motion Speed
@@ -910,9 +906,8 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 		// convert from steps per second, to uSecond periods
 	m_curSampleRate = 1000000 / (unsigned long) p_Rate;
 
-		// timeslices are in 1mS, so how many
-		// stepping samples are there for one 1mS?  This is what
-		// limits us to a minimum of 500 steps per second rate
+		// timeslices are in MS_PER_SPLINE mS, so how many
+		// stepping samples are there for one MS_PER_SPLINE?
 
 	m_cyclesPerSpline = (MS_PER_SPLINE * 1000) / m_curSampleRate;
 
@@ -1274,15 +1269,8 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 		_fireCallback(OM_MOT_DONE);
 		return;
    }
-   if (contSpeed() == 0.0)
+   if (m_desiredContSpd == 0.0)
         return;
- /*
-   USBSerial.print("Dir: ");
-   USBSerial.print(p_Dir);
-   USBSerial.print(" p_steps: ");
-   USBSerial.println(p_Steps);
-*/
-
 
 	// note: the check on p_Steps is required
 	// to allow manual moves that are not continuous
@@ -1344,7 +1332,7 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
 
         _setTravelConst(&m_splineOne);
 
-        unsigned int mSpeed = contSpeed();
+        unsigned int mSpeed = m_desiredContSpd;
 
 
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
@@ -1402,7 +1390,7 @@ void OMMotorFunctions::stop() {
       endOfMove = false;
       splineReady = false;
       m_motCont = false;
-      //m_contSpd = 0.0;
+      m_contSpd = 0.0;
 
         // set sleep state for drivers if needed
       if( sleep() )
@@ -2015,10 +2003,11 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
      // which we can accumulate between steps
 
      theFunctions->m_nextOffCycles = (unsigned long) off_time;
-     theFunctions->m_nextCycleErr = off_time - (unsigned long) off_time;
+     float temp = theFunctions->m_nextOffCycles;
+     theFunctions->m_nextCycleErr = off_time - temp;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-      if( theFunctions->m_nextCycleErr > 1.0 ) {
+      if( theFunctions->m_nextCycleErr >= 1.0 ) {
           theFunctions->m_nextCycleErr = 0.0;
       }
 
@@ -2105,10 +2094,11 @@ void OMMotorFunctions::_quadEasing(bool p_Plan, float p_tmPos, OMMotorFunctions*
      // which we can accumulate between steps
 
      theFunctions->m_nextOffCycles = (unsigned long) off_time;
-     theFunctions->m_nextCycleErr = off_time - theFunctions->m_curOffCycles;
+     float temp = theFunctions->m_nextOffCycles;
+     theFunctions->m_nextCycleErr = off_time - temp;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-     if( theFunctions->m_nextCycleErr > 1.0 ) {
+     if( theFunctions->m_nextCycleErr >= 1.0 ) {
         theFunctions->m_nextCycleErr = 0.0;
      }
 
@@ -2373,14 +2363,7 @@ void OMMotorFunctions::updateSpline(){
                 f_easeFunc(false, tmPos, this); //goes to a new function?
 
                 endOfMove = false;
-
-                        // we don't stop here, as we still need to check the off-time
-                        // between steps, based on our current spline point
-
-                 // end if( m_asyncSteps > 0 && totalCyclesTaken...
             }
-            unsigned long i = m_nextOffCycles;
-
         }
         splineReady = true;
     }
