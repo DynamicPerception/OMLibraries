@@ -2478,10 +2478,9 @@ bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
             // if we hit the step count requested for this move,
             // or if we have hit the maximum stepping point,
             // stop now - don't overshoot
-          int temp = (m_curDir == 1 ? 1: -1);
 
-          if( (m_endPos < 0 && ((m_homePos + temp) < m_endPos || (m_homePos + temp) > 0))
-             || (m_endPos > 0 && ((m_homePos + temp) > m_endPos || (m_homePos + temp) < 0))
+          if( (m_endPos < 0 && ((m_homePos <= m_endPos && m_curDir == 0) || (m_homePos >= 0 && m_curDir == 1)))
+             || (m_endPos > 0 && ((m_homePos >= m_endPos  && m_curDir == 1) || (m_homePos <= 0 && m_curDir == 0)))
              || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
