@@ -508,7 +508,7 @@ public:
     unsigned long mtpc_arrive;
     unsigned long mtpc_accel;
     unsigned long mtpc_decel;
-    bool mtpc;
+    uint8_t planMoveType;
     uint8_t mtpc_start;
     uint8_t mt_plan;
 

@@ -125,7 +125,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 	mtpc_arrive       = 0;
 	mtpc_accel        = 0;
 	mtpc_decel        = 0;
-	mtpc		  = false;
+	planMoveType 		  = 0;
 	mtpc_start	  = false;
 	m_planLeadIn      = 0;
 	autoPause     = false;
@@ -1768,34 +1768,34 @@ void OMMotorFunctions::moveTo(long p_pos) {
 /** Set Plan Type
 
 Variable to identify if a plan move is set and what type it is.
-mtpc = 0 (SMS), mtpc = 1 (continuous).
+planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
 
 */
 
 void OMMotorFunctions::planType(uint8_t p_type){
 
-    mtpc = p_type;
+    planMoveType  = p_type;
 }
 
 /** Get Plan Type
 
 Variable to identify if a plan move is set and what type it is.
-mtpc = 0 (SMS), mtpc = 1 (continuous).
+planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
 
  @return
- A byte, representing the plan move type. mtpc = 0 (SMS), mtpc = 1 (continuous).
+ A byte, representing the plan move type. planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
 
 */
 
 uint8_t OMMotorFunctions::planType(){
 
-    return(mtpc);
+    return(planMoveType );
 }
 
-/** Set Plan Travel Lenth (either shots or time depending)
+/** Set Plan Travel Lenth (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
 */
 
@@ -1804,14 +1804,14 @@ void OMMotorFunctions::planTravelLength(unsigned long p_length){
     mtpc_arrive = p_length;
 }
 
-/** Get Plan Travel Lenth (either shots or time depending)
+/** Get Plan Travel Lenth (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
  @return
- An unsigned long, representing the plan travel length in time (ms) or shots. If mtpc = 0
- then it's shots, if mtpc = 1 then it's time (ms).
+ An unsigned long, representing the plan travel length in time (ms) or shots. If planMoveType  = 0
+ then it's shots, if planMoveType  = 1 then it's time (ms).
 
 */
 
@@ -1820,10 +1820,10 @@ unsigned long OMMotorFunctions::planTravelLength(){
     return(mtpc_arrive);
 }
 
-/** Set Plan Acceleration Length (either shots or time depending)
+/** Set Plan Acceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
 */
 
@@ -1832,14 +1832,14 @@ void OMMotorFunctions::planAccelLength(unsigned long p_accel){
     mtpc_accel = p_accel;
 }
 
-/** Get Plan Acceleration Length (either shots or time depending)
+/** Get Plan Acceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
  @return
  An unsigned long, representing the plan interval acceleration in time (ms) or shots.
- If mtpc = 0 then shots, mtpc = 1 then time.
+ If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
 */
 
@@ -1848,10 +1848,10 @@ unsigned long OMMotorFunctions::planAccelLength(){
     return(mtpc_accel);
 }
 
-/** Set Plan Deceleration Length (either shots or time depending)
+/** Set Plan Deceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
 */
 
@@ -1860,14 +1860,14 @@ void OMMotorFunctions::planDecelLength(unsigned long p_decel){
     mtpc_decel = p_decel;
 }
 
-/** Get Plan Deceleration Length (either shots or time depending)
+/** Get Plan Deceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If mtpc = 0 then shots, mtpc = 1 then time.
+to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
  @return
  An unsigned long, representing the plan interval deceleration in time (ms) or shots.
- If mtpc = 0 then shots, mtpc = 1 then time.
+ If planMoveType  = 0 then shots, planMoveType  = 1 then time.
 
 */
 
@@ -1876,26 +1876,26 @@ unsigned long OMMotorFunctions::planDecelLength(){
     return(mtpc_decel);
 }
 
-/** Set Shots Lead In
+/** Set Lead In (either shots or time depending on plan mode)
 
 Sets the planned number of shots for lead in. This is the number of shots taken before the motor
 begins its move.
 
 */
 
-void OMMotorFunctions::planLeadIn(unsigned int p_shots){
+void OMMotorFunctions::planLeadIn(unsigned int p_leadIn){
 
-    m_planLeadIn = p_shots;
+    m_planLeadIn = p_leadIn;
 }
 
-/** Get Shots Lead In
+/** Get Lead In (either shots or time depending on plan mode)
 
-Gets the planned number of shots for lead in. This is the number of shots taken before the motor
+Gets the planned number of shots for lead in. This is the number of shots or time taken before the motor
 begins its move.
 
  @return
- An unsigned int, representing the plan interval deceleration in time (ms) or shots.
- If mtpc = 0 then shots, mtpc = 1 then time.
+ An unsigned int, representing the lead-in in shots or time (ms).
+ If planMoveType  = 0 or planMoveType  = 1 then shots, if planMoveType  = 2 then time.
 
 */
 
@@ -1949,7 +1949,7 @@ void OMMotorFunctions::programMove(){
      }
 
 
-    if (mtpc == 0){
+    if (planMoveType  == 0){
         if( mtpc_start == false){
             plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel);
             mtpc_start = true;
