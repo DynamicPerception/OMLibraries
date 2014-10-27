@@ -489,7 +489,7 @@ public:
 	void easing(uint8_t);
 	uint8_t easing();
 
-
+    void resetProgramMove();
 
     void checkRefresh();
     bool checkStep();
@@ -509,26 +509,15 @@ public:
     unsigned long mtpc_accel;
     unsigned long mtpc_decel;
     uint8_t planMoveType;
-    uint8_t mtpc_start;
+
     uint8_t mt_plan;
 
     void updateSpline();
     volatile bool splineReady;
     bool endOfMove;
 
-    struct s_splineCal {
-		float acTm;
-		float dcTm;
-		float crTm;
-		float topSpeed;
-		float dcStart;
-		float travel;
-		float acStep;
-		float dcStep;
-		unsigned long acTravel;
-		unsigned long dcTravel;
-		unsigned long crTravel;
-	};
+
+
 
 
 
@@ -546,6 +535,20 @@ private:
     int m_ms3;
 
     bool m_programDone;
+
+    struct s_splineCal {
+		float acTm;
+		float dcTm;
+		float crTm;
+		float topSpeed;
+		float dcStart;
+		float travel;
+		float acStep;
+		float dcStep;
+		unsigned long acTravel;
+		unsigned long dcTravel;
+		unsigned long crTravel;
+	};
 
 
 
@@ -580,6 +583,7 @@ private:
 	bool m_switchDir;
     bool m_refresh;
     bool m_motCont;
+    bool mtpc_start;
 
 
 	//movement variables

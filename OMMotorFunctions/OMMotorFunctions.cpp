@@ -1212,6 +1212,19 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Dist, unsigned long p_Ti
 		return;
 	}
 
+    m_asyncWasdir = dir();
+    dir( p_Dir );
+
+    // check for backlash compensation
+    if( m_backCheck == true ) {
+       p_Dist += backlash();
+       if (dir() == 0)
+            m_homePos +=backlash();
+       else
+            m_homePos -=backlash();
+       m_backCheck = false;
+    }
+
 	m_totalSplines = p_Time / MS_PER_SPLINE;
 
 		// prep spline variables
@@ -1297,19 +1310,6 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
        _fireCallback(OM_MOT_BEGIN);
        return;
    }
-      //check to see if there's a direction change
-    m_asyncWasdir = dir();
-    dir( p_Dir );
-
-	// check for backlash compensation
-    if( m_backCheck == true ) {
-   	   p_Steps += backlash();
-   	   if (dir() == 0)
-            m_homePos +=backlash();
-       else
-            m_homePos -=backlash();
-   	   m_backCheck = false;
-    }
 
    	// continuous allows higher stepping rate
    	// so clamp back down if not doing a continuous
@@ -1328,8 +1328,21 @@ void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
          // times for moves that must operate at maximum speed. We accelerate
          // and decel over 200 steps each, or 1/4 of the total steps, whichever is less
 
-            // set travel const (.travel) here before attempting to use it
+        //check to see if there's a direction change
+        m_asyncWasdir = dir();
+        dir( p_Dir );
 
+        // check for backlash compensation
+        if( m_backCheck == true ) {
+           p_Steps += backlash();
+           if (dir() == 0)
+                m_homePos +=backlash();
+           else
+                m_homePos -=backlash();
+           m_backCheck = false;
+        }
+
+            // set travel const (.travel) here before attempting to use it
         _setTravelConst(&m_splineOne);
 
         unsigned int mSpeed = m_desiredContSpd;
@@ -1923,6 +1936,17 @@ Get flag to indicate if the motor is done with the program move.
 bool OMMotorFunctions::programDone(){
     return(m_programDone);
 }
+
+/**Reset Program Move
+
+Resets the start of the program move, causes the program to recalculate the move.
+
+*/
+
+void OMMotorFunctions::resetProgramMove(){
+    mtpc_start = false;
+}
+
 
 /** Do a program move
 
