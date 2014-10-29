@@ -405,8 +405,8 @@ public:
 	void ms(uint8_t);
 	uint8_t ms();
 
-	void dir(bool);
-	bool dir();
+	void dir(uint8_t);
+	uint8_t dir();
 
 	void backlash(unsigned int);
 	unsigned int backlash();
@@ -421,11 +421,11 @@ public:
 	void maxSpeed(unsigned int);
 	unsigned int maxSpeed();
 
-	void enable(bool);
-	bool enable();
+	void enable(uint8_t);
+	uint8_t enable();
 
-	void continuous(bool);
-	bool continuous();
+	void continuous(uint8_t);
+	uint8_t continuous();
 
 	void contAccel(float);
 	float contAccel();
@@ -433,10 +433,10 @@ public:
 	void contSpeed(float);
 	float contSpeed();
 
-	bool running();
+	uint8_t running();
 
-	void sleep(bool);
-	bool sleep();
+	void sleep(uint8_t);
+	uint8_t sleep();
 
 	void steps(unsigned long);
 	unsigned long steps();
@@ -450,10 +450,10 @@ public:
     void clear();
 
 	void move();
-	void move(bool, unsigned long);
-	void move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
+	void move(uint8_t, unsigned long);
+	void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
 
-	void plan(unsigned long, bool, unsigned long, unsigned long, unsigned long);
+	void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
 	void planRun(); //used move
     void planReverse(); //used move
 
@@ -473,8 +473,8 @@ public:
 	void moveToEnd();
 	void home();
 
-	bool programDone();
-	void programDone(bool);
+	uint8_t programDone();
+	void programDone(uint8_t);
 
 	void planType(uint8_t);
 	uint8_t planType();
@@ -492,7 +492,7 @@ public:
     void resetProgramMove();
 
     void checkRefresh();
-    bool checkStep();
+    uint8_t checkStep();
 
     void planLeadIn(unsigned int);
     unsigned int planLeadIn();
@@ -513,8 +513,8 @@ public:
     uint8_t mt_plan;
 
     void updateSpline();
-    volatile bool splineReady;
-    bool endOfMove;
+    volatile uint8_t splineReady;
+    uint8_t endOfMove;
 
 
 
@@ -534,7 +534,7 @@ private:
     int m_ms2;
     int m_ms3;
 
-    bool m_programDone;
+    uint8_t m_programDone;
 
     struct s_splineCal {
 		float acTm;
@@ -556,34 +556,34 @@ private:
     s_splineCal m_splineOne;
     s_splineCal m_splinePlanned;
 
-	void _stepsAsync(bool, unsigned long);
+	void _stepsAsync(uint8_t, unsigned long);
 
 	void _updateMotorHome(int);
 	void _fireCallback(uint8_t);
 
-	void _initSpline(bool, float, unsigned long, unsigned long, unsigned long);
-	static void _linearEasing(bool, float, OMMotorFunctions*);
-	static void _quadEasing(bool, float, OMMotorFunctions*);
+	void _initSpline(uint8_t, float, unsigned long, unsigned long, unsigned long);
+	static void _linearEasing(uint8_t, float, OMMotorFunctions*);
+	static void _quadEasing(uint8_t, float, OMMotorFunctions*);
 
 	void _setTravelConst(OMMotorFunctions::s_splineCal*);
 
-	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
-	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
+	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
 
     void _updateContSpeed();
 
 	unsigned int m_maxSpeed;
 
-	bool m_backCheck;
-	bool m_motEn;
-	bool m_motSleep;
-	bool m_isRun;
-	bool m_asyncWasdir;
-	bool m_curDir;
-	bool m_switchDir;
-    bool m_refresh;
-    bool m_motCont;
-    bool mtpc_start;
+	uint8_t m_backCheck;
+	uint8_t m_motEn;
+	uint8_t m_motSleep;
+	uint8_t m_isRun;
+	uint8_t m_asyncWasdir;
+	uint8_t m_curDir;
+	uint8_t m_switchDir;
+    uint8_t m_refresh;
+    uint8_t m_motCont;
+    uint8_t mtpc_start;
 
 
 	//movement variables
@@ -616,7 +616,7 @@ private:
 	unsigned long m_curPlanSplines;
 	unsigned long m_curPlanSpline;
 	volatile float m_curPlanErr;
-	bool m_planDir;
+	uint8_t m_planDir;
 
 	unsigned long m_Steps;
 	unsigned int m_asyncCspd;
@@ -636,11 +636,11 @@ private:
 	uint8_t m_easeType;
 
 	void(*f_motSignal)(uint8_t);
-	void(*f_easeFunc)(bool, float, OMMotorFunctions*);
-	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, bool);
+	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
+	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
 
 
-	bool m_calcMove;
+	uint8_t m_calcMove;
 
 };
 

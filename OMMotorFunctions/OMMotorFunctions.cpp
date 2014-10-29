@@ -188,9 +188,9 @@ uint8_t OMMotorFunctions::ms() {
 
 void OMMotorFunctions::ms( uint8_t p_Div ) {
 
-  bool s1 = false;
-  bool s2 = false;
-  bool s3 = false;
+  uint8_t s1 = false;
+  uint8_t s2 = false;
+  uint8_t s3 = false;
 
     switch( p_Div ) {
         case 1:
@@ -257,7 +257,7 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
   */
 
 
-bool OMMotorFunctions::dir() {
+uint8_t OMMotorFunctions::dir() {
 	return(m_curDir);
 }
 
@@ -276,7 +276,7 @@ bool OMMotorFunctions::dir() {
 
   */
 
-void OMMotorFunctions::dir( bool p_Dir ) {
+void OMMotorFunctions::dir( uint8_t p_Dir ) {
 
 // only do anything if we're changing directions
 
@@ -420,7 +420,7 @@ void OMMotorFunctions::backlash(unsigned int p_Back) {
   */
 
 
-void OMMotorFunctions::enable(bool p_En) {
+void OMMotorFunctions::enable(uint8_t p_En) {
 	m_motEn = p_En;
 }
 
@@ -433,7 +433,7 @@ void OMMotorFunctions::enable(bool p_En) {
 
   */
 
-bool OMMotorFunctions::enable() {
+uint8_t OMMotorFunctions::enable() {
 	return(m_motEn);
 }
 
@@ -451,13 +451,13 @@ bool OMMotorFunctions::enable() {
 
   */
 
-void OMMotorFunctions::sleep(bool p_En) {
+void OMMotorFunctions::sleep(uint8_t p_En) {
 	m_motSleep = p_En;
 
 		// turn the sleep line off if sleep disabled, otherwise
 		// turn sleep line on
 
-	bool doSleep = p_En ? OM_MOT_SSTATE : ! OM_MOT_SSTATE;
+	uint8_t doSleep = p_En ? OM_MOT_SSTATE : ! OM_MOT_SSTATE;
 	digitalWrite(m_slp, doSleep);
 }
 
@@ -471,7 +471,7 @@ void OMMotorFunctions::sleep(bool p_En) {
 
   */
 
-bool OMMotorFunctions::sleep() {
+uint8_t OMMotorFunctions::sleep() {
 	return(m_motSleep);
 }
 
@@ -603,7 +603,7 @@ void motorCallback( byte code ) {
 
   */
 
-void OMMotorFunctions::continuous(bool p_En) {
+void OMMotorFunctions::continuous(uint8_t p_En) {
 	m_motCont = p_En;
 	//_updateContSpeed();
 }
@@ -617,7 +617,7 @@ void OMMotorFunctions::continuous(bool p_En) {
   */
 
 
-bool OMMotorFunctions::continuous() {
+uint8_t OMMotorFunctions::continuous() {
 	return(m_motCont);
 }
 
@@ -740,7 +740,7 @@ void OMMotorFunctions::_updateContSpeed(){
   Running (true) or Stopped (false)
   */
 
-bool OMMotorFunctions::running() {
+uint8_t OMMotorFunctions::running() {
 	return(m_isRun);
 }
 
@@ -829,7 +829,7 @@ long OMMotorFunctions::maxSteps() {
 
  void loop() {
 
-  static bool dir = true;
+  static uint8_t dir = true;
 
   if( ! Motor.running() {
   	move(dir, 1000);
@@ -1007,7 +1007,7 @@ unsigned long OMMotorFunctions::stepsMoved() {
  @param p_Decel
  Number of intervals during which deceleration occurs
 */
-void OMMotorFunctions::plan(unsigned long p_Shots, bool p_Dir, unsigned long p_Dist, unsigned long p_Accel, unsigned long p_Decel) {
+void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long p_Dist, unsigned long p_Accel, unsigned long p_Decel) {
 
 	m_curPlanSpd = 0;
 	m_curPlanErr = 0.0;
@@ -1052,7 +1052,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, bool p_Dir, unsigned long p_D
 
  OMMotorFunctions Motor = OMMotorFunctions();
 
- volatile boolean okNext = true;
+ volatile uint8_tean okNext = true;
 
  unsigned int totalIntervals = 500;
  unsigned int totalSteps = 2000;
@@ -1204,7 +1204,7 @@ void OMMotorFunctions::planReverse() {
 
  */
 
-void OMMotorFunctions::move(bool p_Dir, unsigned long p_Dist, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
+void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
 
 		// if motor is disabled, do nothing
 	if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
@@ -1275,7 +1275,7 @@ void OMMotorFunctions::move() {
 }
 
 
-void OMMotorFunctions::move(bool p_Dir, unsigned long p_Steps) {
+void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
 		// if motor is disabled, do nothing
    if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
@@ -1416,7 +1416,7 @@ void OMMotorFunctions::stop() {
 }
 
  // execute an async move, when specifying a direction
-void OMMotorFunctions::_stepsAsync( bool p_Dir, unsigned long p_Steps ) {
+void OMMotorFunctions::_stepsAsync( uint8_t p_Dir, unsigned long p_Steps ) {
 
 
 	 // is async control not already running?
@@ -1763,7 +1763,7 @@ void OMMotorFunctions::moveTo(long p_pos) {
 
  m_refresh = true;
 
- bool thsDir  = false;
+ uint8_t thsDir  = false;
  long goToPos = currentPos() - p_pos;  //detemine how many steps needed
 
 	// negative value means move in
@@ -1923,7 +1923,7 @@ Set flag to indicate if the motor is done with the program move.
 
 */
 
-void OMMotorFunctions::programDone(bool p_En){
+void OMMotorFunctions::programDone(uint8_t p_En){
     m_programDone = p_En;
 }
 
@@ -1933,7 +1933,7 @@ Get flag to indicate if the motor is done with the program move.
 
 */
 
-bool OMMotorFunctions::programDone(){
+uint8_t OMMotorFunctions::programDone(){
     return(m_programDone);
 }
 
@@ -1962,7 +1962,7 @@ void OMMotorFunctions::programMove(){
         return;
     }
 
-    bool thsDir  = false;
+    uint8_t thsDir  = false;
     long goToPos = m_homePos - m_stopPos;  //detemine how many steps needed
 
 	// negative value means move in
@@ -1999,7 +1999,7 @@ void OMMotorFunctions::programMove(){
 */
 
 
-void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
+void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
   OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
@@ -2100,7 +2100,7 @@ void OMMotorFunctions::_linearEasing(bool p_Plan, float p_tmPos, OMMotorFunction
 
 /* Quadratic easing for planned and non-planned moves */
 
-void OMMotorFunctions::_quadEasing(bool p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
+void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
   OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
@@ -2182,7 +2182,7 @@ void OMMotorFunctions::_quadEasing(bool p_Plan, float p_tmPos, OMMotorFunctions*
 }
 
 
-float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, bool p_Plan) {
+float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, uint8_t p_Plan) {
   float curSpd;
 
     if (p_Plan){
@@ -2212,7 +2212,7 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 
 }
 
-float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, bool p_Plan) {
+float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, uint8_t p_Plan) {
   float curSpd;
 
     if (p_Plan){
@@ -2245,7 +2245,7 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
  // pre-calculate spline values to optimize execution time when requesting the
  // velocity at a certain point
 
-void OMMotorFunctions::_initSpline(bool p_Plan, float p_Steps, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
+void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
 
    OMMotorFunctions::s_splineCal *thisSpline = &m_splineOne;
    unsigned long totSplines = m_totalSplines;
@@ -2407,7 +2407,7 @@ Check to see if the motor needs to take a step
 
 
 
-bool OMMotorFunctions::checkStep(){//bool p_endOfMove){
+uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
     if (m_curOffCycles == 0){
         m_curOffCycles = m_nextOffCycles;
         m_curCycleErr = m_nextCycleErr;
