@@ -497,7 +497,7 @@ uint8_t OMMotorFunctions::sleep() {
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
 
-	if( p_Speed > maxStepRate() || p_Speed < 0.0 )
+	if( abs(p_Speed) > maxStepRate())
 		return;
 
         m_desiredContSpd = p_Speed;
@@ -672,9 +672,12 @@ void OMMotorFunctions::_updateContSpeed(){
 
 
         //decelerate until your within half of the m_contAccelRate step/sec of stop
-        m_contSpd -= m_contAccelRate;
+        if (m_contSpd >= 0.0)
+            m_contSpd -= m_contAccelRate;
+        else
+            m_contSpd += m_contAccelRate;
 
-        if (m_contSpd <= (m_contAccelRate/2)){
+        if (m_contSpd <= (m_contAccelRate/2.0)){
             //don't want to set it zero as that will give us an infinite off_time
             m_contSpd = 0.01;
             m_switchDir = false;
@@ -684,7 +687,7 @@ void OMMotorFunctions::_updateContSpeed(){
 
 
         //calculate the next spline's off cycles and off cycles error
-        float curSpd = m_contSpd / (1000.0 / MS_PER_SPLINE);  //steps per spline
+        float curSpd = abs(m_contSpd) / (1000.0 / MS_PER_SPLINE);  //steps per spline
 
         // figure out how many cycles we delay after each step
         float off_time = m_cyclesPerSpline / (curSpd);
@@ -722,8 +725,17 @@ void OMMotorFunctions::_updateContSpeed(){
             stop();
     }
 
+    //check to see if you need to reverse directions
+    if(m_contSpd <= m_contAccelRate/2.0 && m_contSpd >= m_contAccelRate/-2.0){
+        if(m_desiredContSpd >=0.0)
+            dir(1);
+        else
+            dir(0);
+    }
+
+
     //calculate the next spline's off cycles and off cycles error
-    float curSpd = m_contSpd / (1000.0 / MS_PER_SPLINE);  //steps per spline
+    float curSpd = abs(m_contSpd) / (1000.0 / MS_PER_SPLINE);  //steps per spline
 
          // figure out how many cycles we delay after each step
     float off_time = m_cyclesPerSpline / (curSpd);
@@ -1345,7 +1357,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
             // set travel const (.travel) here before attempting to use it
         _setTravelConst(&m_splineOne);
 
-        unsigned int mSpeed = m_desiredContSpd;
+        unsigned int mSpeed = abs(m_desiredContSpd);
 
 
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
