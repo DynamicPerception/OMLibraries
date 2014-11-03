@@ -496,12 +496,19 @@ uint8_t OMMotorFunctions::sleep() {
  */
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
+	
+	USBSerial.print("Commanded speed: ");
+	USBSerial.println(p_Speed);
 
 	if( abs(p_Speed) > maxStepRate())
 		return;
 
         m_desiredContSpd = p_Speed;
 
+}
+
+float OMMotorFunctions::desiredSpeed() {
+	return(m_desiredContSpd);
 }
 
 /** Get Continuous Motion Speed
@@ -946,7 +953,7 @@ unsigned int OMMotorFunctions::curSamplePeriod() {
  */
 
 unsigned int OMMotorFunctions::maxStepRate() {
-	return( (long) 1000000 / (long) m_curSampleRate );
+	return((unsigned int)( (long) 1000000 / (long) m_curSampleRate ));
 }
 
 

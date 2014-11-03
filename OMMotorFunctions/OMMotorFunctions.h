@@ -432,6 +432,7 @@ public:
 
 	void contSpeed(float);
 	float contSpeed();
+	float desiredSpeed();
 
 	uint8_t running();
 
