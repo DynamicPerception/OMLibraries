@@ -497,9 +497,6 @@ uint8_t OMMotorFunctions::sleep() {
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
 	
-	USBSerial.print("Commanded speed: ");
-	USBSerial.println(p_Speed);
-
 	if( abs(p_Speed) > maxStepRate())
 		return;
 
@@ -1034,7 +1031,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 	m_curPlanSpline = 0;
 	m_planDir = p_Dir;
 
-			// prep spline variables (using planned mode)
+	// prep spline variables (using planned mode)
 	_initSpline(true, p_Dist, p_Shots, p_Accel, p_Decel);
 
 }
@@ -1249,6 +1246,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
 		// prep spline variables
 	_initSpline(false, p_Dist, p_Time, p_Accel, p_Decel);
 
+
 		// we need to initialize the first spline point
 	m_curSpline = 1;
 	float tmPos = (float) m_curSpline / (float) m_totalSplines;
@@ -1377,8 +1375,8 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
         //calculate acceleration and deceleration time
         float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
 
-
-        float mvMS = (crTm + adTm);// + 1.0;
+		//calculated total move time
+        float mvMS = (crTm + adTm);
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -1824,7 +1822,7 @@ uint8_t OMMotorFunctions::planType(){
     return(planMoveType );
 }
 
-/** Set Plan Travel Lenth (either shots or time depending on plan mode)
+/** Set Plan Travel Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
 to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
@@ -2288,7 +2286,7 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
 
-
+   // SMS mode
     if (p_Plan == true){
 
         float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
@@ -2338,7 +2336,10 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
 
 
-    } else {
+    } 
+	
+	// Continuous mode
+	else {
         float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
     }
@@ -2365,7 +2366,8 @@ void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline
 
 /** getTopSpeed
 
-	Calculate the planned move variables and report back the top speed in 16th microstps / second that will be used during the move.
+	Calculates the planned move variables and report back the top speed in 16th microsteps / second that will be used during the move when
+	in time lapse continuous or video continuous mode, or 16th microsteps / move during "cruising" portion of SMS mode.
 
 */
 
@@ -2377,25 +2379,39 @@ float OMMotorFunctions::getTopSpeed() {
 		return(-1);
 
 	// Determine the length and distance required for _initSpline()
-	long dist = m_stopPos - m_startPos;
-	byte dir;
-	
-	// If the distance to be moved is 0, then the top speed will be 0
-	if (dist == 0)
-		return(0);
-	else if (dist > 0)
-		dir = 1;
+	// compensate for any backlash
+	long dist;
+	if (m_backCheck == true)
+		dist =abs(m_stopPos - m_startPos + m_backAdj);
 	else
-		dir = 0;
-	// Make sure distance is a positive number
-	dist = abs(dist);
+		dist =abs(m_stopPos - m_startPos);
 
-	// Initialize the planned move variables to calculate the m_topSpeed variable
-	_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+	// For time lapse SMS mode
+	if (planMoveType == 0) {
 
-	// m_topSpeed calculated in _initSpline is in units of steps/spline, where one spline lasts 10 ms.
-	m_topSpeed *= 100;				// Convert to steps / second
-	m_topSpeed *= m_curMs / 16;		// Convert to 16th steps / second
+		// Determine the total splines based upon the travel time
+		m_curPlanSplines = (unsigned long)mtpc_arrive;
+
+		// Initialize the planned move variables to calculate the m_topSpeed variable
+		_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+
+	}
+
+	// For time lapse continuous and video continuous modes
+	else if (planMoveType == 1 || planMoveType == 2) {
+		
+		// Determine the total splines based upon the travel time
+		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / MS_PER_SPLINE;
+
+		// Initialize the planned move variables to calculate the m_topSpeed variable
+		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+	
+		// Convert to steps/spline to steps/second
+		m_topSpeed *= 100;
+	}
+
+	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
+	m_topSpeed *= (16 / (float) m_curMs);		
 	
 	return(m_topSpeed);
 }
@@ -2478,7 +2494,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
 
     if( m_totalCyclesTaken >= m_cyclesPerSpline) { //m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
-        if(splineReady == false){
+        if(splineReady == false && !continuous()){
             updateSpline();
         }
 
