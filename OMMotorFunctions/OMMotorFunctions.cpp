@@ -2319,7 +2319,7 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
 
-
+   // SMS mode
     if (p_Plan == true){
 
         float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
@@ -2369,7 +2369,10 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
 
 
-    } else {
+    } 
+	
+	// Continuous mode
+	else {
         float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
     }
@@ -2441,10 +2444,16 @@ float OMMotorFunctions::getTopSpeed() {
 	// For time lapse continuous and video continuous modes
 	if (planMoveType == 1 || planMoveType == 2)
 		// Convert to steps/spline to steps/second
-		m_topSpeed *= 100;				
+		m_topSpeed *= 100;
+
+	USBSerial.print("Steps/sec: ");
+	USBSerial.println(m_topSpeed);
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
-	m_topSpeed *= m_curMs / 16;		
+	m_topSpeed *= ((float) m_curMs / 16.0);		
+
+	USBSerial.print("16th Steps/sec: ");
+	USBSerial.println(m_topSpeed);
 	
 	return(m_topSpeed);
 }
