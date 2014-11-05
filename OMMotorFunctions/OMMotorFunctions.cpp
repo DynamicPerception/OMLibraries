@@ -497,9 +497,6 @@ uint8_t OMMotorFunctions::sleep() {
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
 	
-	USBSerial.print("Commanded speed: ");
-	USBSerial.println(p_Speed);
-
 	if( abs(p_Speed) > maxStepRate())
 		return;
 
@@ -1034,17 +1031,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 	m_curPlanSpline = 0;
 	m_planDir = p_Dir;
 
-	USBSerial.println("Recticulating splines");
-	USBSerial.print("Distance: ");
-	USBSerial.println(p_Dist);
-	USBSerial.print("Time: ");
-	USBSerial.println(p_Shots);
-	USBSerial.print("Accel: ");
-	USBSerial.println(p_Accel);
-	USBSerial.print("Decel: ");
-	USBSerial.println(p_Decel);
-
-			// prep spline variables (using planned mode)
+	// prep spline variables (using planned mode)
 	_initSpline(true, p_Dist, p_Shots, p_Accel, p_Decel);
 
 }
@@ -1256,16 +1243,6 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
 
 	m_totalSplines = p_Time / MS_PER_SPLINE;
 
-	USBSerial.println("Recticulating splines (move)");
-	USBSerial.print("Distance: ");
-	USBSerial.println(p_Dist);
-	USBSerial.print("Time: ");
-	USBSerial.println(p_Time);
-	USBSerial.print("Accel: ");
-	USBSerial.println(p_Accel);
-	USBSerial.print("Decel: ");
-	USBSerial.println(p_Decel);
-
 		// prep spline variables
 	_initSpline(false, p_Dist, p_Time, p_Accel, p_Decel);
 
@@ -1409,16 +1386,6 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
             // calculated total number of splines during the move
         m_totalSplines = (unsigned long) mvMS / MS_PER_SPLINE;
-
-		USBSerial.println("Recticulating splines (move)");
-		USBSerial.print("Distance: ");
-		USBSerial.println(p_Steps);
-		USBSerial.print("Time: ");
-		USBSerial.println(mvMS);
-		USBSerial.print("Accel: ");
-		USBSerial.println(adTm / 2.0);
-		USBSerial.print("Decel: ");
-		USBSerial.println(adTm / 2.0);
 
             // prep spline variables
         _initSpline(false, p_Steps, mvMS, adTm/2.0, adTm/2.0);
@@ -1855,7 +1822,7 @@ uint8_t OMMotorFunctions::planType(){
     return(planMoveType );
 }
 
-/** Set Plan Travel Lenth (either shots or time depending on plan mode)
+/** Set Plan Travel Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
 to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
@@ -2379,9 +2346,6 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
 
 	m_topSpeed = thisSpline->topSpeed;
 
-	USBSerial.print("Value from inside the beast: ");
-	USBSerial.println(m_topSpeed);
-
 }
 
 void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline) {
@@ -2415,45 +2379,39 @@ float OMMotorFunctions::getTopSpeed() {
 		return(-1);
 
 	// Determine the length and distance required for _initSpline()
-	long dist = m_stopPos - m_startPos + m_backAdj;
-	byte dir;
-	
-	// If the distance to be moved is 0, then the top speed will be 0
-	if (dist == 0)
-		return(0);
-	else if (dist > 0)
-		dir = 1;
+	// compensate for any backlash
+	long dist;
+	if (m_backCheck == true)
+		dist =abs(m_stopPos - m_startPos + m_backAdj);
 	else
-		dir = 0;
-	// Make sure distance is a positive number
-	dist = abs(dist);
+		dist =abs(m_stopPos - m_startPos);
 
-	USBSerial.println("Recticulating splines (getTopSpeed)");
-	USBSerial.print("Distance: ");
-	USBSerial.println(dist);
-	USBSerial.print("Time: ");
-	USBSerial.println(mtpc_arrive);
-	USBSerial.print("Accel: ");
-	USBSerial.println(mtpc_accel);
-	USBSerial.print("Decel: ");
-	USBSerial.println(mtpc_decel);
+	// For time lapse SMS mode
+	if (planMoveType == 0) {
 
-	// Initialize the planned move variables to calculate the m_topSpeed variable
-	_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+		// Determine the total splines based upon the travel time
+		m_curPlanSplines = (unsigned long)mtpc_arrive;
+
+		// Initialize the planned move variables to calculate the m_topSpeed variable
+		_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+
+	}
 
 	// For time lapse continuous and video continuous modes
-	if (planMoveType == 1 || planMoveType == 2)
+	else if (planMoveType == 1 || planMoveType == 2) {
+		
+		// Determine the total splines based upon the travel time
+		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / MS_PER_SPLINE;
+
+		// Initialize the planned move variables to calculate the m_topSpeed variable
+		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+	
 		// Convert to steps/spline to steps/second
 		m_topSpeed *= 100;
-
-	USBSerial.print("Steps/sec: ");
-	USBSerial.println(m_topSpeed);
+	}
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
-	m_topSpeed *= ((float) m_curMs / 16.0);		
-
-	USBSerial.print("16th Steps/sec: ");
-	USBSerial.println(m_topSpeed);
+	m_topSpeed *= (16 / (float) m_curMs);		
 	
 	return(m_topSpeed);
 }
@@ -2536,7 +2494,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
 
     if( m_totalCyclesTaken >= m_cyclesPerSpline) { //m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
-        if(splineReady == false){
+        if(splineReady == false && !continuous()){
             updateSpline();
         }
 
