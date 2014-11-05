@@ -455,7 +455,7 @@ public:
 	void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
 
 	void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
-	void planRun(); //used move
+	void planRun();		//used move
     void planReverse(); //used move
 
 	void homeSet();
@@ -496,7 +496,7 @@ public:
     uint8_t checkStep();
 
     void planLeadIn(unsigned int);
-    unsigned int planLeadIn();
+    unsigned long planLeadIn();
 
     int stpreg;
     int stpflg;
@@ -516,6 +516,8 @@ public:
     void updateSpline();
     volatile uint8_t splineReady;
     uint8_t endOfMove;
+
+	float getTopSpeed();
 
 
 
@@ -630,11 +632,13 @@ private:
 	long m_startPos;
 	long m_stopPos;
 
-	unsigned int m_planLeadIn;
+	unsigned long m_planLeadIn;
 
 	uint8_t m_curMs;
 	unsigned int m_backAdj;
 	uint8_t m_easeType;
+
+	float m_topSpeed;
 
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);

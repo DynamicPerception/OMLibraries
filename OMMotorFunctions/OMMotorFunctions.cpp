@@ -1931,7 +1931,7 @@ begins its move.
 
 */
 
-unsigned int OMMotorFunctions::planLeadIn(){
+unsigned long OMMotorFunctions::planLeadIn(){
 
     return(m_planLeadIn);
 }
@@ -1998,7 +1998,8 @@ void OMMotorFunctions::programMove(){
             mtpc_start = true;
         }
         planRun();
-    } else {
+    } 
+	else {
         if( mtpc_start == false ) {
            // a planned continuous move has not been started...
            mtpc_start = true;
@@ -2342,6 +2343,7 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
     }
 
+	m_topSpeed = thisSpline->topSpeed;
 
 }
 
@@ -2358,6 +2360,44 @@ void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline
    	   thisSpline->travel = 3.0;//2.9999985;
    else if( m_easeType == OM_MOT_QUADINV )
 	   thisSpline->travel = 1.5;//1.5000597;
+}
+
+
+/** getTopSpeed
+
+	Calculate the planned move variables and report back the top speed in 16th microstps / second that will be used during the move.
+
+*/
+
+float OMMotorFunctions::getTopSpeed() {
+
+	// Don't proceed with this function if this motor is running since calling _initSpline during a move could be bad 
+	// Return -1 to indicate error
+	if (m_isRun)
+		return(-1);
+
+	// Determine the length and distance required for _initSpline()
+	long dist = m_stopPos - m_startPos;
+	byte dir;
+	
+	// If the distance to be moved is 0, then the top speed will be 0
+	if (dist == 0)
+		return(0);
+	else if (dist > 0)
+		dir = 1;
+	else
+		dir = 0;
+	// Make sure distance is a positive number
+	dist = abs(dist);
+
+	// Initialize the planned move variables to calculate the m_topSpeed variable
+	_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+
+	// m_topSpeed calculated in _initSpline is in units of steps/spline, where one spline lasts 10 ms.
+	m_topSpeed *= 100;				// Convert to steps / second
+	m_topSpeed *= m_curMs / 16;		// Convert to 16th steps / second
+	
+	return(m_topSpeed);
 }
 
 /** checkRefresh

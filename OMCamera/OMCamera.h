@@ -198,7 +198,7 @@ public:
 	void setHandler(void(*)(uint8_t));
 
 	unsigned long maxShots;
-	unsigned long delay;
+	unsigned long delay;		// aka "interval"
 	bool repeat;
 	bool enable;
 
