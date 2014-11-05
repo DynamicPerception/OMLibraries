@@ -627,14 +627,14 @@ private:
 	float m_desiredContSpd;
 	float m_contAccelRate;
 
-	volatile long m_homePos;
-	long m_endPos;
-	long m_startPos;
-	long m_stopPos;
+	volatile long m_homePos;		// Distance in current microsteps of present location from home position
+	long m_endPos;					// Distance in current microsteps of end limit from home position
+	long m_startPos;				// Distance in current microsteps of program start from home position
+	long m_stopPos;					// Distance in current microsteps of program stop from home position
 
-	unsigned long m_planLeadIn;
+	unsigned long m_planLeadIn;		// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
 
-	uint8_t m_curMs;
+	uint8_t m_curMs;				// Current microstepping value
 	unsigned int m_backAdj;
 	uint8_t m_easeType;
 

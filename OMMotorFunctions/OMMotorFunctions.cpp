@@ -1034,6 +1034,16 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 	m_curPlanSpline = 0;
 	m_planDir = p_Dir;
 
+	USBSerial.println("Recticulating splines");
+	USBSerial.print("Distance: ");
+	USBSerial.println(p_Dist);
+	USBSerial.print("Time: ");
+	USBSerial.println(p_Shots);
+	USBSerial.print("Accel: ");
+	USBSerial.println(p_Accel);
+	USBSerial.print("Decel: ");
+	USBSerial.println(p_Decel);
+
 			// prep spline variables (using planned mode)
 	_initSpline(true, p_Dist, p_Shots, p_Accel, p_Decel);
 
@@ -1246,8 +1256,19 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
 
 	m_totalSplines = p_Time / MS_PER_SPLINE;
 
+	USBSerial.println("Recticulating splines (move)");
+	USBSerial.print("Distance: ");
+	USBSerial.println(p_Dist);
+	USBSerial.print("Time: ");
+	USBSerial.println(p_Time);
+	USBSerial.print("Accel: ");
+	USBSerial.println(p_Accel);
+	USBSerial.print("Decel: ");
+	USBSerial.println(p_Decel);
+
 		// prep spline variables
 	_initSpline(false, p_Dist, p_Time, p_Accel, p_Decel);
+
 
 		// we need to initialize the first spline point
 	m_curSpline = 1;
@@ -1377,8 +1398,8 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
         //calculate acceleration and deceleration time
         float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
 
-
-        float mvMS = (crTm + adTm);// + 1.0;
+		//calculated total move time
+        float mvMS = (crTm + adTm);
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -1388,6 +1409,16 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
             // calculated total number of splines during the move
         m_totalSplines = (unsigned long) mvMS / MS_PER_SPLINE;
+
+		USBSerial.println("Recticulating splines (move)");
+		USBSerial.print("Distance: ");
+		USBSerial.println(p_Steps);
+		USBSerial.print("Time: ");
+		USBSerial.println(mvMS);
+		USBSerial.print("Accel: ");
+		USBSerial.println(adTm / 2.0);
+		USBSerial.print("Decel: ");
+		USBSerial.println(adTm / 2.0);
 
             // prep spline variables
         _initSpline(false, p_Steps, mvMS, adTm/2.0, adTm/2.0);
@@ -2345,6 +2376,9 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
 
 	m_topSpeed = thisSpline->topSpeed;
 
+	USBSerial.print("Value from inside the beast: ");
+	USBSerial.println(m_topSpeed);
+
 }
 
 void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline) {
@@ -2365,7 +2399,8 @@ void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline
 
 /** getTopSpeed
 
-	Calculate the planned move variables and report back the top speed in 16th microstps / second that will be used during the move.
+	Calculates the planned move variables and report back the top speed in 16th microsteps / second that will be used during the move when
+	in time lapse continuous or video continuous mode, or 16th microsteps / move during "cruising" portion of SMS mode.
 
 */
 
@@ -2377,7 +2412,7 @@ float OMMotorFunctions::getTopSpeed() {
 		return(-1);
 
 	// Determine the length and distance required for _initSpline()
-	long dist = m_stopPos - m_startPos;
+	long dist = m_stopPos - m_startPos + m_backAdj;
 	byte dir;
 	
 	// If the distance to be moved is 0, then the top speed will be 0
@@ -2390,12 +2425,26 @@ float OMMotorFunctions::getTopSpeed() {
 	// Make sure distance is a positive number
 	dist = abs(dist);
 
-	// Initialize the planned move variables to calculate the m_topSpeed variable
-	_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+	USBSerial.println("Recticulating splines (getTopSpeed)");
+	USBSerial.print("Distance: ");
+	USBSerial.println(dist);
+	USBSerial.print("Time: ");
+	USBSerial.println(mtpc_arrive);
+	USBSerial.print("Accel: ");
+	USBSerial.println(mtpc_accel);
+	USBSerial.print("Decel: ");
+	USBSerial.println(mtpc_decel);
 
-	// m_topSpeed calculated in _initSpline is in units of steps/spline, where one spline lasts 10 ms.
-	m_topSpeed *= 100;				// Convert to steps / second
-	m_topSpeed *= m_curMs / 16;		// Convert to 16th steps / second
+	// Initialize the planned move variables to calculate the m_topSpeed variable
+	_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
+
+	// For time lapse continuous and video continuous modes
+	if (planMoveType == 1 || planMoveType == 2)
+		// Convert to steps/spline to steps/second
+		m_topSpeed *= 100;				
+
+	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
+	m_topSpeed *= m_curMs / 16;		
 	
 	return(m_topSpeed);
 }
