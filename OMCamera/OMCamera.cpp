@@ -270,7 +270,7 @@ void OMCamera::stop() {
 
 /** Trigger Exposure
 
- This method triggers an exposure for the amount of time as set via exposeTime().
+ This method triggers an exposure for the amount of time as set via triggerTime().
  Sends an expose begin signal.
 
 */
@@ -400,7 +400,7 @@ void OMCamera::focusTime(unsigned int p_tm) {
  Exposure time, in milliseconds
  */
 
-void OMCamera::exposeTime(unsigned long p_tm) {
+void OMCamera::triggerTime(unsigned long p_tm) {
 	m_timeExp = p_tm;
 }
 
@@ -410,7 +410,7 @@ void OMCamera::exposeTime(unsigned long p_tm) {
  Delay time, in milliseconds
  */
 
-void OMCamera::waitTime(unsigned int p_tm) {
+void OMCamera::delayTime(unsigned int p_tm) {
 	m_timeWait = p_tm;
 }
 
@@ -420,7 +420,7 @@ void OMCamera::waitTime(unsigned int p_tm) {
  Delay time, in milliseconds
  */
 
-unsigned int OMCamera::waitTime() {
+unsigned int OMCamera::delayTime() {
 	return(m_timeWait);
 }
 
@@ -440,7 +440,7 @@ unsigned int OMCamera::focusTime() {
  Delay time, in milliseconds
  */
 
-unsigned long OMCamera::exposeTime() {
+unsigned long OMCamera::triggerTime() {
 	return(m_timeExp);
 }
 
@@ -472,7 +472,7 @@ uint8_t OMCamera::exposureFocus() {
 
 /** Trigger Delay
 
- This method triggers a delay action for the amount of time as set via waitTime().
+ This method triggers a delay action for the amount of time as set via delayTime().
  Sends a delay begin signal.
 
 */

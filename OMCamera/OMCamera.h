@@ -204,8 +204,8 @@ public:
 
 	void expose();
 	void expose(unsigned long p_time);
-	void exposeTime(unsigned long p_tm);
-	unsigned long exposeTime();
+	void triggerTime(unsigned long p_tm);
+	unsigned long triggerTime();
 
 	void exposureFocus(bool);
 	uint8_t exposureFocus();
@@ -217,8 +217,8 @@ public:
 
 	void wait();
 	void wait(unsigned int p_time);
-	void waitTime(unsigned int p_tm);
-	unsigned int waitTime();
+	void delayTime(unsigned int p_tm);
+	unsigned int delayTime();
 
 	static void stop();
 
