@@ -89,7 +89,7 @@ void OMCamera::_init() {
 
 	m_focusShut = true;
 
-	delay = 1;
+	interval = 1;
 	enable = false;
 	maxShots = 0;
 	repeat = 0;

@@ -1365,7 +1365,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = abs(m_desiredContSpd);
 
-        float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
+        float rampSteps = ((p_Steps / 2.0) < 1000.0) ? (p_Steps / 2.0) : 1000.0;
 
         rampSteps *= 2.0;
 
