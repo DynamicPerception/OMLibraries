@@ -129,6 +129,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 	mtpc_start	  = false;
 	m_planLeadIn      = 0;
 	autoPause     = false;
+	m_firstRun     = true;
 
 
 	pinMode(m_stp, OUTPUT);
@@ -496,7 +497,7 @@ uint8_t OMMotorFunctions::sleep() {
  */
 
 void OMMotorFunctions::contSpeed(float p_Speed) {
-	
+
 	if( abs(p_Speed) > maxStepRate())
 		return;
 
@@ -1364,7 +1365,6 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = abs(m_desiredContSpd);
 
-
         float rampSteps = (200.0 > (p_Steps / 4.0)) ? (p_Steps / 4.0) : 200.0;
 
         rampSteps *= 2.0;
@@ -1442,7 +1442,8 @@ void OMMotorFunctions::_stepsAsync( uint8_t p_Dir, unsigned long p_Steps ) {
 
 
          m_asyncSteps = p_Steps;
-         updateSpline();
+         m_firstRun = true;
+         //updateSpline();
 
           // bring sleep pin to non-sleeping state if
           // motor kill enabled
@@ -1996,7 +1997,7 @@ void OMMotorFunctions::programMove(){
             mtpc_start = true;
         }
         planRun();
-    } 
+    }
 	else {
         if( mtpc_start == false ) {
            // a planned continuous move has not been started...
@@ -2045,7 +2046,10 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
      // which we can accumulate between steps
 
      theFunctions->m_nextOffCycles = (unsigned long) off_time;
-     float temp = theFunctions->m_nextOffCycles;
+     if (theFunctions->m_nextOffCycles < 1){
+        theFunctions->m_nextOffCycles = 1;
+     }
+     float temp = (float)theFunctions->m_nextOffCycles;
      theFunctions->m_nextCycleErr = off_time - temp;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
@@ -2136,6 +2140,9 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctio
      // which we can accumulate between steps
 
      theFunctions->m_nextOffCycles = (unsigned long) off_time;
+     if (theFunctions->m_nextOffCycles < 1){
+        theFunctions->m_nextOffCycles = 1;
+     }
      float temp = theFunctions->m_nextOffCycles;
      theFunctions->m_nextCycleErr = off_time - temp;
 
@@ -2336,8 +2343,8 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
 
 
-    } 
-	
+    }
+
 	// Continuous mode
 	else {
         float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
@@ -2373,7 +2380,7 @@ void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline
 
 float OMMotorFunctions::getTopSpeed() {
 
-	// Don't proceed with this function if this motor is running since calling _initSpline during a move could be bad 
+	// Don't proceed with this function if this motor is running since calling _initSpline during a move could be bad
 	// Return -1 to indicate error
 	if (m_isRun)
 		return(-1);
@@ -2399,20 +2406,20 @@ float OMMotorFunctions::getTopSpeed() {
 
 	// For time lapse continuous and video continuous modes
 	else if (planMoveType == 1 || planMoveType == 2) {
-		
+
 		// Determine the total splines based upon the travel time
 		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / MS_PER_SPLINE;
 
 		// Initialize the planned move variables to calculate the m_topSpeed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
-	
+
 		// Convert to steps/spline to steps/second
-		m_topSpeed *= 100;
+		m_topSpeed *= 100.0;
 	}
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
-	m_topSpeed *= (16 / (float) m_curMs);		
-	
+	m_topSpeed *= (16.0 / (float) m_curMs);
+
 	return(m_topSpeed);
 }
 
@@ -2447,7 +2454,7 @@ void OMMotorFunctions::updateSpline(){
 
         } else { //Calculate next spline while not in continous mode
 
-            if( m_curSpline + 1 >= m_totalSplines ) {
+            if( m_curSpline >= m_totalSplines ) {
                         // hey, look at that - we're at the end of our spline (and
                         // we haven't finished our last step either, otherwise we
                         // wouldn't get here...)
@@ -2483,12 +2490,13 @@ Check to see if the motor needs to take a step
 
 
 uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
-    if (m_curOffCycles == 0){
+
+    if (m_firstRun == true){ //run the first time the ISR is run, this populates the variables
         m_curOffCycles = m_nextOffCycles;
         m_curCycleErr = m_nextCycleErr;
-        m_curSpline++;
         m_totalCyclesTaken = 0;
         splineReady = false;
+        m_firstRun = false;
     }
 
 
@@ -2564,6 +2572,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
                  // run an extra cycle low
             return (false);
     }
+
 
             // increase lowcycle counter after applying error correction, as we
             // don't want to take the next step too fast

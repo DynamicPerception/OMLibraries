@@ -587,12 +587,13 @@ private:
     uint8_t m_refresh;
     uint8_t m_motCont;
     uint8_t mtpc_start;
+    uint8_t m_firstRun;
 
 
 	//movement variables
-	float m_cycleErrAccumulated;
-    unsigned long m_cyclesLow;
-    unsigned long m_stepsTaken;
+	volatile float m_cycleErrAccumulated;
+    volatile unsigned long m_cyclesLow;
+    volatile unsigned long m_stepsTaken;
     volatile unsigned long m_totalCyclesTaken;
 
 	unsigned long m_asyncSteps;
