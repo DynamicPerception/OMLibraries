@@ -1352,7 +1352,9 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
         // check for backlash compensation
         if( m_backCheck == true ) {
+			USBSerial.println("Adding backlash compensation");
            p_Steps += backlash();
+		   USBSerial.println(p_Steps);
            if (dir() == 0)
                 m_homePos +=backlash();
            else
@@ -1365,7 +1367,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = abs(m_desiredContSpd);
 
-        float rampSteps = ((p_Steps / 2.0) < 1000.0) ? (p_Steps / 2.0) : 1000.0;
+        float rampSteps = ((p_Steps / 2.0) < 500.0) ? (p_Steps / 2.0) : 500.0;
 
         rampSteps *= 2.0;
 
@@ -2619,4 +2621,84 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
     } // end if( cyclesLow...
 
     return(false);
+}
+
+/**
+
+Sets the flag indicating whether the motor has backlash to be taken up before a program move
+
+*/
+void OMMotorFunctions::programBackCheck(uint8_t p_setFlag) {
+
+	m_programBackCheck = p_setFlag;
+	m_backCheck = p_setFlag;
+
+}
+
+/**
+
+Returns whether the motor has backlash to be taken up before a program move
+
+*/
+uint8_t OMMotorFunctions::programBackCheck() {
+
+	return(m_programBackCheck);
+
+}
+
+
+/**
+
+Read/write functions for motor's key frame varaibles
+
+*/
+
+void OMMotorFunctions::keyDest(uint8_t p_which, unsigned long p_input) {
+
+	key_frame.dest[p_which] = p_input;
+}
+
+void OMMotorFunctions::keySpeed(uint8_t p_which, float p_input) {
+
+	key_frame.speed[p_which] = p_input;
+}
+
+void OMMotorFunctions::keyAccel(uint8_t p_which, unsigned long p_input) {
+
+	key_frame.accel[p_which] = p_input;
+}
+
+void OMMotorFunctions::keyDecel(uint8_t p_which, unsigned long p_input) {
+
+	key_frame.decel[p_which] = p_input;
+}
+
+void OMMotorFunctions::keyLead(uint8_t p_which, unsigned long p_input) {
+
+	key_frame.lead_in[p_which] = p_input;
+}
+
+unsigned long OMMotorFunctions::keyDest(uint8_t p_which) {
+
+	return(key_frame.dest[p_which]);
+}
+
+float OMMotorFunctions::keySpeed(uint8_t p_which) {
+
+	return(key_frame.speed[p_which]);
+}
+
+unsigned long OMMotorFunctions::keyAccel(uint8_t p_which) {
+
+	return(key_frame.accel[p_which]);
+}
+
+unsigned long OMMotorFunctions::keyDecel(uint8_t p_which) {
+
+	return(key_frame.decel[p_which]);
+}
+
+unsigned long OMMotorFunctions::keyLead(uint8_t p_which) {
+
+	return(key_frame.lead_in[p_which]);
 }
