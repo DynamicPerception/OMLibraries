@@ -36,10 +36,10 @@ See www.dynamicperception.com for more information
     #define OMC_COM1 2
 #endif
 #ifndef OMC_COM2
-    #define OMC_COM2 3
+    #define OMC_COM2 36//3
 #endif
 #ifndef OMC_COM3
-    #define OMC_COM3 19
+    #define OMC_COM3 38//19
 #endif
 
     // defines for pin change interrupt handling
@@ -67,16 +67,16 @@ See www.dynamicperception.com for more information
 
     // defines for port registers for com1 and com2
 #ifndef OMC_COM1_REG
-    #define OMC_COM1_REG PIND
+    #define OMC_COM1_REG PINA
 #endif
 #ifndef OMC_COM1_PIN
-    #define OMC_COM1_PIN PIND2
+    #define OMC_COM1_PIN PINA2
 #endif
 #ifndef OMC_COM2_REG
-    #define OMC_COM2_REG PIND
+    #define OMC_COM2_REG PINE
 #endif
 #ifndef OMC_COM2_PIN
-    #define OMC_COM2_PIN PIND3
+    #define OMC_COM2_PIN PINE4
 #endif
 
 
