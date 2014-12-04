@@ -2653,14 +2653,14 @@ Read/write functions for motor's key frame varaibles
 
 */
 
-void OMMotorFunctions::keyDest(uint8_t p_which, unsigned long p_input) {
+void OMMotorFunctions::keyDest(uint8_t p_which, long p_input) {
 
 	key_frame.dest[p_which] = p_input;
 }
 
-void OMMotorFunctions::keySpeed(uint8_t p_which, float p_input) {
+void OMMotorFunctions::keyTime(uint8_t p_which, unsigned long p_input) {
 
-	key_frame.speed[p_which] = p_input;
+	key_frame.time[p_which] = p_input;
 }
 
 void OMMotorFunctions::keyAccel(uint8_t p_which, unsigned long p_input) {
@@ -2678,14 +2678,14 @@ void OMMotorFunctions::keyLead(uint8_t p_which, unsigned long p_input) {
 	key_frame.lead_in[p_which] = p_input;
 }
 
-unsigned long OMMotorFunctions::keyDest(uint8_t p_which) {
+long OMMotorFunctions::keyDest(uint8_t p_which) {
 
 	return(key_frame.dest[p_which]);
 }
 
-float OMMotorFunctions::keySpeed(uint8_t p_which) {
+unsigned long OMMotorFunctions::keyTime(uint8_t p_which) {
 
-	return(key_frame.speed[p_which]);
+	return(key_frame.time[p_which]);
 }
 
 unsigned long OMMotorFunctions::keyAccel(uint8_t p_which) {

@@ -523,15 +523,15 @@ public:
 	void programBackCheck(uint8_t p_setFlag);
 
 	// Key frame assignment functions
-	void keyDest(uint8_t, unsigned long);
-	void keySpeed(uint8_t, float);
+	void keyDest(uint8_t, long);
+	void keyTime(uint8_t, unsigned long);
 	void keyAccel(uint8_t, unsigned long);
 	void keyDecel(uint8_t, unsigned long);
 	void keyLead(uint8_t, unsigned long);
 
 	// Key frame queries
-	unsigned long keyDest(uint8_t);
-	float		  keySpeed(uint8_t);
+	long keyDest(uint8_t);
+	unsigned long keyTime(uint8_t);
 	unsigned long keyAccel(uint8_t);
 	unsigned long keyDecel(uint8_t);
 	unsigned long keyLead(uint8_t);
@@ -668,8 +668,8 @@ private:
 
 	// Key Frame variables
 	struct key_frame {
-		unsigned long dest[10];
-		float speed[10];
+		long dest[10];
+		unsigned long time[10];
 		unsigned long accel[10];
 		unsigned long decel[10];
 		unsigned long lead_in[10];
