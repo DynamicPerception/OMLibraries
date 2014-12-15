@@ -453,6 +453,7 @@ public:
 	void move();
 	void move(uint8_t, unsigned long);
 	void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
+	void resumeMove();
 
 	void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
 	void planRun();		//used move

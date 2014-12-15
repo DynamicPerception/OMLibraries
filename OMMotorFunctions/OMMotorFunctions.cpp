@@ -1260,6 +1260,21 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
 	move(p_Dir, p_Dist);
 }
 
+/** Resume Move
+
+Moves the motor with the same parameters that were calculated before. This is used
+to resume movement after the program was paused while in contiuous move.
+
+*/
+
+
+void OMMotorFunctions::resumeMove(){
+
+    m_calcMove = true;
+    move(dir(),abs(m_homePos-m_stopPos));
+
+}
+
 
 /** Move Now
 
