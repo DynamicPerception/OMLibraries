@@ -56,7 +56,9 @@ OMMoCoNode::OMMoCoNode(Stream * c_serObj, unsigned int c_addr, unsigned int c_ve
    The result code, true for success and false for error
    */
 
-void OMMoCoNode::response(bool p_stat) {
+void OMMoCoNode::response(uint8_t p_stat) {
+	//if (p_stat == 0)
+	//	p_stat = 2;
 		// 0 bytes returned to master (no data in response)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 0);
 }
@@ -70,7 +72,9 @@ void OMMoCoNode::response(bool p_stat) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, uint8_t p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, uint8_t p_resp) {
+	if (p_stat == 0)
+		p_stat = 2;
 		// 2 bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 2);
 
@@ -87,7 +91,9 @@ void OMMoCoNode::response(bool p_stat, uint8_t p_resp) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, unsigned int p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, unsigned int p_resp) {
+	if (p_stat == 0)
+		p_stat = 2;
 		// 3 bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 3);
 	this->write((uint8_t) R_UINT);
@@ -103,7 +109,9 @@ void OMMoCoNode::response(bool p_stat, unsigned int p_resp) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, int p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, int p_resp) {
+	if (p_stat == 0)
+		p_stat = 2;
 		// 3 bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 3);
 
@@ -120,7 +128,9 @@ void OMMoCoNode::response(bool p_stat, int p_resp) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, long p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, long p_resp) {
+	if (p_stat == 0)
+		p_stat = 2;
 		// 5 bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 5);
 	this->write((uint8_t) R_LONG);
@@ -136,7 +146,9 @@ void OMMoCoNode::response(bool p_stat, long p_resp) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, unsigned long p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, unsigned long p_resp) {
+	if (p_stat == 0)
+		p_stat = 2;
 		// 5 bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, 5);
 	this->write((uint8_t) R_ULONG);
@@ -152,9 +164,11 @@ void OMMoCoNode::response(bool p_stat, unsigned long p_resp) {
   The response data to send
   */
 
-void OMMoCoNode::response(bool p_stat, float p_resp) {
+void OMMoCoNode::response(uint8_t p_stat, float p_resp) {
 		// 5 bytes returned to master (type + data size)
-	
+	if (p_stat == 0)
+		p_stat = 2;
+
 	sendPacketHeader(OM_SER_MASTER, p_stat, 5);
 	this->write((uint8_t) R_FLOAT);
 	this->write(p_resp);
@@ -176,7 +190,7 @@ void OMMoCoNode::response(bool p_stat, float p_resp) {
 
   */
 
-void OMMoCoNode::response(bool p_stat, char* p_resp, int p_len) {
+void OMMoCoNode::response(uint8_t p_stat, char* p_resp, int p_len) {
 		// 1 + len bytes returned to master (type + data size)
 	sendPacketHeader(OM_SER_MASTER, p_stat, p_len + 1);
 	this->write((uint8_t) R_STR);

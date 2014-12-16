@@ -46,7 +46,7 @@ See www.openmoco.org for more information
 
 #define OM_MOT_DONE_PLAN 7
 
-#define MS_PER_SPLINE    10
+#define MS_PER_SPLINE    20
 
 
 /**
@@ -452,6 +452,7 @@ public:
 
 	void move();
 	void move(uint8_t, unsigned long);
+	void move(uint8_t, unsigned long, bool);
 	void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
 	void resumeMove();
 
@@ -470,6 +471,7 @@ public:
 	long currentPos();
 
 	void moveTo(long);
+	void moveTo(long, bool);
 	void moveToStart();
 	void moveToStop();
 	void moveToEnd();

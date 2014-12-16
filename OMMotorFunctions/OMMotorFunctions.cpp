@@ -1271,7 +1271,8 @@ to resume movement after the program was paused while in contiuous move.
 void OMMotorFunctions::resumeMove(){
 
     m_calcMove = true;
-    move(dir(),abs(m_homePos-m_stopPos));
+	if (m_homePos-m_stopPos != 0)
+		move(dir(),abs(m_homePos-m_stopPos));
 
 }
 
@@ -1308,7 +1309,13 @@ void OMMotorFunctions::move() {
 }
 
 
+
 void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
+	move(p_Dir, p_Steps, false);
+}
+
+
+void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
 		// if motor is disabled, do nothing
    if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
@@ -1382,7 +1389,21 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps) {
 
         unsigned int mSpeed = abs(m_desiredContSpd);
 
-        float rampSteps = ((p_Steps / 2.0) < 500.0) ? (p_Steps / 2.0) : 500.0;
+		// Fixed acceleration/deceleration step length to use for "send to..." and SMS motor commands
+		const int ACCEL_DECEL_LENGTH_SEND = 2500;
+		const int ACCEL_DECEL_LENGTH_SMS = 500;
+		int accel_decel_length;
+
+		// If this is a "send to..." move (i.e. sending the motor to the start position, use a longer accel/decel length)
+		if (p_Send == true)
+			accel_decel_length = ACCEL_DECEL_LENGTH_SEND;
+		else
+			accel_decel_length = ACCEL_DECEL_LENGTH_SMS;
+
+		
+		// This is the fixed acceleration/deceleration step length used for the "send to" commands.
+		float rampSteps = ((p_Steps / 2.0) < accel_decel_length) ? (p_Steps / 2.0) : accel_decel_length;
+		
 
         rampSteps *= 2.0;
 
@@ -1717,7 +1738,7 @@ long OMMotorFunctions::currentPos() {
 
 void OMMotorFunctions::home() {
 
-    moveTo(0);
+    moveTo(0, true);
 
 }
 
@@ -1735,7 +1756,7 @@ void OMMotorFunctions::home() {
 
 void OMMotorFunctions::moveToStart() {
 
-    moveTo(m_startPos);
+    moveTo(m_startPos, true);
 
 }
 
@@ -1754,7 +1775,7 @@ void OMMotorFunctions::moveToStart() {
 void OMMotorFunctions::moveToStop() {
 
 
-    moveTo(m_stopPos );
+    moveTo(m_stopPos, true);
 
 }
 
@@ -1775,7 +1796,7 @@ void OMMotorFunctions::moveToEnd() {
     if (m_endPos == 0)
         return;
 
-    moveTo(m_endPos );
+    moveTo(m_endPos, true);
 
 }
 
@@ -1792,6 +1813,12 @@ void OMMotorFunctions::moveToEnd() {
  */
 
 void OMMotorFunctions::moveTo(long p_pos) {
+	moveTo(p_pos, false);
+}
+
+
+// Same as above, but if the third parameter is true (indicating a "send to..." move), the move will execute with a longer accel/decel 
+void OMMotorFunctions::moveTo(long p_pos, bool p_send) {
 
  if( currentPos() == p_pos )
      return;
@@ -1809,7 +1836,7 @@ void OMMotorFunctions::moveTo(long p_pos) {
 	thsDir = true;
  }
 
- move(thsDir, goToPos);
+ move(thsDir, goToPos, p_send);
 
 }
 
@@ -2422,21 +2449,33 @@ float OMMotorFunctions::getTopSpeed() {
 	}
 
 	// For time lapse continuous and video continuous modes
-	else if (planMoveType == 1 || planMoveType == 2) {
+	else if ( planMoveType == 1 || planMoveType == 2 ) {
 
 		// Determine the total splines based upon the travel time
-		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / MS_PER_SPLINE;
+		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
+		USBSerial.print("mtpc_arrive: ");
+		USBSerial.println(mtpc_arrive);
+		USBSerial.print("mtpc_accel: ");
+		USBSerial.println(mtpc_accel);
+		USBSerial.print("mtpc_decel: ");
+		USBSerial.println(mtpc_decel);
+		USBSerial.print("total splines: ");
+		USBSerial.println(m_totalSplines);
 
 		// Initialize the planned move variables to calculate the m_topSpeed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
 
+		const float MILLIS_P_SECOND = 1000.0;
+
 		// Convert to steps/spline to steps/second
-		m_topSpeed *= 100.0;
+		m_topSpeed *= MILLIS_P_SECOND / MS_PER_SPLINE;
 	}
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
 	m_topSpeed *= (16.0 / (float) m_curMs);
 
+	USBSerial.print("Top speed: ");
+	USBSerial.println(m_topSpeed);
 	return(m_topSpeed);
 }
 

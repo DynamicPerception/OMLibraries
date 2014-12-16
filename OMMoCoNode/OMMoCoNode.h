@@ -85,14 +85,14 @@ public:
 	OMMoCoNode(Stream * c_serObj, unsigned int c_addr, unsigned int c_ver, char* c_id);
 	uint8_t check();
 
-	void response(bool p_stat);
-	void response(bool p_stat, uint8_t p_resp);
-	void response(bool p_stat, unsigned int p_resp);
-	void response(bool p_stat, int p_resp);
-	void response(bool p_stat, unsigned long p_resp);
-	void response(bool p_stat, long p_resp);
-	void response(bool p_stat, float p_resp);
-	void response(bool p_stat, char* p_resp, int p_len);
+	void response(uint8_t p_stat);
+	void response(uint8_t p_stat, uint8_t p_resp);
+	void response(uint8_t p_stat, unsigned int p_resp);
+	void response(uint8_t p_stat, int p_resp);
+	void response(uint8_t p_stat, unsigned long p_resp);
+	void response(uint8_t p_stat, long p_resp);
+	void response(uint8_t p_stat, float p_resp);
+	void response(uint8_t p_stat, char* p_resp, int p_len);
 
 	void sendPacket(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_command, uint8_t p_bufLen, uint8_t* p_buf);
 
