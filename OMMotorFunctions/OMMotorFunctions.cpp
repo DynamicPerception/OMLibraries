@@ -1374,9 +1374,9 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         // check for backlash compensation
         if( m_backCheck == true ) {
-			USBSerial.println("Adding backlash compensation");
+			//USBSerial.println("Adding backlash compensation");
            p_Steps += backlash();
-		   USBSerial.println(p_Steps);
+		   //USBSerial.println(p_Steps);
            if (dir() == 0)
                 m_homePos +=backlash();
            else
@@ -1390,7 +1390,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
         unsigned int mSpeed = abs(m_desiredContSpd);
 
 		// Fixed acceleration/deceleration step length to use for "send to..." and SMS motor commands
-		const int ACCEL_DECEL_LENGTH_SEND = 2500;
+		const int ACCEL_DECEL_LENGTH_SEND = 4000;
 		const int ACCEL_DECEL_LENGTH_SMS = 500;
 		int accel_decel_length;
 
@@ -2453,14 +2453,14 @@ float OMMotorFunctions::getTopSpeed() {
 
 		// Determine the total splines based upon the travel time
 		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
-		USBSerial.print("mtpc_arrive: ");
-		USBSerial.println(mtpc_arrive);
-		USBSerial.print("mtpc_accel: ");
-		USBSerial.println(mtpc_accel);
-		USBSerial.print("mtpc_decel: ");
-		USBSerial.println(mtpc_decel);
-		USBSerial.print("total splines: ");
-		USBSerial.println(m_totalSplines);
+		//USBSerial.print("mtpc_arrive: ");
+		//USBSerial.println(mtpc_arrive);
+		//USBSerial.print("mtpc_accel: ");
+		//USBSerial.println(mtpc_accel);
+		//USBSerial.print("mtpc_decel: ");
+		//USBSerial.println(mtpc_decel);
+		//USBSerial.print("total splines: ");
+		//USBSerial.println(m_totalSplines);
 
 		// Initialize the planned move variables to calculate the m_topSpeed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
