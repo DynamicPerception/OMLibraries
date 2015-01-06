@@ -53,7 +53,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_curSpline = 0;
     m_totalSplines = 0;
     m_curOffCycles = 0;
-    m_curCycleErr = 0.0;
+    m_curCycleErr = 0;
     m_homePos = 0;
     m_endPos = 0;
     m_startPos = 0;
@@ -62,9 +62,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
     //variables for the next spline
     m_nextOffCycles = 0;
-    m_nextCycleErr = 0.0;
-    m_nextPlanSpd = 0;
-    m_nextPlanErr = 0.0;
+    m_nextCycleErr = 0;
 
 
     m_curPlanSpd = 0;
@@ -698,7 +696,8 @@ void OMMotorFunctions::_updateContSpeed(){
         float off_time = m_cyclesPerSpline / (curSpd);
 
         m_nextOffCycles = (unsigned long) off_time;
-        m_nextCycleErr = off_time - (unsigned long) off_time;
+        //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
+        m_nextCycleErr = (off_time - (unsigned long) off_time)*FLOAT_TOLERANCE;
 
         return;
 
@@ -746,7 +745,8 @@ void OMMotorFunctions::_updateContSpeed(){
     float off_time = m_cyclesPerSpline / (curSpd);
 
     m_nextOffCycles = (unsigned long) off_time;
-    m_nextCycleErr = off_time - (unsigned long) off_time;
+    //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
+    m_nextCycleErr = (off_time - (unsigned long) off_time)*FLOAT_TOLERANCE;
 }
 
 /** Motor Running?
@@ -1242,7 +1242,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
        m_backCheck = false;
     }
 
-	m_totalSplines = p_Time / MS_PER_SPLINE;
+	//m_totalSplines = p_Time / MS_PER_SPLINE;
 
 		// prep spline variables
 	_initSpline(false, p_Dist, p_Time, p_Accel, p_Decel);
@@ -1351,6 +1351,11 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
        return;
    }
 
+   //ignore steps of 0 if not in continuous mode
+   if (p_Steps == 0){
+     return;
+   }
+
    	// continuous allows higher stepping rate
    	// so clamp back down if not doing a continuous
    	// move
@@ -1400,10 +1405,10 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 		else
 			accel_decel_length = ACCEL_DECEL_LENGTH_SMS;
 
-		
+
 		// This is the fixed acceleration/deceleration step length used for the "send to" commands.
 		float rampSteps = ((p_Steps / 2.0) < accel_decel_length) ? (p_Steps / 2.0) : accel_decel_length;
-		
+
 
         rampSteps *= 2.0;
 
@@ -1423,7 +1428,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
         }
 
             // calculated total number of splines during the move
-        m_totalSplines = (unsigned long) mvMS / MS_PER_SPLINE;
+        //m_totalSplines = (unsigned long) mvMS / MS_PER_SPLINE;
 
             // prep spline variables
         _initSpline(false, p_Steps, mvMS, adTm/2.0, adTm/2.0);
@@ -1817,7 +1822,7 @@ void OMMotorFunctions::moveTo(long p_pos) {
 }
 
 
-// Same as above, but if the third parameter is true (indicating a "send to..." move), the move will execute with a longer accel/decel 
+// Same as above, but if the third parameter is true (indicating a "send to..." move), the move will execute with a longer accel/decel
 void OMMotorFunctions::moveTo(long p_pos, bool p_send) {
 
  if( currentPos() == p_pos )
@@ -2079,12 +2084,19 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
   }
 
 
+
   if( ! p_Plan ) {
   	  // we only do this for non-planned (i.e. real-time) moves
 
+    float off_time = 1000000.0;
 
-     // figure out how many cycles we delay after each step
-     float off_time = theFunctions->m_cyclesPerSpline / curSpd;
+        //if curSpd is very small set to a small number to prevent dividing by 0
+     if (curSpd <= 0.000001){
+        curSpd = 0.000001;
+     } else {
+        // figure out how many cycles we delay after each step
+        off_time = theFunctions->m_cyclesPerSpline / curSpd;
+     }
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
@@ -2094,11 +2106,13 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
         theFunctions->m_nextOffCycles = 1;
      }
      float temp = (float)theFunctions->m_nextOffCycles;
-     theFunctions->m_nextCycleErr = off_time - temp;
+     //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
+     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-      if( theFunctions->m_nextCycleErr >= 1.0 ) {
-          theFunctions->m_nextCycleErr = 0.0;
+      // compare again the FLOAT_TOLERANCE
+      if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
+          theFunctions->m_nextCycleErr = 0;
       }
 
   }
@@ -2169,16 +2183,24 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
 void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
   OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
-
+    float curSpd = 0.0;
   	// use correct quad or inv. quad calculation
-  float curSpd = (theFunctions->f_easeCal)(thisSpline, p_tmPos, theFunctions, p_Plan);
+  curSpd = (theFunctions->f_easeCal)(thisSpline, p_tmPos, theFunctions, p_Plan);
 
   if( ! p_Plan ) {
 
   	  // we only do this for non-planned (i.e. real-time) moves
 
-     // figure out how many cycles we delay after each step
-     float off_time = theFunctions->m_cyclesPerSpline / curSpd;
+    float off_time = 1000000.0;
+
+        //if curSpd is very small set to a small number to prevent dividing by 0
+     if (curSpd <= 0.000001){
+        curSpd = 0.000001;
+     } else {
+        // figure out how many cycles we delay after each step
+        off_time = theFunctions->m_cyclesPerSpline / curSpd;
+     }
+
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
@@ -2188,10 +2210,12 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctio
         theFunctions->m_nextOffCycles = 1;
      }
      float temp = theFunctions->m_nextOffCycles;
-     theFunctions->m_nextCycleErr = off_time - temp;
+     //multiple the error by the FLOAT_TOLERANCE in order to get rid of the float varaible
+     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
+
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-     if( theFunctions->m_nextCycleErr >= 1.0 ) {
+     if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
         theFunctions->m_nextCycleErr = 0.0;
      }
 
@@ -2317,6 +2341,7 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
 void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
 
    OMMotorFunctions::s_splineCal *thisSpline = &m_splineOne;
+   m_totalSplines = p_Time/MS_PER_SPLINE;
    unsigned long totSplines = m_totalSplines;
 
 
@@ -2337,10 +2362,10 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
    thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
    thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
 
+    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
+
    // SMS mode
     if (p_Plan == true){
-
-        float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
 
         unsigned long acSteps = 0;
         unsigned long dcSteps = 0;
@@ -2391,7 +2416,6 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
 
 	// Continuous mode
 	else {
-        float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
         thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
     }
 
@@ -2452,7 +2476,7 @@ float OMMotorFunctions::getTopSpeed() {
 	else if ( planMoveType == 1 || planMoveType == 2 ) {
 
 		// Determine the total splines based upon the travel time
-		m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
+		//m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
 		//USBSerial.print("mtpc_arrive: ");
 		//USBSerial.println(mtpc_arrive);
 		//USBSerial.print("mtpc_accel: ");
@@ -2491,7 +2515,7 @@ void OMMotorFunctions::checkRefresh(){
           m_cyclesLow = 0;
           m_stepsTaken = 0;
           m_totalCyclesTaken = 0;
-          m_cycleErrAccumulated = 0.0;
+          m_cycleErrAccumulated = 0;
           m_refresh = false;
       }
 }
@@ -2595,7 +2619,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
           m_stepsTaken = 0;
           m_curSpline = 0;
           m_totalCyclesTaken = 0;
-          m_cycleErrAccumulated = 0.0;
+          m_cycleErrAccumulated = 0;
           m_cyclesLow = 0;
 
           stop();
@@ -2616,14 +2640,17 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
     m_totalCyclesTaken++;
 
-    if( m_cycleErrAccumulated >= 1.00 ) {
+    //compare against the FLOAT_TOLERANCE because the error variable isn't a float and all
+    //the errors should have been multipled by the FLOAT_TOLERANCE
+    if( m_cycleErrAccumulated >= FLOAT_TOLERANCE ) {
 
 
             // check the error rate (fractions of a cycle that
             // were accumulated - if at least one full cycle, add
             // an additional delay cycle to get overall movement
             // timing as close to exact as is possible
-            m_cycleErrAccumulated -= 1.00;
+            m_cycleErrAccumulated -= FLOAT_TOLERANCE;
+
 
                  // run an extra cycle low
             return (false);
@@ -2648,7 +2675,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
              || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
-              m_cycleErrAccumulated = 0.0;
+              m_cycleErrAccumulated = 0;
               m_cyclesLow = 0;
 
               stop();

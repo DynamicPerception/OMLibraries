@@ -48,6 +48,8 @@ See www.openmoco.org for more information
 
 #define MS_PER_SPLINE    20
 
+#define FLOAT_TOLERANCE  1000
+
 
 /**
   @page ommotion Motion Capabilities
@@ -611,7 +613,7 @@ private:
 
 
 	//movement variables
-	volatile float m_cycleErrAccumulated;
+	volatile int m_cycleErrAccumulated;
     volatile unsigned long m_cyclesLow;
     volatile unsigned long m_stepsTaken;
     volatile unsigned long m_totalCyclesTaken;
@@ -623,14 +625,12 @@ private:
 
 
     unsigned long m_nextOffCycles;
-    float m_nextCycleErr;
-    float m_nextPlanErr;
-    unsigned long m_nextPlanSpd;
+    unsigned int m_nextCycleErr;
 
 
 
     volatile unsigned long m_curOffCycles;
-	volatile float m_curCycleErr;
+	volatile int m_curCycleErr;
 	static unsigned int m_curSampleRate;
 	static unsigned int m_cyclesPerSpline;
 	volatile unsigned long m_curSpline;
