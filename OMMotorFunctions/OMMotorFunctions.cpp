@@ -2498,8 +2498,8 @@ float OMMotorFunctions::getTopSpeed() {
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
 	m_topSpeed *= (16.0 / (float) m_curMs);
 
-	USBSerial.print("Top speed: ");
-	USBSerial.println(m_topSpeed);
+	//USBSerial.print("Top speed: ");
+	//USBSerial.println(m_topSpeed);
 	return(m_topSpeed);
 }
 
