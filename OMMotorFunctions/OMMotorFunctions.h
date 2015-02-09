@@ -501,7 +501,9 @@ public:
     uint8_t checkStep();
 
     void planLeadIn(unsigned int);
+	void planLeadOut(unsigned int);
     unsigned long planLeadIn();
+	unsigned long planLeadOut();
 
     int stpreg;
     int stpflg;
@@ -654,6 +656,7 @@ private:
 	long m_stopPos;					// Distance in current microsteps of program stop from home position
 
 	unsigned long m_planLeadIn;		// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
+	unsigned long m_planLeadOut;		// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
 
 	uint8_t m_curMs;				// Current microstepping value
 	unsigned int m_backAdj;

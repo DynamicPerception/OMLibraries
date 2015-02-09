@@ -126,6 +126,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 	planMoveType 		  = 0;
 	mtpc_start	  = false;
 	m_planLeadIn      = 0;
+	m_planLeadOut     = 0;
 	autoPause     = false;
 	m_firstRun     = true;
 
@@ -1379,9 +1380,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         // check for backlash compensation
         if( m_backCheck == true ) {
-			//USBSerial.println("Adding backlash compensation");
            p_Steps += backlash();
-		   //USBSerial.println(p_Steps);
            if (dir() == 0)
                 m_homePos +=backlash();
            else
@@ -1984,6 +1983,34 @@ unsigned long OMMotorFunctions::planLeadIn(){
     return(m_planLeadIn);
 }
 
+/** Set Lead Out (either shots or time depending on plan mode)
+
+Sets the planned number of shots for lead Out. This is the number of shots taken after the motor
+finishes its move.
+
+*/
+
+void OMMotorFunctions::planLeadOut(unsigned int p_leadOut){
+
+	m_planLeadOut = p_leadOut;
+}
+
+/** Get Lead Out (either shots or time depending on plan mode)
+
+Gets the planned number of shots for lead out. This is the number of shots or time taken after the motor
+finishes its move.
+
+@return
+An unsigned int, representing the lead-out in shots or time (ms).
+If planMoveType  = 0 or planMoveType  = 1 then shots, if planMoveType  = 2 then time.
+
+*/
+
+unsigned long OMMotorFunctions::planLeadOut(){
+
+	return(m_planLeadOut);
+}
+
 /** Set Program Done
 
 Set flag to indicate if the motor is done with the program move.
@@ -2476,15 +2503,15 @@ float OMMotorFunctions::getTopSpeed() {
 	else if ( planMoveType == 1 || planMoveType == 2 ) {
 
 		// Determine the total splines based upon the travel time
-		//m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
-		//USBSerial.print("mtpc_arrive: ");
-		//USBSerial.println(mtpc_arrive);
-		//USBSerial.print("mtpc_accel: ");
-		//USBSerial.println(mtpc_accel);
-		//USBSerial.print("mtpc_decel: ");
-		//USBSerial.println(mtpc_decel);
-		//USBSerial.print("total splines: ");
-		//USBSerial.println(m_totalSplines);
+			//m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
+			//USBSerial.print("mtpc_arrive: ");
+			//USBSerial.println(mtpc_arrive);
+			//USBSerial.print("mtpc_accel: ");
+			//USBSerial.println(mtpc_accel);
+			//USBSerial.print("mtpc_decel: ");
+			//USBSerial.println(mtpc_decel);
+			//USBSerial.print("total splines: ");
+			//USBSerial.println(m_totalSplines);
 
 		// Initialize the planned move variables to calculate the m_topSpeed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
@@ -2497,9 +2524,6 @@ float OMMotorFunctions::getTopSpeed() {
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
 	m_topSpeed *= (16.0 / (float) m_curMs);
-
-	//USBSerial.print("Top speed: ");
-	//USBSerial.println(m_topSpeed);
 	return(m_topSpeed);
 }
 

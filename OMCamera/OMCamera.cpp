@@ -406,6 +406,8 @@ void OMCamera::triggerTime(unsigned long p_tm) {
 
 /** Set Default Delay Time
 
+AKA: Exposure delay
+
  @param tm
  Delay time, in milliseconds
  */
@@ -415,6 +417,8 @@ void OMCamera::delayTime(unsigned int p_tm) {
 }
 
 /** Get Default Delay Time
+
+AKA: Exposure delay
 
  @return
  Delay time, in milliseconds
