@@ -34,26 +34,26 @@
 
 
 
-	// default pin assignments (nanomoco)
-#define OM_DEFSHUTTER1	 9
-#define OM_DEFSHUTTER2	 8
-#define OM_DEFFOCUS1     11
-#define OM_DEFFOCUS2     10
+// default pin assignments (nanomoco)
+#define OM_DEFSHUTTER1	 9		// Trigger 1 pin
+#define OM_DEFSHUTTER2	 8		// Trigger 2 pin
+#define OM_DEFFOCUS1     11		// Focus 1 pin
+#define OM_DEFFOCUS2     10		// Focus 2 pin
 
-	// callback status codes
+// callback status codes
 
-#define OM_CAMEXP		1
-#define OM_CAM_EFIN		2
-#define OM_CAMFOC		3
-#define OM_CAM_FFIN		4
-#define OM_CAMWAIT		5
-#define OM_CAM_WFIN		6
+#define OM_CAMEXP		1	// Camera exposure has begun
+#define OM_CAM_EFIN		2	// Camera exposure has completed
+#define OM_CAMFOC		3	// Camera focus has begun
+#define OM_CAM_FFIN		4	// Camera focus has completed
+#define OM_CAMWAIT		5	// (Exposure) delay has begun
+#define OM_CAM_WFIN		6	// (Exposure) delay has completed
 
 
-#define OM_CAM_INCLR	0
-#define OM_CAM_INEXP	1
-#define OM_CAM_INFOC	2
-#define OM_CAM_INDLY	3
+#define OM_CAM_INCLR	0	// Camera action is cleared 
+#define OM_CAM_INEXP	1	// Camera is currently exposing 
+#define OM_CAM_INFOC	2	// Camera is currently focusing
+#define OM_CAM_INDLY	3	// Camera is currently idle
 
 /**
 
@@ -180,6 +180,7 @@ private:
 
 	bool m_focusShut;
 
+	static bool m_debug;
 
 	static uint8_t m_curAct;
 
@@ -221,7 +222,8 @@ public:
 	unsigned int delayTime();
 
 	static void stop();
-
+	static void debugOutput(bool p_state);
+	static bool debugOutput();
 };
 
 

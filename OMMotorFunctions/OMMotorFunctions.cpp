@@ -29,9 +29,11 @@ See www.openmoco.org for more information
 
 #include "OMMotorFunctions.h"
 
+// initialize static members
 
 unsigned int OMMotorFunctions::m_curSampleRate = 200;
 unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
+bool		 OMMotorFunctions::m_debug = false;
 
 /** Constructor
 
@@ -1413,12 +1415,27 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         //calculated cruise time
         float crTm = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
+		if (m_debug) {
+			USBSerial.print("OMMotorFunctions::move() - Cruise time: ");
+			USBSerial.print(crTm);
+			USBSerial.print("ms ");
+		}
 
         //calculate acceleration and deceleration time
         float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
+		if(m_debug) {
+			USBSerial.print("Accel/decel time: ");
+			USBSerial.print(crTm);
+			USBSerial.print("ms ");
+		}
 
 		//calculated total move time
         float mvMS = (crTm + adTm);
+		if (m_debug) {
+			USBSerial.print("Total move time: ");
+			USBSerial.print(crTm);
+			USBSerial.println("ms");
+		}
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -2096,7 +2113,8 @@ void OMMotorFunctions::programMove(){
 
 void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
-  OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
+	// Is this a plan move? If yes, use planned spline, otherwise use default start spline
+	OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
   float curSpd;
 
@@ -2111,29 +2129,32 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
   }
 
 
-
+  // we only do this for non-planned (i.e. real-time) moves
   if( ! p_Plan ) {
-  	  // we only do this for non-planned (i.e. real-time) moves
+  	  
 
     float off_time = 1000000.0;
 
-        //if curSpd is very small set to a small number to prevent dividing by 0
+     //if curSpd is very small set to a small number to prevent dividing by 0
      if (curSpd <= 0.000001){
         curSpd = 0.000001;
-     } else {
-        // figure out how many cycles we delay after each step
+     } 
+	 
+	 // figure out how many cycles we delay after each step
+	 else {
         off_time = theFunctions->m_cyclesPerSpline / curSpd;
      }
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
-
-     theFunctions->m_nextOffCycles = (unsigned long) off_time;
+	 theFunctions->m_nextOffCycles = (unsigned long) off_time;
      if (theFunctions->m_nextOffCycles < 1){
         theFunctions->m_nextOffCycles = 1;
      }
-     float temp = (float)theFunctions->m_nextOffCycles;
-     //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
+     
+	 float temp = (float)theFunctions->m_nextOffCycles;
+     
+	 //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
      theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
@@ -2143,9 +2164,9 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
       }
 
   }
+  
+  // for planned shoot-move-shoot calculations, we need whole steps per shot
   else {
-  	  	// for planned shoot-move-shoot calculations, we need whole
-  	  	// steps per shot
 
     //make sure we don't overshoot the steps required for the move for each section
   	if( p_tmPos <= thisSpline->acTm ){
@@ -2165,7 +2186,9 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
         }
         thisSpline->acTravel -= theFunctions->m_curPlanSpd;
 
-  	} else if (p_tmPos <= thisSpline->dcStart ) {
+  	} 
+
+	else if (p_tmPos <= thisSpline->dcStart ) {
 
         if (theFunctions->m_curPlanSpd > thisSpline->crTravel || p_tmPos == thisSpline->dcStart)
             curSpd = thisSpline->crTravel;
@@ -2181,7 +2204,9 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
         }
         thisSpline->crTravel -= theFunctions->m_curPlanSpd;
 
-  	} else {
+  	} 
+
+	else {
   	    curSpd = thisSpline->topSpeed - thisSpline->dcStep*(theFunctions->m_curPlanSpline -
         (theFunctions->mtpc_arrive - theFunctions->mtpc_accel - theFunctions->mtpc_decel));
 
@@ -2200,6 +2225,7 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunct
 
         thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
   	}
+
   }
 
 
@@ -2503,15 +2529,17 @@ float OMMotorFunctions::getTopSpeed() {
 	else if ( planMoveType == 1 || planMoveType == 2 ) {
 
 		// Determine the total splines based upon the travel time
-			//m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
-			//USBSerial.print("mtpc_arrive: ");
-			//USBSerial.println(mtpc_arrive);
-			//USBSerial.print("mtpc_accel: ");
-			//USBSerial.println(mtpc_accel);
-			//USBSerial.print("mtpc_decel: ");
-			//USBSerial.println(mtpc_decel);
-			//USBSerial.print("total splines: ");
-			//USBSerial.println(m_totalSplines);
+		if (m_debug){
+			m_totalSplines = (unsigned long)(mtpc_arrive + mtpc_accel + mtpc_decel) / (MS_PER_SPLINE);
+			USBSerial.print("mtpc_arrive: ");
+			USBSerial.println(mtpc_arrive);
+			USBSerial.print("mtpc_accel: ");
+			USBSerial.println(mtpc_accel);
+			USBSerial.print("mtpc_decel: ");
+			USBSerial.println(mtpc_decel);
+			USBSerial.print("total splines: ");
+			USBSerial.println(m_totalSplines);
+		}
 
 		// Initialize the planned move variables to calculate the m_topSpeed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
@@ -2806,4 +2834,30 @@ unsigned long OMMotorFunctions::keyDecel(uint8_t p_which) {
 unsigned long OMMotorFunctions::keyLead(uint8_t p_which) {
 
 	return(key_frame.lead_in[p_which]);
+}
+
+
+/** void debugOutput(bool p_switch)
+
+This method handles turning on and off the USB debug output flag.
+
+@param
+p_switch = (true, false)
+
+*/
+
+void OMMotorFunctions::debugOutput(bool p_state) {
+
+	m_debug = p_state;
+}
+
+/** bool debugOutput()
+
+This method handles retuning the state of the USB debug output flag.
+
+*/
+
+bool OMMotorFunctions::debugOutput() {
+
+	return m_debug;
 }

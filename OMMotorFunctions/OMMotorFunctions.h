@@ -543,10 +543,8 @@ public:
 	unsigned long keyDecel(uint8_t);
 	unsigned long keyLead(uint8_t);
 
-
-
-
-
+	static void debugOutput(bool p_state);
+	static bool debugOutput();
 
 
 private:
@@ -682,6 +680,8 @@ private:
 	};
 
 	key_frame key_frame;
+
+	static bool m_debug;
 
 };
 

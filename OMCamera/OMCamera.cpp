@@ -41,7 +41,7 @@
  // initialize static members
 
  bool OMCamera::m_isBzy = false;
- void(*OMCamera::f_camSignal)(uint8_t) = 0;
+ void(*OMCamera::f_camSignal)(uint8_t) = 0;			// Pointer to camera callback function, camCallBack()
 
  uint8_t OMCamera::m_shutter1 = OM_DEFSHUTTER1;
  uint8_t OMCamera::m_shutter2 = OM_DEFSHUTTER2;
@@ -49,6 +49,7 @@
  uint8_t OMCamera::m_focus2 = OM_DEFFOCUS2;
  uint8_t OMCamera::m_curAct = OM_CAM_INCLR;
 
+ bool	 OMCamera::m_debug = false;
 
 /** Constructor
 
@@ -217,13 +218,20 @@ void OMCamera::stop() {
 	// timer from continuing to trigger and getting stuck in
 	// a loop.
 
+	if (m_debug)
+		USBSerial.println("OMCamera::stop() - Entering function");
 
   MsTimer2::stop();
 
   uint8_t code = 0;
 
+  // If expose state is set
   if( m_curAct == OM_CAM_INEXP ) {
-  	  	// expose complete
+	  
+	  if (m_debug)
+		USBSerial.println("OMCamera::stop() - Stopping exposure");
+  	  
+	  // expose complete
   	  digitalWrite(m_shutter1, LOW);
   	  digitalWrite(m_shutter2, LOW);
 
@@ -240,29 +248,37 @@ void OMCamera::stop() {
 	  digitalWrite(m_focus2, LOW);
 	  code = OM_CAM_EFIN;
   }
+  // If focus state is set
   else if( m_curAct == OM_CAM_INFOC ) {
-		// focus complete
+
+	  if (m_debug)
+		  USBSerial.println("OMCamera::stop() - Stopping focus");
+
+	  // focus complete
 	  digitalWrite(m_focus1, LOW);
 	  digitalWrite(m_focus2, LOW);
 	  code = OM_CAM_FFIN;
   }
+  // If not ending exposure or focus state
   else {
-  	code = OM_CAM_WFIN;
+	  if (m_debug)
+		  USBSerial.println("OMCamera::stop() - Setting wait state");
+	  code = OM_CAM_WFIN;
   }
 
-
-  	// reset current action
+  // reset current action
   m_curAct = OM_CAM_INCLR;
 
-      // update camera currently engaged
+  // update camera currently engaged
   m_isBzy = false;
 
 
   if( code != 0 ) {
   	  // if we got here because of stop() called from a timer, then
   	  // let's send a proper signal (if callback set)
-	  if( f_camSignal != 0 )
+	  if (f_camSignal != 0) {
 		  f_camSignal(code);
+	  }
   }
 
 }
@@ -373,6 +389,7 @@ void OMCamera::focus(unsigned int p_time) {
 
   m_curAct = OM_CAM_INFOC;
 
+  // Set interrupt timer with focus time, call stop() when complete
   MsTimer2::set(p_time, OMCamera::stop);
   MsTimer2::start();
     // update camera currently engaged
@@ -518,6 +535,30 @@ void OMCamera::wait(unsigned int p_Time) {
   	  f_camSignal(OM_CAMWAIT);
 }
 
+/** void debugOutput(bool p_switch)
+
+This method handles turning on and off the USB debug output flag.
+
+@param 
+p_switch = (true, false)
+
+*/
+
+void OMCamera::debugOutput(bool p_state) {
+	
+	m_debug = p_state;
+}
+
+/** bool debugOutput()
+
+This method handles retuning the state of the USB debug output flag.
+
+*/
+
+bool OMCamera::debugOutput() {
+
+	return m_debug;
+}
 
 
 
