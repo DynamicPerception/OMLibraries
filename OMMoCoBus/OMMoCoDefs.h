@@ -2,7 +2,7 @@
 
 MoCoBus Core Library Definitions
 
-OpenMoco nanoMoCo Core Engine Libraries 
+OpenMoco nanoMoCo Core Engine Libraries
 
 See www.openmoco.org for more information
 
@@ -30,9 +30,9 @@ See www.openmoco.org for more information
 
 
 /** @file OMMoCoDefs.h
- 
+
  MoCoBus Definitions
- 
+
  */
 
 // types of data responses which can be sent back
@@ -55,6 +55,7 @@ enum {
 // bus 'broadcast' address
 #define OM_SER_BCAST_ADDR	1
 
+
  // timeout in milliseconds
 #define OM_SER_MASTER_TIMEOUT  100
 
@@ -62,6 +63,8 @@ enum {
 #define OM_SER_WAIT 100
 // command data buffer size in bytes
 #define OM_SER_BUFLEN 32
+// length of the command packet header, address, sub-address, packet code, and length
+#define OM_SER_PKT_PREAMBLE 10
 
 // return codes
 #define OM_SER_OK 1
@@ -97,6 +100,17 @@ enum {
 #define OM_SER_COREVER		3
 #define OM_SER_COREADDR		4
 
+
+
+// Position of the command code in the packet
+#define COM_POS  8
+
+// Position of the data length in the packet
+#define LEN_POS  9
+
+// Position of the beginning of the data section of the packet
+#define DATA_POS  10
+
 // commond broadcast commands
 
  /** Common Broadcast Command Types */
@@ -106,7 +120,9 @@ enum BroadCastType {
         /** Stop Program Execution */
     OM_BCAST_STOP  = 2,
         /** Pause Program Execution */
-    OM_BCAST_PAUSE = 3
+    OM_BCAST_PAUSE = 3,
+        /** Set Default Address Execution */
+    OM_BCAST_SET_ADDRESS = 4
 };
 
 
