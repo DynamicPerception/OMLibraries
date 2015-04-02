@@ -116,13 +116,17 @@ enum {
  /** Common Broadcast Command Types */
 enum BroadCastType {
         /** Start Program Execution */
-    OM_BCAST_START = 1,
-        /** Stop Program Execution */
-    OM_BCAST_STOP  = 2,
-        /** Pause Program Execution */
-    OM_BCAST_PAUSE = 3,
-        /** Set Default Address Execution */
-    OM_BCAST_SET_ADDRESS = 4
+	OM_BCAST_START = 1,
+		/** Stop Program Execution */
+	OM_BCAST_STOP = 2,
+		/** Pause Program Execution */
+	OM_BCAST_PAUSE = 3,
+		/** Set Default Address Execution */
+	OM_BCAST_SET_ADDRESS = 4,
+		/** Set Graffik Mode Using USB Connection */
+	OM_GRAFFIK_MODE_USB = 5,
+		/** Set Graffik Mode Using BLE Connection*/
+	OM_GRAFFIK_MODE_BLE = 6
 };
 
 
