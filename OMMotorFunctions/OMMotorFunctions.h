@@ -47,7 +47,9 @@ See www.openmoco.org for more information
 #define OM_MOT_DONE_PLAN 7
 
 #define MS_PER_SPLINE    20
-
+#define MS_PER_SEC		 1000
+#define MS_PER_MICRO	 1000
+#define MICROS_PER_SEC	 1000000
 #define FLOAT_TOLERANCE  1000
 
 
@@ -562,17 +564,17 @@ private:
     uint8_t m_programDone;
 
     struct s_splineCal {
-		float acTm;
-		float dcTm;
-		float crTm;
-		float topSpeed;
-		float dcStart;
-		float travel;
-		float acStep;
-		float dcStep;
-		unsigned long acTravel;
-		unsigned long dcTravel;
-		unsigned long crTravel;
+		float acTm;					// Acceleration time in milliseconds
+		float dcTm;					// Deceleration time in milliseconds
+		float crTm;					// Cruise (constsnt) time in milliseconds
+		float topSpeed;				// Top speed in steps/s or steps/move
+		float dcStart;				// Deceleration start time in milliseconds
+		float travel;				// 1/travel = (distance during accel / distance at constant speed for same time period)
+		float acStep;				//
+		float dcStep;				//
+		unsigned long acTravel;		//
+		unsigned long dcTravel;		//
+		unsigned long crTravel;		//
 	};
 
 
@@ -587,13 +589,13 @@ private:
 	void _fireCallback(uint8_t);
 
 	void _initSpline(uint8_t, float, unsigned long, unsigned long, unsigned long);
-	static void _linearEasing(uint8_t, float, OMMotorFunctions*);
-	static void _quadEasing(uint8_t, float, OMMotorFunctions*);
+	void _linearEasing(uint8_t, float);
+	void _quadEasing(uint8_t, float);
 
-	void _setTravelConst(OMMotorFunctions::s_splineCal*);
+	void _setTravelConst(s_splineCal*);
 
-	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
-	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+	float _qEaseCalc(s_splineCal*, float, uint8_t);
+	float _qInvCalc(s_splineCal*, float, uint8_t);
 
     void _updateContSpeed();
 
@@ -631,7 +633,7 @@ private:
 
     volatile unsigned long m_curOffCycles;
 	volatile int m_curCycleErr;
-	static unsigned int m_curSampleRate;
+	static unsigned int m_curSampleTime;
 	static unsigned int m_cyclesPerSpline;
 	volatile unsigned long m_curSpline;
 	unsigned long m_totalSplines;
@@ -663,8 +665,8 @@ private:
 	float m_topSpeed;
 
 	void(*f_motSignal)(uint8_t);
-	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
-	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+	void(*f_easeFunc)(uint8_t, float);
+	float(*f_easeCal)(s_splineCal*, float, uint8_t);
 
 	uint8_t m_programBackCheck;
 
