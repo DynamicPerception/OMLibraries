@@ -1072,7 +1072,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 
  OMMotorFunctions Motor = OMMotorFunctions();
 
- volatile uint8_t okNext = true;
+ volatile uint8_tean okNext = true;
 
  unsigned int totalIntervals = 500;
  unsigned int totalSteps = 2000;
@@ -2269,9 +2269,10 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos) {
      }
      float temp = m_nextOffCycles;
      //multiple the error by the FLOAT_TOLERANCE in order to get rid of the float varaible
-     m_nextCycleErr = (off_time - temp) * FLOAT_TOLERANCE;
+     m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
 
-     // worry about the fact that floats and doubles CAN actually overflow an unsigned long
+
+      // worry about the fact that floats and doubles CAN actually overflow an unsigned long
      if( m_nextCycleErr >= FLOAT_TOLERANCE ) {
         m_nextCycleErr = 0.0;
      }
@@ -2282,7 +2283,6 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos) {
   else {
     unsigned long x = 0;
     float y = 0.0;
-
 	// Acceleration phase
   	if( p_tmPos <= thisSpline->acTm ){
         if ((unsigned long)curSpd >= thisSpline->acTravel || p_tmPos == thisSpline->acTm )
@@ -2587,29 +2587,31 @@ void OMMotorFunctions::checkRefresh(){
 }
 
 
+
+
 void OMMotorFunctions::updateSpline(){
 
     if (splineReady == false){
-        
-		//If it's in continuous mode accel/decel until desired spd
-        if (continuous())
+        //If it's in continuous mode accel/decel until desired spd
+        if (continuous()){
+
             _updateContSpeed();
 
-		//Calculate next spline while not in continous mode
-		else { 
+
+        } else { //Calculate next spline while not in continous mode
 
             if( m_curSpline >= m_totalSplines ) {
                         // hey, look at that - we're at the end of our spline (and
                         // we haven't finished our last step either, otherwise we
                         // wouldn't get here...)
-                endOfMove = true;
-            } 
-			else {// end if( m_curSpline...
 
-                // move to the next point in the current spline.
+                endOfMove = true;
+            } else {// end if( m_curSpline...
+
+                    // move to the next point in the current spline.
                 float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
 
-                // get new off cycle timing for the next point in the spline
+                    // get new off cycle timing for the next point in the spline
                 f_easeFunc(false, tmPos); //goes to a new function?
 
                 endOfMove = false;
@@ -2617,7 +2619,12 @@ void OMMotorFunctions::updateSpline(){
         }
         splineReady = true;
     }
+
+
+
 }
+
+
 
 
 /** checkStep
@@ -2625,6 +2632,8 @@ void OMMotorFunctions::updateSpline(){
 Check to see if the motor needs to take a step
 
 */
+
+
 
 uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
@@ -2684,12 +2693,14 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
         }
 
+
         //update spline data
         m_curOffCycles = m_nextOffCycles;
         m_curCycleErr = m_nextCycleErr;
         m_curSpline++;
         m_totalCyclesTaken = 0;
         splineReady = false;
+
 
     }
 
@@ -2752,18 +2763,18 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
           }
 
+
+
     } // end if( cyclesLow...
 
     return(false);
 }
-
 
 /**
 
 Sets the flag indicating whether the motor has backlash to be taken up before a program move
 
 */
-
 void OMMotorFunctions::programBackCheck(uint8_t p_setFlag) {
 
 	m_programBackCheck = p_setFlag;
@@ -2771,13 +2782,11 @@ void OMMotorFunctions::programBackCheck(uint8_t p_setFlag) {
 
 }
 
-
 /**
 
 Returns whether the motor has backlash to be taken up before a program move
 
 */
-
 uint8_t OMMotorFunctions::programBackCheck() {
 
 	return(m_programBackCheck);
@@ -2855,7 +2864,6 @@ void OMMotorFunctions::debugOutput(bool p_state) {
 
 	m_debug = p_state;
 }
-
 
 /** bool debugOutput()
 
