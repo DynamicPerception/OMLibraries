@@ -31,8 +31,8 @@ See www.openmoco.org for more information
 
 // initialize static members
 
-unsigned int OMMotorFunctions::m_curSampleTime = 200;		// Microseconds between checks for whether a step pluse is required
-unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;		// Number of step pluse checks per spline
+unsigned int OMMotorFunctions::m_curSampleRate = 200;
+unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
 bool		 OMMotorFunctions::m_debug = false;
 
 /** Constructor
@@ -43,7 +43,7 @@ bool		 OMMotorFunctions::m_debug = false;
   */
 
 OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_ms1=0, int p_ms2=0, int p_ms3=0, int p_stpreg = 0, int p_stpflg = 0) {
-	// set pin states
+		// set pin states
 
 
     m_asyncSteps = 0;
@@ -149,8 +149,8 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
 void(*f_motSignal)(uint8_t) = 0;
 
-	f_easeFunc = this->_quadEasing;
-	f_easeCal = this->_qEaseCalc;
+	f_easeFunc = _quadEasing;
+	f_easeCal = _qEaseCalc;
 }
 
 /** Destructor
@@ -924,12 +924,12 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 		return;
 
 		// convert from steps per second, to uSecond periods
-	m_curSampleTime = MICROS_PER_SEC / (unsigned long)p_Rate;
+	m_curSampleRate = 1000000 / (unsigned long) p_Rate;
 
 		// timeslices are in MS_PER_SPLINE mS, so how many
 		// stepping samples are there for one MS_PER_SPLINE?
 
-	m_cyclesPerSpline = (MS_PER_SPLINE * MS_PER_MICRO) / m_curSampleTime;
+	m_cyclesPerSpline = (MS_PER_SPLINE * 1000) / m_curSampleRate;
 
 }
 
@@ -942,7 +942,7 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
  */
 
 unsigned int OMMotorFunctions::curSamplePeriod() {
-    return( m_curSampleTime );
+    return( m_curSampleRate );
 }
 
 /** Get Maximum Stepping Rate
@@ -954,7 +954,7 @@ unsigned int OMMotorFunctions::curSamplePeriod() {
  */
 
 unsigned int OMMotorFunctions::maxStepRate() {
-	return((unsigned int)( (long) MICROS_PER_SEC / (long) m_curSampleTime ));
+	return((unsigned int)( (long) 1000000 / (long) m_curSampleRate ));
 }
 
 
@@ -1133,7 +1133,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 
 void OMMotorFunctions::planRun() {
 
-	// if motor is disabled, do nothing
+			// if motor is disabled, do nothing
 	if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) || m_curPlanSpline >= m_curPlanSplines ) {
 		_fireCallback(OM_MOT_DONE);
 		return;
@@ -1141,10 +1141,10 @@ void OMMotorFunctions::planRun() {
 
 	m_curPlanSpline++;
 
-	// get steps to move for next movement
+		// get steps to move for next movement
 	float tmPos = ((float) m_curPlanSpline) / (float) m_curPlanSplines;
 
-	f_easeFunc(true, tmPos); // sets m_curPlanSpd
+	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
 	unsigned long i = m_curPlanSpd;
 	move(m_planDir, m_curPlanSpd);
 
@@ -1165,9 +1165,10 @@ void OMMotorFunctions::planReverse() {
 
 
     // get steps to move for last movement (m_curPlanSpline is not changed)
+
 	float tmPos = (float) m_curPlanSpline / (float) m_curPlanSplines;
 
-	f_easeFunc(true, tmPos); // sets m_curPlanSpd
+	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
         // note that direction is reversed
 	move(!m_planDir, m_curPlanSpd);
 
@@ -1254,7 +1255,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
 	m_curSpline = 1;
 	float tmPos = (float) m_curSpline / (float) m_totalSplines;
 
-	f_easeFunc(false, tmPos);
+	f_easeFunc(false, tmPos, this);
 
 	m_calcMove = true;
 
@@ -1452,7 +1453,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
         m_curSpline = 1;
         float tmPos = (float) m_curSpline / (float) m_totalSplines;
             // calculate the first running speed
-        f_easeFunc(false, tmPos);
+        f_easeFunc(false, tmPos, this);
    }
 
 	// limit step cycle using this control
@@ -1551,15 +1552,15 @@ void OMMotorFunctions::easing(uint8_t p_easeType) {
   	  return;
 
   if( p_easeType == OM_MOT_LINEAR ) {
-	  f_easeFunc = this->_linearEasing;
+  	  f_easeFunc = _linearEasing;
   }
   else if( p_easeType == OM_MOT_QUAD ) {
-	  f_easeFunc = this->_quadEasing;
-  	  f_easeCal = this->_qEaseCalc;
+  	  f_easeFunc = _quadEasing;
+  	  f_easeCal = _qEaseCalc;
   }
   else if( p_easeType == OM_MOT_QUADINV ) {
-	  f_easeFunc = this->_quadEasing;
-	  f_easeCal = this->_qInvCalc;
+  	  f_easeFunc = _quadEasing;
+  	  f_easeCal = _qInvCalc;
   }
   else {
   	  	// unsupported type
@@ -2110,10 +2111,10 @@ void OMMotorFunctions::programMove(){
 */
 
 
-void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos) {
+void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
 	// Is this a plan move? If yes, use planned spline, otherwise use default start spline
-	OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &m_splinePlanned : &m_splineOne;
+	OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
   float curSpd;
 
@@ -2141,25 +2142,25 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos) {
 	 
 	 // figure out how many cycles we delay after each step
 	 else {
-        off_time = m_cyclesPerSpline / curSpd;
+        off_time = theFunctions->m_cyclesPerSpline / curSpd;
      }
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
-	 m_nextOffCycles = (unsigned long) off_time;
-     if (m_nextOffCycles < 1){
-        m_nextOffCycles = 1;
+	 theFunctions->m_nextOffCycles = (unsigned long) off_time;
+     if (theFunctions->m_nextOffCycles < 1){
+        theFunctions->m_nextOffCycles = 1;
      }
      
-	 float temp = (float)m_nextOffCycles;
+	 float temp = (float)theFunctions->m_nextOffCycles;
      
 	 //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
-     m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
+     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
       // compare again the FLOAT_TOLERANCE
-      if( m_nextCycleErr >= FLOAT_TOLERANCE ) {
-          m_nextCycleErr = 0;
+      if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
+          theFunctions->m_nextCycleErr = 0;
       }
 
   }
@@ -2170,59 +2171,59 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos) {
     //make sure we don't overshoot the steps required for the move for each section
   	if( p_tmPos <= thisSpline->acTm ){
 
-        curSpd = thisSpline->acStep * m_curPlanSpline;
-        if (m_curPlanSpd >= thisSpline->acTravel || p_tmPos == thisSpline->acTm )
+        curSpd = thisSpline->acStep * theFunctions->m_curPlanSpline;
+        if (theFunctions->m_curPlanSpd >= thisSpline->acTravel || p_tmPos == thisSpline->acTm )
             curSpd = thisSpline->acTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
-        thisSpline->acTravel -= m_curPlanSpd;
+        thisSpline->acTravel -= theFunctions->m_curPlanSpd;
 
   	} 
 
 	else if (p_tmPos <= thisSpline->dcStart ) {
 
-        if (m_curPlanSpd > thisSpline->crTravel || p_tmPos == thisSpline->dcStart)
+        if (theFunctions->m_curPlanSpd > thisSpline->crTravel || p_tmPos == thisSpline->dcStart)
             curSpd = thisSpline->crTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
-        thisSpline->crTravel -= m_curPlanSpd;
+        thisSpline->crTravel -= theFunctions->m_curPlanSpd;
 
   	} 
 
 	else {
-  	    curSpd = thisSpline->topSpeed - thisSpline->dcStep*(m_curPlanSpline -
-        (mtpc_arrive - mtpc_accel - mtpc_decel));
+  	    curSpd = thisSpline->topSpeed - thisSpline->dcStep*(theFunctions->m_curPlanSpline -
+        (theFunctions->mtpc_arrive - theFunctions->mtpc_accel - theFunctions->mtpc_decel));
 
-        if (m_curPlanSpd > thisSpline->dcTravel || p_tmPos == 1.0)
+        if (theFunctions->m_curPlanSpd > thisSpline->dcTravel || p_tmPos == 1.0)
             curSpd = thisSpline->dcTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
 
-        thisSpline->dcTravel -= m_curPlanSpd;
+        thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
   	}
 
   }
@@ -2230,129 +2231,114 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_tmPos) {
 
 }
 
-/* Quadratic easing for planned and non-planned moves 
+/* Quadratic easing for planned and non-planned moves */
 
+void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos, OMMotorFunctions* theFunctions) {
 
-@p_Plan: Is this a planned move? If not, then it is a real-time move
-@p_tmPos:
-@p_theFunctions: Pointer to an OMMotorFunctions object
-
-*/
-
-void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_tmPos) {
-
-  OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &m_splinePlanned : &m_splineOne;
+  OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
     float curSpd = 0.0;
-  
-  // use correct quad or inv. quad calculation
-  curSpd = (f_easeCal)(thisSpline, p_tmPos, p_Plan);
+  	// use correct quad or inv. quad calculation
+  curSpd = (theFunctions->f_easeCal)(thisSpline, p_tmPos, theFunctions, p_Plan);
 
-  // Non-planned (i.e. real-time) moves
   if( ! p_Plan ) {
+
+  	  // we only do this for non-planned (i.e. real-time) moves
 
     float off_time = 1000000.0;
 
-     //if curSpd is very small set to a small number to prevent dividing by 0
+        //if curSpd is very small set to a small number to prevent dividing by 0
      if (curSpd <= 0.000001){
         curSpd = 0.000001;
-     } 
-	 // figure out how many cycles we delay after each step
-	 else {
-        off_time = m_cyclesPerSpline / curSpd;
+     } else {
+        // figure out how many cycles we delay after each step
+        off_time = theFunctions->m_cyclesPerSpline / curSpd;
      }
+
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
-     m_nextOffCycles = (unsigned long) off_time;
-     if (m_nextOffCycles < 1){
-        m_nextOffCycles = 1;
+
+     theFunctions->m_nextOffCycles = (unsigned long) off_time;
+     if (theFunctions->m_nextOffCycles < 1){
+        theFunctions->m_nextOffCycles = 1;
      }
-     float temp = m_nextOffCycles;
+     float temp = theFunctions->m_nextOffCycles;
      //multiple the error by the FLOAT_TOLERANCE in order to get rid of the float varaible
-     m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
+     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
 
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-     if( m_nextCycleErr >= FLOAT_TOLERANCE ) {
-        m_nextCycleErr = 0.0;
+     if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
+        theFunctions->m_nextCycleErr = 0.0;
      }
 
   }
-
-  // Planned moves
   else {
     unsigned long x = 0;
     float y = 0.0;
-	// Acceleration phase
   	if( p_tmPos <= thisSpline->acTm ){
         if ((unsigned long)curSpd >= thisSpline->acTravel || p_tmPos == thisSpline->acTm )
             curSpd = thisSpline->acTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
 
-        thisSpline->acTravel -= m_curPlanSpd;
-  	} 
-
-	// Constant speed phase
-	else if (p_tmPos <= thisSpline->dcStart ) {
+        thisSpline->acTravel -= theFunctions->m_curPlanSpd;
+  	} else if (p_tmPos <= thisSpline->dcStart ) {
 
         if ((unsigned long)curSpd > thisSpline->crTravel || p_tmPos == thisSpline->dcStart)
             curSpd = thisSpline->crTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
 
 
-        thisSpline->crTravel -= m_curPlanSpd;
-  	} 
-	
-	// Deceleration phase
-	else {
+        thisSpline->crTravel -= theFunctions->m_curPlanSpd;
+  	} else {
         if ((unsigned long)curSpd > thisSpline->dcTravel || p_tmPos == 1.0)
             curSpd = thisSpline->dcTravel;
 
-        m_curPlanSpd = (unsigned long) curSpd;
+        theFunctions->m_curPlanSpd = (unsigned long) curSpd;
         // of course, this tends to leave some fractional steps on the floor
-        m_curPlanErr += (curSpd - m_curPlanSpd);
+        theFunctions->m_curPlanErr += (curSpd - theFunctions->m_curPlanSpd);
 
         // .. so we compensate for the error to catch up...
-        if( m_curPlanErr >= 1.0 ) {
-            m_curPlanErr -= 1.0;
-            m_curPlanSpd++;
+        if( theFunctions->m_curPlanErr >= 1.0 ) {
+            theFunctions->m_curPlanErr -= 1.0;
+            theFunctions->m_curPlanSpd++;
         }
 
-        thisSpline->dcTravel -= m_curPlanSpd;
+        thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
   	}
   }
 }
 
 
-float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, uint8_t p_Plan) {
+float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, uint8_t p_Plan) {
   float curSpd;
 
     if (p_Plan){
         if( p_tmPos < thisSpline->acTm ) {
-            p_tmPos = m_curPlanSpline;
+            p_tmPos = theFunctions->m_curPlanSpline;
             curSpd = thisSpline->acStep * p_tmPos * p_tmPos;
         } else if( p_tmPos <= thisSpline->dcStart ) {
             curSpd = thisSpline->topSpeed;
         } else {
-            p_tmPos = (m_curPlanSplines - (m_curPlanSpline - 1));
+            p_tmPos = (theFunctions->m_curPlanSplines - (theFunctions->m_curPlanSpline - 1));
             curSpd = thisSpline->dcStep * p_tmPos * p_tmPos;
         }
 
@@ -2372,18 +2358,18 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 
 }
 
-float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, uint8_t p_Plan) {
+float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_tmPos, OMMotorFunctions* theFunctions, uint8_t p_Plan) {
   float curSpd;
 
     if (p_Plan){
 
         if( p_tmPos < thisSpline->acTm ) {
-            p_tmPos = mtpc_accel - (m_curPlanSpline - 1);
+            p_tmPos = theFunctions->mtpc_accel - (theFunctions->m_curPlanSpline - 1);
             curSpd = thisSpline->topSpeed - thisSpline->acStep * p_tmPos * p_tmPos;
         } else if( p_tmPos <= thisSpline->dcStart ) {
             curSpd = thisSpline->topSpeed;
         } else {
-            p_tmPos = (m_curPlanSpline) - (m_curPlanSplines - mtpc_decel);
+            p_tmPos = (theFunctions->m_curPlanSpline) - (theFunctions->m_curPlanSplines - theFunctions->mtpc_decel);
             curSpd = thisSpline->topSpeed - (thisSpline->dcStep * p_tmPos * p_tmPos);
         }
     } else {
@@ -2612,7 +2598,7 @@ void OMMotorFunctions::updateSpline(){
                 float tmPos = ((float) m_curSpline + 1.0) / (float) m_totalSplines;
 
                     // get new off cycle timing for the next point in the spline
-                f_easeFunc(false, tmPos); //goes to a new function?
+                f_easeFunc(false, tmPos, this); //goes to a new function?
 
                 endOfMove = false;
             }
