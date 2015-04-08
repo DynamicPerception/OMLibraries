@@ -513,10 +513,10 @@ public:
     unsigned long motor_steps_max;
     unsigned long mtpc_steps;
     uint8_t       mtpc_dir;
-    unsigned long mtpc_arrive;
-    unsigned long mtpc_accel;
-    unsigned long mtpc_decel;
-    uint8_t planMoveType;
+    unsigned long mtpc_arrive;		// SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
+    unsigned long mtpc_accel;		// SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
+    unsigned long mtpc_decel;		// SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds
+    uint8_t planMoveType;			// Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
 
     uint8_t mt_plan;
 
@@ -562,17 +562,17 @@ private:
     uint8_t m_programDone;
 
     struct s_splineCal {
-		float acTm;
-		float dcTm;
-		float crTm;
-		float topSpeed;
-		float dcStart;
-		float travel;
-		float acStep;
-		float dcStep;
-		unsigned long acTravel;
-		unsigned long dcTravel;
-		unsigned long crTravel;
+		float acTm;					// Acceleration percentage of total move
+		float dcTm;					// Deceleration percentage of total move
+		float crTm;					// Constant speed percentage of toal move
+		float topSpeed;				// SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
+		float dcStart;				// Percentage of total move when deceleration begins
+		float travel;				// 
+		float acStep;				//
+		float dcStep;				//
+		unsigned long acTravel;		//
+		unsigned long dcTravel;		//
+		unsigned long crTravel;		//
 	};
 
 
@@ -634,10 +634,10 @@ private:
 	static unsigned int m_curSampleRate;
 	static unsigned int m_cyclesPerSpline;
 	volatile unsigned long m_curSpline;
-	unsigned long m_totalSplines;
+	unsigned long m_totalSplines;			// 
 
 	volatile unsigned long m_curPlanSpd;
-	unsigned long m_curPlanSplines;
+	unsigned long m_curPlanSplines;			// SMS mode: number of movement intervals -- Continuous: number of arbitrary time increments (?)
 	unsigned long m_curPlanSpline;
 	volatile float m_curPlanErr;
 	uint8_t m_planDir;
