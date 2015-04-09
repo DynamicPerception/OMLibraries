@@ -1133,8 +1133,6 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
 
 void OMMotorFunctions::planRun() {
 
-	USBSerial.println("planRun()");
-
 	// if motor is disabled, do nothing
 	if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) || m_curPlanSpline >= m_curPlanSplines ) {
 		_fireCallback(OM_MOT_DONE);
@@ -1145,8 +1143,6 @@ void OMMotorFunctions::planRun() {
 
 	// get steps to move for next movement
 	float tmPos = ((float) m_curPlanSpline) / (float) m_curPlanSplines;
-	USBSerial.print("tmPos: ");
-	USBSerial.println(tmPos);
 	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
 	
 	move(m_planDir, m_curPlanSpd);
