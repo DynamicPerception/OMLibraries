@@ -31,8 +31,8 @@ See www.openmoco.org for more information
 
 // initialize static members
 
-unsigned int OMMotorFunctions::m_curSampleRate = 200;
-unsigned int OMMotorFunctions::m_cyclesPerSpline = 5;
+unsigned int OMMotorFunctions::m_curSampleRate = 200;	// How often to run the motor ISR in microseconds
+unsigned int OMMotorFunctions::m_cyclesPerSpline = 100;
 bool		 OMMotorFunctions::m_debug = false;
 
 /** Constructor
@@ -85,28 +85,28 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 
     m_curMs = 1;
     m_backAdj = 0;
-    m_easeType = OM_MOT_QUAD;
+    m_easeType = OM_MOT_LINEAR;
 
 
-    m_splineOne.acTm = 0.0;
-    m_splineOne.dcTm = 0.0;
-    m_splineOne.crTm = 0.0;
-    m_splineOne.topSpeed = 0.0;
-    m_splineOne.dcStart = 0.0;
-    m_splineOne.travel = 0.0;
-    m_splineOne.acTravel = 0;
-    m_splineOne.dcTravel = 0;
-    m_splineOne.crTravel = 0;
+    m_splineOne.accel_fraction = 0.0;
+    m_splineOne.decel_fraction = 0.0;
+    m_splineOne.cruise_fraction = 0.0;
+    m_splineOne.top_speed = 0.0;
+    m_splineOne.decel_start = 0.0;
+    m_splineOne.easing_coeff = 0.0;
+    m_splineOne.accel_steps = 0;
+    m_splineOne.decel_steps = 0;
+    m_splineOne.cruise_steps = 0;
 
-    m_splinePlanned.acTm = 0.0;
-    m_splinePlanned.dcTm = 0.0;
-    m_splinePlanned.crTm = 0.0;
-    m_splinePlanned.topSpeed = 0.0;
-    m_splinePlanned.dcStart = 0.0;
-    m_splinePlanned.travel = 0.0;
-    m_splinePlanned.acTravel = 0;
-    m_splinePlanned.dcTravel = 0;
-    m_splinePlanned.crTravel = 0;
+    m_splinePlanned.accel_fraction = 0.0;
+    m_splinePlanned.decel_fraction = 0.0;
+    m_splinePlanned.cruise_fraction = 0.0;
+    m_splinePlanned.top_speed = 0.0;
+    m_splinePlanned.decel_start = 0.0;
+	m_splinePlanned.easing_coeff = 0.0;
+    m_splinePlanned.accel_steps = 0;
+    m_splinePlanned.decel_steps = 0;
+    m_splinePlanned.cruise_steps = 0;
 
     m_refresh = true;
 
@@ -675,9 +675,7 @@ void OMMotorFunctions::_updateContSpeed(){
 
     if (m_switchDir){
 
-
-
-        //decelerate until your within half of the m_contAccelRate step/sec of stop
+        //decelerate until you're within half of the m_contAccelRate step/sec of stop
         if (m_contSpd >= 0.0)
             m_contSpd -= m_contAccelRate;
         else
@@ -689,8 +687,6 @@ void OMMotorFunctions::_updateContSpeed(){
             m_switchDir = false;
             dir(!m_curDir);
         }
-
-
 
         //calculate the next spline's off cycles and off cycles error
         float curSpd = abs(m_contSpd) / (1000.0 / MS_PER_SPLINE);  //steps per spline
@@ -1413,26 +1409,26 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
         rampSteps *= 2.0;
 
         //calculated cruise time
-        float crTm = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
+        float cruise_fraction = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
 		if (m_debug) {
 			USBSerial.print("OMMotorFunctions::move() - Cruise time: ");
-			USBSerial.print(crTm);
+			USBSerial.print(cruise_fraction);
 			USBSerial.print("ms ");
 		}
 
         //calculate acceleration and deceleration time
-        float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.travel;
+		float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.easing_coeff;
 		if(m_debug) {
 			USBSerial.print("Accel/decel time: ");
-			USBSerial.print(crTm);
+			USBSerial.print(cruise_fraction);
 			USBSerial.print("ms ");
 		}
 
 		//calculated total move time
-        float mvMS = (crTm + adTm);
+        float mvMS = (cruise_fraction + adTm);
 		if (m_debug) {
 			USBSerial.print("Total move time: ");
-			USBSerial.print(crTm);
+			USBSerial.print(cruise_fraction);
 			USBSerial.println("ms");
 		}
 
@@ -2129,122 +2125,65 @@ void OMMotorFunctions::_linearEasing(uint8_t p_Plan, float p_move_percent, OMMot
 	// Is this a plan move? If yes, use planned spline, otherwise use default start spline
 	OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
-  // Current move interval steps or speed in steps/second
-  float cur_spd_stps;
+	float speed_steps = 0;						// A temporary variable to hold continuous speed or SMS move steps
+	float& cur_spd = speed_steps;				// Current continuous speed (steps/s). References speed_steps for context disambiguation.
+	float& cur_move_steps = speed_steps;		// Current SMS move steps (steps). References speed_steps for context disambiguation.
 
-  // Determine whether we're currently in the accel/constant/decel phase,
-  // then assign move steps / speed based upon current position within that phase
-  if (p_move_percent <= thisSpline->acTm) {
-	  cur_spd_stps = thisSpline->topSpeed * (p_move_percent / thisSpline->acTm);
-  }
-  else if (p_move_percent < thisSpline->dcStart) {
-	  cur_spd_stps = thisSpline->topSpeed;
-  }
-  else {
-	  cur_spd_stps = thisSpline->topSpeed * (1.0 - ((p_move_percent - thisSpline->acTm - thisSpline->crTm) / thisSpline->dcTm));
-  }
-
-
-  // we only do this for non-planned (i.e. real-time) moves
-  // In non-planned moves, cur_spd_stps always refers to speed in steps / second
-  if( ! p_Plan ) {
-
-    float off_time = 1000000.0;		// 1 second in microseconds
-
-     //if curSpd is very small set to a small number to prevent dividing by 0
-	if (cur_spd_stps <= 0.000001){
-		cur_spd_stps = 0.000001;
-     } 
-	 
-	 // figure out how many cycles we delay after each step
-	 else {
-		 off_time = theFunctions->m_cyclesPerSpline / cur_spd_stps;
-     }
-
-     // we can't track fractional off-cycles, so we need to have an error rate
-     // which we can accumulate between steps
-	 theFunctions->m_nextOffCycles = (unsigned long) off_time;
-     if (theFunctions->m_nextOffCycles < 1){
-        theFunctions->m_nextOffCycles = 1;
-     }
-     
-	 float temp = (float)theFunctions->m_nextOffCycles;
-     
-	 //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
-     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
-
-      // worry about the fact that floats and doubles CAN actually overflow an unsigned long
-      // compare again the FLOAT_TOLERANCE
-      if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
-          theFunctions->m_nextCycleErr = 0;
-      }
-
-  }
-  
-  // for planned shoot-move-shoot calculations, we need whole steps per shot
-  else {
-
-    //make sure we don't overshoot the steps required for the move for each section
-	  if (p_move_percent <= thisSpline->acTm){
-
-		  cur_spd_stps = thisSpline->acStep * theFunctions->m_curPlanSpline;
-		if (theFunctions->m_curPlanSpd >= thisSpline->acTravel || p_move_percent == thisSpline->acTm)
-			cur_spd_stps = thisSpline->acTravel;
-
-		theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-        thisSpline->acTravel -= theFunctions->m_curPlanSpd;
-
-  	} 
-
-	  else if (p_move_percent <= thisSpline->dcStart) {
-
-		  if (theFunctions->m_curPlanSpd > thisSpline->crTravel || p_move_percent == thisSpline->dcStart)
-			  cur_spd_stps = thisSpline->crTravel;
-
-		  theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		  theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-        thisSpline->crTravel -= theFunctions->m_curPlanSpd;
-
-  	} 
-
+	// Determine whether we're currently in the accel/constant/decel phase,
+	// then assign move steps / speed based upon current position within that phase
+	if (p_move_percent <= thisSpline->accel_fraction) {
+		speed_steps = thisSpline->top_speed * (p_move_percent / thisSpline->accel_fraction);
+	}
+	else if (p_move_percent < thisSpline->decel_start) {
+		speed_steps = thisSpline->top_speed;
+	}
 	else {
-		cur_spd_stps = thisSpline->topSpeed - thisSpline->dcStep*(theFunctions->m_curPlanSpline -
-        (theFunctions->mtpc_arrive - theFunctions->mtpc_accel - theFunctions->mtpc_decel));
-
-		if (theFunctions->m_curPlanSpd > thisSpline->dcTravel || p_move_percent == 1.0)
-			cur_spd_stps = thisSpline->dcTravel;
-
-		theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-
-        thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
-  	}
-
-  }
+		speed_steps = thisSpline->top_speed * (1.0 - ((p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction));
+	}
 
 
+	// we only do this for non-planned (i.e. real-time) moves
+	// In non-planned moves, cur_spd_stps always refers to speed in steps / second
+	if( ! p_Plan ) {
+
+	float off_time = 1000000.0;		// 1 second in microseconds
+
+		//if curSpd is very small set to a small number to prevent dividing by 0
+	if (cur_spd <= 0.000001){
+		cur_spd = 0.000001;
+		} 
+	 
+		// figure out how many cycles we delay after each step
+		else {
+			off_time = theFunctions->m_cyclesPerSpline / cur_spd;
+		}
+
+		// we can't track fractional off-cycles, so we need to have an error rate
+		// which we can accumulate between steps
+		theFunctions->m_nextOffCycles = (unsigned long) off_time;
+		if (theFunctions->m_nextOffCycles < 1){
+		theFunctions->m_nextOffCycles = 1;
+		}
+     
+		float temp = (float)theFunctions->m_nextOffCycles;
+     
+		//multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
+		theFunctions->m_nextCycleErr = (off_time - temp) * FLOAT_TOLERANCE;
+
+		// worry about the fact that floats and doubles CAN actually overflow an unsigned long
+		// compare again the FLOAT_TOLERANCE
+		if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
+			theFunctions->m_nextCycleErr = 0;
+		}
+
+	}
+  
+	// For planned SMS calculations, we need whole steps per shot
+	else {
+		_SMSErrorCalc(p_move_percent, cur_move_steps, thisSpline, theFunctions);
+	}
+
+	
 }
 
 /* 
@@ -2274,36 +2213,37 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_move_percent, OMMotor
   OMMotorFunctions::s_splineCal *thisSpline = p_Plan == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
   
   // Current move interval steps or speed in steps/second
-  float cur_spd_stps = 0.0;		
+  float speed_steps = 0.0;					// A temporary variable to hold continuous speed or SMS move steps
+  float& cur_spd = speed_steps;				// Current continuous speed (steps/s). References speed_steps for context disambiguation.
+  float& cur_move_steps = speed_steps;		// Current SMS move steps (steps). References speed_steps for context disambiguation.
 
   // use correct quad or inv. quad calculation
-  cur_spd_stps = (theFunctions->f_easeCal)(thisSpline, p_move_percent, theFunctions, p_Plan);
+  speed_steps = (theFunctions->f_easeCal)(thisSpline, p_move_percent, theFunctions, p_Plan);
 
-  // we only do this for non-planned (i.e. real-time) moves
+  // we only do this for non-planned (i.e. continuous real-time) moves
   if( ! p_Plan ) {
 
     float off_time = 1000000.0;
 
-        //if curSpd is very small set to a small number to prevent dividing by 0
-	if (cur_spd_stps <= 0.000001){
-		cur_spd_stps = 0.000001;
-     } else {
-        // figure out how many cycles we delay after each step
-		off_time = theFunctions->m_cyclesPerSpline / cur_spd_stps;
+    //if curSpd is very small set to a small number to prevent dividing by 0
+	if (cur_spd <= 0.000001){
+		cur_spd = 0.000001;
+     } 
+	// figure out how many cycles we delay after each step
+	else {
+		off_time = theFunctions->m_cyclesPerSpline / cur_spd;
      }
 
 
      // we can't track fractional off-cycles, so we need to have an error rate
      // which we can accumulate between steps
-
-     theFunctions->m_nextOffCycles = (unsigned long) off_time;
+	 theFunctions->m_nextOffCycles = (unsigned long) off_time;
      if (theFunctions->m_nextOffCycles < 1){
         theFunctions->m_nextOffCycles = 1;
      }
      float temp = theFunctions->m_nextOffCycles;
-     //multiple the error by the FLOAT_TOLERANCE in order to get rid of the float varaible
-     theFunctions->m_nextCycleErr = (off_time - temp)*FLOAT_TOLERANCE;
-
+     //multiply the error by the FLOAT_TOLERANCE in order to get rid of the float varaible
+     theFunctions->m_nextCycleErr = (off_time - temp) * FLOAT_TOLERANCE;
 
       // worry about the fact that floats and doubles CAN actually overflow an unsigned long
      if( theFunctions->m_nextCycleErr >= FLOAT_TOLERANCE ) {
@@ -2312,61 +2252,97 @@ void OMMotorFunctions::_quadEasing(uint8_t p_Plan, float p_move_percent, OMMotor
 
   }
 
-  // For planned moves
+  // For planned SMS calculations, we need whole steps per shot
   else {
-    unsigned long x = 0;
-    float y = 0.0;
-	if (p_move_percent <= thisSpline->acTm){
-		if ((unsigned long)cur_spd_stps >= thisSpline->acTravel || p_move_percent == thisSpline->acTm)
-			cur_spd_stps = thisSpline->acTravel;
-
-		theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-
-        thisSpline->acTravel -= theFunctions->m_curPlanSpd;
-	}
-	else if (p_move_percent <= thisSpline->dcStart) {
-
-		if ((unsigned long)cur_spd_stps > thisSpline->crTravel || p_move_percent == thisSpline->dcStart)
-			cur_spd_stps = thisSpline->crTravel;
-
-		theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-
-
-        thisSpline->crTravel -= theFunctions->m_curPlanSpd;
-  	} 
-	else {
-		if ((unsigned long)cur_spd_stps > thisSpline->dcTravel || p_move_percent == 1.0)
-			cur_spd_stps = thisSpline->dcTravel;
-
-		theFunctions->m_curPlanSpd = (unsigned long)cur_spd_stps;
-        // of course, this tends to leave some fractional steps on the floor
-		theFunctions->m_curPlanErr += (cur_spd_stps - theFunctions->m_curPlanSpd);
-
-        // .. so we compensate for the error to catch up...
-        if( theFunctions->m_curPlanErr >= 1.0 ) {
-            theFunctions->m_curPlanErr -= 1.0;
-            theFunctions->m_curPlanSpd++;
-        }
-
-        thisSpline->dcTravel -= theFunctions->m_curPlanSpd;
-  	}
+	  _SMSErrorCalc(p_move_percent, cur_move_steps, thisSpline, theFunctions);
   }
+}
+
+
+/*
+
+This function changes the current SMS move length to an integer (since the motor can't move fractional steps),
+then adds the trucated decimal to motor's error value. If the error value exceeds 1, an extra step is added to the
+upcoming SMS move.
+
+@p_move_percent:
+	A reference to a variable of the same name in the _linearEasing or _quadEasing functions. This is how far through
+	the total program the motor is currently
+
+@p_cur_move_steps:
+	A reference to a variable of the same name in the _linearEasing or _quadEasing functions. This length, in steps,
+	of the just-calculated SMS move. This is the value that is being adjusted to an whole number and whose floating
+	point portion is added to the motor's error.
+
+@thisSpline:
+	A pointer to the motor's current spline, passed through from either the _linearEasing or _quadEasing function.
+
+@theFunctions:
+	A pointer to the current motor object, passed through from either the _linearEasing or _quadEasing function..
+
+*/
+
+void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_move_steps, s_splineCal *thisSpline, OMMotorFunctions *theFunctions){
+
+
+	byte phase = 0;
+
+	// Determine the current ramping phase
+	if (p_move_percent <= thisSpline->accel_fraction)
+		phase = ACCEL;
+	else if (p_move_percent <= thisSpline->decel_start)
+		phase = CRUISE;
+	else
+		phase = DECEL;
+
+	// If the calculated move would be greater than the steps remaining in the current phase 
+	// (or the movement completion equals the phase's fraction), just use the current remaining as the move length
+	switch (phase){
+
+	case ACCEL:
+		if ((unsigned long)p_cur_move_steps >= thisSpline->accel_steps || p_move_percent == thisSpline->accel_fraction)
+			p_cur_move_steps = thisSpline->accel_steps;
+		break;
+
+	case CRUISE:
+
+		if ((unsigned long)p_cur_move_steps > thisSpline->cruise_steps || p_move_percent == thisSpline->decel_start)
+			p_cur_move_steps = thisSpline->cruise_steps;
+		break;
+
+	case DECEL:
+		if ((unsigned long)p_cur_move_steps > thisSpline->decel_steps || p_move_percent == 1.0)
+			p_cur_move_steps = thisSpline->decel_steps;
+		break;
+
+	}
+
+	// Drop the floating point from the calculated steps...
+	theFunctions->m_curPlanSpd = (unsigned long)p_cur_move_steps;
+	// ...then add the dropped decimal places to the error variable..
+	theFunctions->m_curPlanErr += (p_cur_move_steps - theFunctions->m_curPlanSpd);
+	// ... and if at least 1 full step of error has accumulated, add it to the SMS move length
+	if (theFunctions->m_curPlanErr >= 1.0) {
+		theFunctions->m_curPlanErr -= 1.0;
+		theFunctions->m_curPlanSpd++;
+	}
+
+	// Adjust the remaining steps in the current phase
+	switch (phase){
+
+	case ACCEL:
+		thisSpline->accel_steps -= theFunctions->m_curPlanSpd;
+		break;
+
+	case CRUISE:
+		thisSpline->cruise_steps -= theFunctions->m_curPlanSpd;
+		break;
+
+	case DECEL:
+		thisSpline->decel_steps -= theFunctions->m_curPlanSpd;
+		break;
+	}
+
 }
 
 
@@ -2376,18 +2352,18 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 	// For planned moves
     if (p_Plan){
 		// Accel phase
-		if (p_move_percent < thisSpline->acTm) {
+		if (p_move_percent < thisSpline->accel_fraction) {
 			p_move_percent = theFunctions->m_curPlanSpline;
-			curSpd = thisSpline->acStep * p_move_percent * p_move_percent;		// y = ax^2, where y = curSpd, x = p_move_percent and a = acStep
+			curSpd = thisSpline->accel_coeff * p_move_percent * p_move_percent;		// y = ax^2, where y = curSpd, x = p_move_percent and a = steps per calculation unit
 		}
 		// Constant phase
-		else if (p_move_percent <= thisSpline->dcStart) {
-            curSpd = thisSpline->topSpeed;
+		else if (p_move_percent <= thisSpline->decel_start) {
+            curSpd = thisSpline->top_speed;
         } 
 		// Decel phase
 		else {
 			p_move_percent = (theFunctions->m_curPlanSplines - (theFunctions->m_curPlanSpline - 1));
-			curSpd = thisSpline->dcStep * p_move_percent * p_move_percent;
+			curSpd = thisSpline->decel_coeff * p_move_percent * p_move_percent;
         }
 
     } 
@@ -2395,18 +2371,18 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 	// For manual moves
 	else {
 		// Accel phase
-		if (p_move_percent < thisSpline->acTm) {
-			p_move_percent = p_move_percent / thisSpline->acTm;
-			curSpd = thisSpline->topSpeed * p_move_percent * p_move_percent;
+		if (p_move_percent < thisSpline->accel_fraction) {
+			p_move_percent = p_move_percent / thisSpline->accel_fraction;
+			curSpd = thisSpline->top_speed * p_move_percent * p_move_percent;
 		}
 		// Constant phase
-		else if (p_move_percent < thisSpline->dcStart) {
-            curSpd = thisSpline->topSpeed;
+		else if (p_move_percent < thisSpline->decel_start) {
+            curSpd = thisSpline->top_speed;
         } 
 		// Decel phase
 		else {
-			p_move_percent = 1.0 - (p_move_percent - thisSpline->acTm - thisSpline->crTm) / thisSpline->dcTm;
-			curSpd = thisSpline->topSpeed * p_move_percent * p_move_percent;
+			p_move_percent = 1.0 - (p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction;
+			curSpd = thisSpline->top_speed * p_move_percent * p_move_percent;
         }
     }
 
@@ -2420,36 +2396,36 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
 	// For planned moves
     if (p_Plan){
 		// Accel phase
-		if (p_move_percent < thisSpline->acTm) {
+		if (p_move_percent < thisSpline->accel_fraction) {
 			p_move_percent = theFunctions->mtpc_accel - (theFunctions->m_curPlanSpline - 1);
-			curSpd = thisSpline->topSpeed - thisSpline->acStep * p_move_percent * p_move_percent;
+			curSpd = thisSpline->top_speed - thisSpline->accel_coeff * p_move_percent * p_move_percent;
 		}
 		// Constant phase
-		else if (p_move_percent <= thisSpline->dcStart) {
-            curSpd = thisSpline->topSpeed;
+		else if (p_move_percent <= thisSpline->decel_start) {
+            curSpd = thisSpline->top_speed;
         } 
 		// Decel phase
 		else {
 			p_move_percent = (theFunctions->m_curPlanSpline) - (theFunctions->m_curPlanSplines - theFunctions->mtpc_decel);
-			curSpd = thisSpline->topSpeed - (thisSpline->dcStep * p_move_percent * p_move_percent);
+			curSpd = thisSpline->top_speed - (thisSpline->decel_coeff * p_move_percent * p_move_percent);
         }
     } 
 	
 	// For manual moves
 	else {
 		// Accel phase
-		if (p_move_percent < thisSpline->acTm) {
-			p_move_percent = 1.0 - (p_move_percent / thisSpline->acTm);
-			curSpd = thisSpline->topSpeed - (thisSpline->topSpeed * p_move_percent * p_move_percent);
+		if (p_move_percent < thisSpline->accel_fraction) {
+			p_move_percent = 1.0 - (p_move_percent / thisSpline->accel_fraction);
+			curSpd = thisSpline->top_speed - (thisSpline->top_speed * p_move_percent * p_move_percent);
 		}
 		// Constant phase
-		else if (p_move_percent < thisSpline->dcStart) {
-            curSpd = thisSpline->topSpeed;
+		else if (p_move_percent < thisSpline->decel_start) {
+            curSpd = thisSpline->top_speed;
         } 
 		// Decel phase
 		else {
-			p_move_percent = (p_move_percent - thisSpline->acTm - thisSpline->crTm) / thisSpline->dcTm;
-			curSpd = thisSpline->topSpeed - (thisSpline->topSpeed * p_move_percent * p_move_percent);
+			p_move_percent = (p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction;
+			curSpd = thisSpline->top_speed - (thisSpline->top_speed * p_move_percent * p_move_percent);
         }
     }
 
@@ -2481,98 +2457,116 @@ void OMMotorFunctions::_initSpline(uint8_t p_Plan, float p_Steps, unsigned long 
 
    OMMotorFunctions::s_splineCal *thisSpline = &m_splineOne;
    m_totalSplines = p_Travel / MS_PER_SPLINE;
-   unsigned long totSplines = m_totalSplines;
+   unsigned long totSplines = m_totalSplines;	// Total number of SMS moves
    
    if( p_Plan == true ) {
    	   	// work with plan parameters
    	   thisSpline = &m_splinePlanned;
-   	   totSplines = m_curPlanSplines;
-
+   	   totSplines = m_curPlanSplines;	
    }
 
    _setTravelConst(thisSpline);
-
+   USBSerial.print("p_Accel: ");
+   USBSerial.println(p_Accel);
 
 	// pre-calculate values for spline interpolation
-   thisSpline->acTm = (float)p_Accel / (float)p_Travel;
-   thisSpline->dcTm = (float)p_Decel / (float)p_Travel;
-   thisSpline->crTm = 1.0 - (thisSpline->acTm + thisSpline->dcTm);
-   thisSpline->dcStart = thisSpline->acTm + thisSpline->crTm;
+   thisSpline->accel_fraction = (float)p_Accel / (float)p_Travel;
+   thisSpline->decel_fraction = (float)p_Decel / (float)p_Travel;
+   thisSpline->cruise_fraction = 1.0 - (thisSpline->accel_fraction + thisSpline->decel_fraction);
+   thisSpline->decel_start = thisSpline->accel_fraction + thisSpline->cruise_fraction;
+   
+   // Step count that equals continuous speed * travel time (CONT_VID OR CONT_TL) OR cruise phase movement length * SMS movements (SMS)
+   float length_at_cruise = p_Steps / (thisSpline->accel_fraction / thisSpline->easing_coeff + thisSpline->cruise_fraction + thisSpline->decel_fraction / thisSpline->easing_coeff);
 
-    float velocity = p_Steps / (thisSpline->acTm/thisSpline->travel + thisSpline->crTm + thisSpline->dcTm/thisSpline->travel);
+   USBSerial.print("velocity: ");
+   USBSerial.println(length_at_cruise);
+   USBSerial.print("accel_fraction: ");
+   USBSerial.println(thisSpline->accel_fraction);
+   USBSerial.print("decel_fraction: ");
+   USBSerial.println(thisSpline->decel_fraction);
+   USBSerial.print("p_Steps: ");
+   USBSerial.println(p_Steps);
+   USBSerial.print("travel: ");
+   USBSerial.println(thisSpline->easing_coeff);
+   USBSerial.println("");
 
    // SMS mode
     if (p_Plan == true){
 
-        unsigned long acSteps = 0;
-        unsigned long dcSteps = 0;
+        unsigned long ac_movement_units = 0;		// Total of step units required to accelerate
+		unsigned long dc_movement_units = 0;		// Total of step units required to decelerate
 
         for (unsigned long i = 1; i <= p_Accel; i++){
             if (m_easeType == OM_MOT_LINEAR)
-                acSteps+= i;
+				ac_movement_units += i;
             else
-                acSteps += i*i;
+				ac_movement_units += i*i;
         }
 
         for (unsigned long i = 1; i <= p_Decel; i++){
            if (m_easeType == OM_MOT_LINEAR)
-                dcSteps+= i;
+			   dc_movement_units += i;
             else
-                dcSteps += i*i;
+				dc_movement_units += i*i;
         }
 
         //calculate step interval
         if (m_easeType == OM_MOT_QUADINV){
+
+			const float QUAD_TRAVEL_COEFF = 3.0;
+
             //temporary set travel distance as if it was OM_MOT_QUAD, this is to quantize the inverse quad function
-            thisSpline->acTravel = (unsigned long)((velocity*thisSpline->acTm)/3.0);
-            thisSpline->dcTravel = (unsigned long)((velocity*thisSpline->dcTm)/3.0);
+			thisSpline->accel_steps = (unsigned long)((length_at_cruise * thisSpline->accel_fraction) / QUAD_TRAVEL_COEFF);
+			thisSpline->decel_steps = (unsigned long)((length_at_cruise * thisSpline->decel_fraction) / QUAD_TRAVEL_COEFF);
 
             //Calculate step size difference
-            thisSpline->acStep = (float)thisSpline->acTravel  / ((float)acSteps);
-            thisSpline->dcStep = (float)thisSpline->dcTravel  / ((float)dcSteps);
+			thisSpline->accel_coeff = (float)thisSpline->accel_steps / ((float)ac_movement_units);
+			thisSpline->decel_coeff = (float)thisSpline->decel_steps / ((float)dc_movement_units);
 
             //recalculate distance
-            thisSpline->acTravel = (unsigned long)((velocity*thisSpline->acTm)/thisSpline->travel);
-            thisSpline->dcTravel = (unsigned long)((velocity*thisSpline->dcTm)/thisSpline->travel);
+			thisSpline->accel_steps = (unsigned long)((length_at_cruise * thisSpline->accel_fraction) / thisSpline->easing_coeff);
+			thisSpline->decel_steps = (unsigned long)((length_at_cruise * thisSpline->decel_fraction) / thisSpline->easing_coeff);
 
-        } else {
+        }
+		else {
             //calculate distance required for each acceleration/deceleration
-            thisSpline->acTravel = (unsigned long)((velocity*thisSpline->acTm)/thisSpline->travel);
-            thisSpline->dcTravel = (unsigned long)((velocity*thisSpline->dcTm)/thisSpline->travel);
+			thisSpline->accel_steps = (unsigned long)((length_at_cruise * thisSpline->accel_fraction) / thisSpline->easing_coeff);
+			thisSpline->decel_steps = (unsigned long)((length_at_cruise * thisSpline->decel_fraction) / thisSpline->easing_coeff);
              //Calculate step size difference
-            thisSpline->acStep = (float)thisSpline->acTravel  / ((float)acSteps);
-            thisSpline->dcStep = (float)thisSpline->dcTravel  / ((float)dcSteps);
+			thisSpline->accel_coeff = (float)thisSpline->accel_steps / ((float)ac_movement_units);
+			thisSpline->decel_coeff = (float)thisSpline->decel_steps / ((float)dc_movement_units);
 
         }
         //calculate desired travel length for the cruise section
-        thisSpline->crTravel = (unsigned long)(p_Steps-thisSpline->acTravel-thisSpline->dcTravel);
-        thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
+		thisSpline->cruise_steps = (unsigned long)(p_Steps - thisSpline->accel_steps - thisSpline->decel_steps);
+		thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);
 
 
     }
 
 	// Continuous mode
 	else {
-        thisSpline->topSpeed = (velocity ) / ( (float)totSplines );
+		thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);	// steps / spline (default 20ms)
     }
 
-	m_topSpeed = thisSpline->topSpeed;
+	// This is referenced by the motor validation routine in the NMX firmware
+	m_top_speed = thisSpline->top_speed;
 
 }
 
 void OMMotorFunctions::_setTravelConst(OMMotorFunctions::s_splineCal* thisSpline) {
 
-		     // for linear easing, we always travel an average of 1/2 the distance during
-	    // an acceleration period that we would travel during the same cruise period
-   thisSpline->travel = 2.0;
+	// for linear easing, we always travel an average of 1/2 the distance during
+	// an acceleration period that we would travel during the same cruise period
+	thisSpline->easing_coeff = 2.0; 
 
-	    // for quadratic easing, we travel slightly shorter or further...
-	    // note: these values can likely be tuned further
+	// for quadratic easing, we travel slightly shorter or further...
+	// note: these values can likely be tuned further
 
-   if( m_easeType == OM_MOT_QUAD )
-   	   thisSpline->travel = 3.0;//2.9999985;
-   else if( m_easeType == OM_MOT_QUADINV )
-	   thisSpline->travel = 1.5;//1.5000597;
+	if( m_easeType == OM_MOT_QUAD )
+		thisSpline->easing_coeff = 3.0;//2.9999985;
+	else if( m_easeType == OM_MOT_QUADINV )
+		thisSpline->easing_coeff = 1.5;//1.5000597;
 }
 
 
@@ -2604,7 +2598,7 @@ float OMMotorFunctions::getTopSpeed() {
 		// Determine the total splines based upon the travel time
 		m_curPlanSplines = (unsigned long)mtpc_arrive;
 
-		// Initialize the planned move variables to calculate the m_topSpeed variable
+		// Initialize the planned move variables to calculate the m_top_speed variable
 		_initSpline(true, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
 
 	}
@@ -2625,18 +2619,18 @@ float OMMotorFunctions::getTopSpeed() {
 			USBSerial.println(m_totalSplines);
 		}
 
-		// Initialize the planned move variables to calculate the m_topSpeed variable
+		// Initialize the planned move variables to calculate the m_top_speed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
 
 		const float MILLIS_P_SECOND = 1000.0;
 
 		// Convert to steps/spline to steps/second
-		m_topSpeed *= MILLIS_P_SECOND / MS_PER_SPLINE;
+		m_top_speed *= MILLIS_P_SECOND / MS_PER_SPLINE;
 	}
 
 	// Convert to 16th steps/move (SMS) or 16th steps/second (continuous), based on current microstepping value
-	m_topSpeed *= (16.0 / (float) m_curMs);
-	return(m_topSpeed);
+	m_top_speed *= (16.0 / (float) m_curMs);
+	return(m_top_speed);
 }
 
 /** checkRefresh
@@ -2657,23 +2651,17 @@ void OMMotorFunctions::checkRefresh(){
 }
 
 
-
-
 void OMMotorFunctions::updateSpline(){
 
     if (splineReady == false){
         
 		//If it's in continuous mode accel/decel until desired speed
         if (continuous()){
-
             _updateContSpeed();
-
-
         } 
 		
 		//Calculate next spline while not in continous mode
 		else { 
-
             if( m_curSpline >= m_totalSplines ) {
                         // hey, look at that - we're at the end of our spline (and
                         // we haven't finished our last step either, otherwise we
@@ -2724,14 +2712,12 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
 
 
-    if( m_totalCyclesTaken >= m_cyclesPerSpline) { //m_asyncSteps > 0 && m_totalCyclesTaken >= m_cyclesPerSpline) {
+    if( m_totalCyclesTaken >= m_cyclesPerSpline) {
         if(splineReady == false && !continuous()){
             updateSpline();
         }
 
         if (endOfMove){
-
-
 
             if( m_stepsTaken < m_asyncSteps ) {
               // we really should be taking any steps we're missing. (if asked to
