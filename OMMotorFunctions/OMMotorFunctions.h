@@ -50,6 +50,10 @@ See www.openmoco.org for more information
 
 #define FLOAT_TOLERANCE  1000
 
+#define ACCEL 0
+#define CRUISE 1
+#define DECEL 2
+
 
 /**
   @page ommotion Motion Capabilities
@@ -562,17 +566,17 @@ private:
     uint8_t m_programDone;
 
     struct s_splineCal {
-		float acTm;					// Acceleration percentage of total move
-		float dcTm;					// Deceleration percentage of total move
-		float crTm;					// Constant speed percentage of toal move
-		float topSpeed;				// SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
-		float dcStart;				// Percentage of total move when deceleration begins
-		float travel;				// 
-		float acStep;				//
-		float dcStep;				//
-		unsigned long acTravel;		//
-		unsigned long dcTravel;		//
-		unsigned long crTravel;		//
+		float accel_fraction;			// Acceleration percentage of total move
+		float decel_fraction;			// Deceleration percentage of total move
+		float cruise_fraction;			// Constant speed percentage of toal move
+		float top_speed;				// SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
+		float decel_start;				// Percentage of total move when deceleration begins
+		float easing_coeff;				// 1/travel = distance covered during accel/decel compared to same time at continuous speed
+		float accel_coeff;				// Steps (SMS) or steps/s (CONT) per acceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+		float decel_coeff;				// Steps (SMS) or steps/s (CONT) per deceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+		unsigned long accel_steps;		// Number of acceleration steps remaining
+		unsigned long decel_steps;		// Number of deceleration steps remaining
+		unsigned long cruise_steps;		// Number of cruising steps remaining
 	};
 
 
@@ -589,8 +593,10 @@ private:
 	void _initSpline(uint8_t, float, unsigned long, unsigned long, unsigned long);
 	static void _linearEasing(uint8_t, float, OMMotorFunctions*);
 	static void _quadEasing(uint8_t, float, OMMotorFunctions*);
+	static void _SMSErrorCalc(const float&, float&, s_splineCal*, OMMotorFunctions*);
+	static void _contErrorCalc(const float&, float&, OMMotorFunctions*);
 
-	void _setTravelConst(OMMotorFunctions::s_splineCal*);
+	void _setEasingCoeff(OMMotorFunctions::s_splineCal*);
 
 	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
 	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
@@ -629,38 +635,37 @@ private:
 
 
 
-    volatile unsigned long m_curOffCycles;
-	volatile int m_curCycleErr;
-	static unsigned int m_curSampleRate;
-	static unsigned int m_cyclesPerSpline;
-	volatile unsigned long m_curSpline;
-	unsigned long m_totalSplines;			// 
+    volatile unsigned long m_curOffCycles;		//
+	volatile int m_curCycleErr;					//
+	static unsigned int m_curSampleRate;		//
+	static unsigned int m_cyclesPerSpline;		//
+	volatile unsigned long m_curSpline;			//
+	unsigned long m_totalSplines;				// 
 
 	volatile unsigned long m_curPlanSpd;
-	unsigned long m_curPlanSplines;			// SMS mode: number of movement intervals -- Continuous: number of arbitrary time increments (?)
+	unsigned long m_curPlanSplines;				// SMS mode: number of movement intervals -- Continuous: number of arbitrary time increments (?)
 	unsigned long m_curPlanSpline;
 	volatile float m_curPlanErr;
-	uint8_t m_planDir;
+	uint8_t m_planDir;							// Planned move direction
 
-	unsigned long m_Steps;
-	unsigned int m_asyncCspd;
-	float m_contSpd;
-	float m_desiredContSpd;
-	float m_contAccelRate;
+	unsigned long m_Steps;						// Number of steps since start of programmed move. This is not used in the NMX firmware, could be depreciated
+	float m_contSpd;							// Motor's current continuous speed (steps/s)
+	float m_desiredContSpd;						// Motor's target continuous speed (steps/s)
+	float m_contAccelRate;						// Motors continuous acceleration rate (steps/s^2)
 
-	volatile long m_homePos;		// Distance in current microsteps of present location from home position
-	long m_endPos;					// Distance in current microsteps of end limit from home position
-	long m_startPos;				// Distance in current microsteps of program start from home position
-	long m_stopPos;					// Distance in current microsteps of program stop from home position
+	volatile long m_homePos;					// Distance in current microsteps of present location from home position
+	long m_endPos;								// Distance in current microsteps of end limit from home position
+	long m_startPos;							// Distance in current microsteps of program start from home position
+	long m_stopPos;								// Distance in current microsteps of program stop from home position
 
-	unsigned long m_planLeadIn;		// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
-	unsigned long m_planLeadOut;		// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
+	unsigned long m_planLeadIn;					// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
+	unsigned long m_planLeadOut;				// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
 
-	uint8_t m_curMs;				// Current microstepping value
-	unsigned int m_backAdj;
-	uint8_t m_easeType;
+	uint8_t m_curMs;							// Current microstepping value
+	unsigned int m_backAdj;						// Backlash adjustment steps (must be adjusted when microstepping changes)
+	uint8_t m_easeType;							// Easing mode: linear, quadratic, or inv. quadratic
 
-	float m_topSpeed;
+	float m_top_speed;
 
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
