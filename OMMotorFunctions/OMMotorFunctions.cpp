@@ -2449,8 +2449,6 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
    }
 
    _setEasingCoeff(thisSpline);
-   USBSerial.print("p_Accel: ");
-   USBSerial.println(p_Accel);
 
 	// pre-calculate values for spline interpolation
    thisSpline->accel_fraction = (float)p_Accel / (float)p_Travel;
@@ -2461,17 +2459,19 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
    // Step count that equals continuous speed * travel time (CONT_VID OR CONT_TL) OR cruise phase movement length * SMS movements (SMS)
    float length_at_cruise = p_Steps / (thisSpline->accel_fraction / thisSpline->easing_coeff + thisSpline->cruise_fraction + thisSpline->decel_fraction / thisSpline->easing_coeff);
 
-   USBSerial.print("velocity: ");
-   USBSerial.println(length_at_cruise);
-   USBSerial.print("accel_fraction: ");
-   USBSerial.println(thisSpline->accel_fraction);
-   USBSerial.print("decel_fraction: ");
-   USBSerial.println(thisSpline->decel_fraction);
-   USBSerial.print("p_Steps: ");
-   USBSerial.println(p_Steps);
-   USBSerial.print("travel: ");
-   USBSerial.println(thisSpline->easing_coeff);
-   USBSerial.println("");
+   if (m_debug){
+	   USBSerial.print("velocity: ");
+	   USBSerial.println(length_at_cruise);
+	   USBSerial.print("accel_fraction: ");
+	   USBSerial.println(thisSpline->accel_fraction);
+	   USBSerial.print("decel_fraction: ");
+	   USBSerial.println(thisSpline->decel_fraction);
+	   USBSerial.print("p_Steps: ");
+	   USBSerial.println(p_Steps);
+	   USBSerial.print("travel: ");
+	   USBSerial.println(thisSpline->easing_coeff);
+	   USBSerial.println("");
+   }
 
 	// SMS mode
     if (p_SMS == true){
