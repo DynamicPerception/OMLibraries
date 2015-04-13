@@ -2131,6 +2131,7 @@ void OMMotorFunctions::_linearEasing(uint8_t p_SMS, float p_move_percent, OMMoto
 	// Current continuous speed (steps/s) (CONT) or current SMS move steps (SMS)
 	float speed_steps = 0;
 
+	// SMS moves
 	if (p_SMS){
 		// Determine whether we're currently in the accel/constant/decel phase,
 		// then assign move steps / speed based the current spline within the SMS moves
@@ -2146,7 +2147,12 @@ void OMMotorFunctions::_linearEasing(uint8_t p_SMS, float p_move_percent, OMMoto
 			// Basically, when that happens, what should be the first decel move ends up as the final move, which is way bad.
 			speed_steps = thisSpline->decel_coeff * (thisSpline->decel_moves - (theFunctions->m_curPlanSpline - thisSpline->accel_moves - thisSpline->cruise_moves) + 1);
 		}
+
+		// Calculate the error for SMS moves (and adjust movement to whole number)
+		_SMSErrorCalc(p_move_percent, speed_steps, thisSpline, theFunctions);
 	}
+
+	// Continuous moves
 	else{
 		// Determine whether we're currently in the accel/constant/decel phase,
 		// then assign move steps / speed based upon current position within that phase
@@ -2156,18 +2162,10 @@ void OMMotorFunctions::_linearEasing(uint8_t p_SMS, float p_move_percent, OMMoto
 			speed_steps = thisSpline->top_speed;
 		else 
 			speed_steps = thisSpline->top_speed * (1.0 - ((p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction));
-	}
 
-	// Calculate the error for continuous moves
-	if (!p_SMS)
+		// Calculate the error for continuous moves
 		_contErrorCalc(p_move_percent, speed_steps, theFunctions);
-  
-	// Calculaate the error for SMS moves (and adjust movement to whole number)
-	else {
-		_SMSErrorCalc(p_move_percent, speed_steps, thisSpline, theFunctions);
-	}
-
-	
+	}	
 }
 
 /* 
@@ -2202,12 +2200,11 @@ void OMMotorFunctions::_quadEasing(uint8_t p_SMS, float p_move_percent, OMMotorF
   // use correct quad or inv. quad calculation
   speed_steps = (theFunctions->f_easeCal)(thisSpline, p_move_percent, theFunctions, p_SMS);
 
-
   // Calculate the error for continuous moves
   if( ! p_SMS )
 	  _contErrorCalc(p_move_percent, speed_steps, theFunctions);
 
-  // Calculaate the error for SMS moves (and adjust movement to whole number)
+  // Calculate the error for SMS moves (and adjust movement to whole number)
   else
 	  _SMSErrorCalc(p_move_percent, speed_steps, thisSpline, theFunctions);
 }
@@ -2569,7 +2566,7 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
 
 			const float QUAD_TRAVEL_COEFF = 3.0;
 
-            //temporary set travel distance as if it was OM_MOT_QUAD, this is to quantize the inverse quad function
+            //temporarily set travel distance as if it was OM_MOT_QUAD, this is to quantize the inverse quad function
 			thisSpline->accel_steps = (unsigned long)((length_at_cruise * thisSpline->accel_fraction) / QUAD_TRAVEL_COEFF);
 			thisSpline->decel_steps = (unsigned long)((length_at_cruise * thisSpline->decel_fraction) / QUAD_TRAVEL_COEFF);
 
