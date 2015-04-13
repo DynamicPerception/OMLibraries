@@ -577,6 +577,9 @@ private:
 		unsigned long accel_steps;		// Number of acceleration steps remaining
 		unsigned long decel_steps;		// Number of deceleration steps remaining
 		unsigned long cruise_steps;		// Number of cruising steps remaining
+		unsigned long accel_moves;		// Number of SMS acceleration moves
+		unsigned long cruise_moves;		// Number of SMS cruise moves
+		unsigned long decel_moves;		// Number of SMS deceleration moves
 	};
 
 
@@ -595,6 +598,9 @@ private:
 	static void _quadEasing(uint8_t, float, OMMotorFunctions*);
 	static void _SMSErrorCalc(const float&, float&, s_splineCal*, OMMotorFunctions*);
 	static void _contErrorCalc(const float&, float&, OMMotorFunctions*);
+	static unsigned long _partialSum(unsigned long);
+	static unsigned long _partialSumOfSquares(unsigned long);
+
 
 	void _setEasingCoeff(OMMotorFunctions::s_splineCal*);
 

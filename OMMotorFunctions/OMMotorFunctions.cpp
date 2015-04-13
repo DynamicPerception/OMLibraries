@@ -1128,7 +1128,7 @@ void OMMotorFunctions::plan(unsigned long p_Shots, uint8_t p_Dir, unsigned long 
  */
 
 void OMMotorFunctions::planRun() {
-
+	
 	// if motor is disabled, do nothing
 	if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) || m_curPlanSpline >= m_curPlanSplines ) {
 		_fireCallback(OM_MOT_DONE);
@@ -1136,9 +1136,11 @@ void OMMotorFunctions::planRun() {
 	}
 
 	m_curPlanSpline++;
-
-	// get steps to move for next movement
+	
+	// Determine how far through the move we are
 	float tmPos = ((float) m_curPlanSpline) / (float) m_curPlanSplines;
+	
+	// get steps to move for next movement
 	f_easeFunc(true, tmPos, this); // sets m_curPlanSpd
 	
 	move(m_planDir, m_curPlanSpd);
@@ -1153,6 +1155,7 @@ void OMMotorFunctions::planRun() {
  */
 
 void OMMotorFunctions::planReverse() {
+	
     if( ! enable() || m_curPlanSpline == 0 ) {
         _fireCallback(OM_MOT_DONE);
 		return;
@@ -1220,7 +1223,7 @@ void OMMotorFunctions::planReverse() {
  */
 
 void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel) {
-
+	
 		// if motor is disabled, do nothing
 	if( ! enable() || ( maxSteps() > 0 && stepsMoved() >= maxSteps() ) ) {
 		_fireCallback(OM_MOT_DONE);
@@ -2126,18 +2129,33 @@ void OMMotorFunctions::_linearEasing(uint8_t p_SMS, float p_move_percent, OMMoto
 	OMMotorFunctions::s_splineCal *thisSpline = p_SMS == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
 
 	// Current continuous speed (steps/s) (CONT) or current SMS move steps (SMS)
-	float speed_steps = 0;		
-	
-	// Determine whether we're currently in the accel/constant/decel phase,
-	// then assign move steps / speed based upon current position within that phase
-	if (p_move_percent <= thisSpline->accel_fraction) {
-		speed_steps = thisSpline->top_speed * (p_move_percent / thisSpline->accel_fraction);
+	float speed_steps = 0;
+
+	if (p_SMS){
+		// Determine whether we're currently in the accel/constant/decel phase,
+		// then assign move steps / speed based the current spline within the SMS moves
+		if (p_move_percent <= thisSpline->accel_fraction) {
+			speed_steps = thisSpline->accel_coeff * theFunctions->m_curPlanSpline;
+		}
+		else if (p_move_percent < thisSpline->decel_start) {
+			speed_steps = thisSpline->top_speed;
+		}
+		else {
+			// This should count down from the total decel moves to 1.
+			// Need to add 1, otherwise each move count is off by one and the last move is 0, which causes things to come out funky. 
+			// Basically, when that happens, what should be the first decel move ends up as the final move, which is way bad.
+			speed_steps = thisSpline->decel_coeff * (thisSpline->decel_moves - (theFunctions->m_curPlanSpline - thisSpline->accel_moves - thisSpline->cruise_moves) + 1);
+		}
 	}
-	else if (p_move_percent < thisSpline->decel_start) {
-		speed_steps = thisSpline->top_speed;
-	}
-	else {
-		speed_steps = thisSpline->top_speed * (1.0 - ((p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction));
+	else{
+		// Determine whether we're currently in the accel/constant/decel phase,
+		// then assign move steps / speed based upon current position within that phase
+		if (p_move_percent <= thisSpline->accel_fraction)
+			speed_steps = thisSpline->top_speed * (p_move_percent / thisSpline->accel_fraction);
+		else if (p_move_percent < thisSpline->decel_start)
+			speed_steps = thisSpline->top_speed;
+		else 
+			speed_steps = thisSpline->top_speed * (1.0 - ((p_move_percent - thisSpline->accel_fraction - thisSpline->cruise_fraction) / thisSpline->decel_fraction));
 	}
 
 	// Calculate the error for continuous moves
@@ -2300,6 +2318,11 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	}
 
+	if (m_debug){
+		USBSerial.print("Move steps before adjustment: ");
+		USBSerial.println(p_cur_move_steps);
+	}
+
 	// Drop the floating point from the calculated steps...
 	theFunctions->m_curPlanSpd = (unsigned long)p_cur_move_steps;
 	// ...then add the dropped decimal places to the error variable..
@@ -2310,20 +2333,41 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 		theFunctions->m_curPlanSpd++;
 	}
 
+	if (m_debug){
+		USBSerial.print("Move steps after adjustment: ");
+		USBSerial.println(theFunctions->m_curPlanSpd);
+	}
+
 	// Adjust the remaining steps in the current phase
 	switch (phase){
 
 	case ACCEL:
 		thisSpline->accel_steps -= theFunctions->m_curPlanSpd;
+		if (m_debug){
+			USBSerial.print("Accel remaining: ");
+			USBSerial.println(thisSpline->accel_steps);
+		}
 		break;
 
 	case CRUISE:
 		thisSpline->cruise_steps -= theFunctions->m_curPlanSpd;
+		if (m_debug){
+			USBSerial.print("Cruise remaining: ");
+			USBSerial.println(thisSpline->cruise_steps);
+		}
 		break;
 
 	case DECEL:
 		thisSpline->decel_steps -= theFunctions->m_curPlanSpd;
+		if (m_debug){
+			USBSerial.print("Decel remaining: ");
+			USBSerial.println(thisSpline->decel_steps);
+		}
 		break;
+	}
+
+	if (m_debug){
+		USBSerial.println("");
 	}
 
 }
@@ -2332,7 +2376,7 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_move_percent, OMMotorFunctions* theFunctions, uint8_t p_SMS) {
   float curSpd;
 
-	// For planned moves
+	// For SMS moves
     if (p_SMS){
 		// Accel phase
 		if (p_move_percent < thisSpline->accel_fraction) {
@@ -2351,7 +2395,7 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 
     } 
 	
-	// For manual moves
+	// For continuous moves
 	else {
 		// Accel phase
 		if (p_move_percent < thisSpline->accel_fraction) {
@@ -2376,7 +2420,7 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
 float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, float p_move_percent, OMMotorFunctions* theFunctions, uint8_t p_SMS) {
   float curSpd;
 
-	// For planned moves
+	// For SMS moves
     if (p_SMS){
 		// Accel phase
 		if (p_move_percent < thisSpline->accel_fraction) {
@@ -2394,7 +2438,7 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
         }
     } 
 	
-	// For manual moves
+	// For continuous moves
 	else {
 		// Accel phase
 		if (p_move_percent < thisSpline->accel_fraction) {
@@ -2413,6 +2457,34 @@ float OMMotorFunctions::_qInvCalc(OMMotorFunctions::s_splineCal* thisSpline, flo
     }
 
   return(curSpd);
+
+}
+
+
+/*
+
+	Returns the partial sum for k from 1 to n.
+	i.e. 1 + 2 + 3 + ... n
+
+*/
+
+unsigned long OMMotorFunctions::_partialSum(unsigned long p_input){
+	
+	return (p_input * (p_input + 1)) / 2;
+
+}
+
+
+/*
+
+	Returns the partial sum of squares for k^2 from 1 to n.
+	i.e. 1^2 + 2^2 + 3^2 + ... n
+
+*/
+
+unsigned long OMMotorFunctions::_partialSumOfSquares(unsigned long p_input){
+
+	return (p_input * (p_input + 1) * (2 * p_input + 1)) / 6;
 
 }
 
@@ -2446,11 +2518,16 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
    	   	// work with plan parameters
    	   thisSpline = &m_splinePlanned;
    	   totSplines = m_curPlanSplines;	
+
+	   // Save the count of physical moves for each phase
+	   thisSpline->accel_moves = p_Accel;
+	   thisSpline->cruise_moves = p_Travel - p_Accel - p_Decel;
+	   thisSpline->decel_moves = p_Decel;
    }
 
    _setEasingCoeff(thisSpline);
 
-	// pre-calculate values for spline interpolation
+   // pre-calculate values for spline interpolation
    thisSpline->accel_fraction = (float)p_Accel / (float)p_Travel;
    thisSpline->decel_fraction = (float)p_Decel / (float)p_Travel;
    thisSpline->cruise_fraction = 1.0 - (thisSpline->accel_fraction + thisSpline->decel_fraction);
@@ -2459,19 +2536,17 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
    // Step count that equals continuous speed * travel time (CONT_VID OR CONT_TL) OR cruise phase movement length * SMS movements (SMS)
    float length_at_cruise = p_Steps / (thisSpline->accel_fraction / thisSpline->easing_coeff + thisSpline->cruise_fraction + thisSpline->decel_fraction / thisSpline->easing_coeff);
 
-   if (m_debug){
-	   USBSerial.print("velocity: ");
-	   USBSerial.println(length_at_cruise);
-	   USBSerial.print("accel_fraction: ");
-	   USBSerial.println(thisSpline->accel_fraction);
-	   USBSerial.print("decel_fraction: ");
-	   USBSerial.println(thisSpline->decel_fraction);
-	   USBSerial.print("p_Steps: ");
-	   USBSerial.println(p_Steps);
-	   USBSerial.print("travel: ");
-	   USBSerial.println(thisSpline->easing_coeff);
-	   USBSerial.println("");
-   }
+   	   //USBSerial.print("velocity: ");
+	   //USBSerial.println(length_at_cruise);
+	   //USBSerial.print("accel_fraction: ");
+	   //USBSerial.println(thisSpline->accel_fraction);
+	   //USBSerial.print("decel_fraction: ");
+	   //USBSerial.println(thisSpline->decel_fraction);
+	   //USBSerial.print("p_Steps: ");
+	   //USBSerial.println(p_Steps);
+	   //USBSerial.print("travel: ");
+	   //USBSerial.println(thisSpline->easing_coeff);
+	   //USBSerial.println("");
 
 	// SMS mode
     if (p_SMS == true){
@@ -2479,19 +2554,15 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
         unsigned long ac_movement_units = 0;		// Total of step units required to accelerate
 		unsigned long dc_movement_units = 0;		// Total of step units required to decelerate
 
-        for (unsigned long i = 1; i <= p_Accel; i++){
-            if (m_easeType == OM_MOT_LINEAR)
-				ac_movement_units += i;
-            else
-				ac_movement_units += i*i;
-        }
 
-        for (unsigned long i = 1; i <= p_Decel; i++){
-           if (m_easeType == OM_MOT_LINEAR)
-			   dc_movement_units += i;
-            else
-				dc_movement_units += i*i;
-        }
+		if (m_easeType == OM_MOT_LINEAR){
+			ac_movement_units = _partialSum(p_Accel);	// Partial sum equation for 1 + 2 + 3 + ... n
+			dc_movement_units = _partialSum(p_Decel);
+		}
+		else {
+			ac_movement_units = _partialSumOfSquares(p_Accel);	// Partial sum of squares equation for 1^2 + 2^2 + 3^2 + ... n^2
+			dc_movement_units = _partialSumOfSquares(p_Decel);	
+		}
 
         //calculate step interval
         if (m_easeType == OM_MOT_QUADINV){
@@ -2524,6 +2595,12 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
 		thisSpline->cruise_steps = (unsigned long)(p_Steps - thisSpline->accel_steps - thisSpline->decel_steps);
 		thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);
 
+		//USBSerial.print("Total accel steps: ");
+		//USBSerial.println(thisSpline->accel_steps);
+		//USBSerial.print("Accel Movement units: ");
+		//USBSerial.println(ac_movement_units);
+		//USBSerial.print("Accel unit size: ");
+		//USBSerial.println(thisSpline->accel_coeff);
 
     }
 
@@ -2635,7 +2712,7 @@ void OMMotorFunctions::checkRefresh(){
 
 
 void OMMotorFunctions::updateSpline(){
-
+	
     if (splineReady == false){
         
 		//If it's in continuous mode accel/decel until desired speed
