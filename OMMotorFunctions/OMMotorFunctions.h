@@ -504,8 +504,8 @@ public:
     void checkRefresh();
     uint8_t checkStep();
 
-    void planLeadIn(unsigned int);
-	void planLeadOut(unsigned int);
+    void planLeadIn(unsigned long);
+	void planLeadOut(unsigned long);
     unsigned long planLeadIn();
 	unsigned long planLeadOut();
 
