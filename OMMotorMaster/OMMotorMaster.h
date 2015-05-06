@@ -101,6 +101,6 @@
 #define OM_MOT_MOVING 	2
 #define OM_MOT_BEGIN	3
 
-#define OM_MOT_LINEAR 	4
-#define OM_MOT_QUAD	5
-#define OM_MOT_QUADINV	6
+#define OM_MOT_LINEAR 	1
+#define OM_MOT_QUAD		2
+#define OM_MOT_QUADINV	3
