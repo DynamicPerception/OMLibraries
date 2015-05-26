@@ -33,6 +33,8 @@ int			KeyFrames::g_kf_count = 0;
 bool		KeyFrames::g_mem_allocted = false;
 KeyFrames*	KeyFrames::g_axis_array = NULL;
 int			KeyFrames::g_axis_count = 0;
+float		KeyFrames::g_max_accel = 20000;
+float		KeyFrames::g_max_vel = 4000;
 
 
 /*** Static Functions ***/
@@ -98,7 +100,6 @@ void KeyFrames::setKFCount(int p_kf_count){
 		g_axis_array[i].m_fn_recieved = 0;
 		g_axis_array[i].m_dn_recieved = 0;
 	}
-
 	g_mem_allocted = true;
 }
 
@@ -162,7 +163,7 @@ void KeyFrames::setFN(float* p_fn){
 void KeyFrames::setFN(float p_input){
 	if (!g_mem_allocted)
 		return;
-	m_fn[m_fn_recieved] = p_input;
+	m_fn[m_fn_recieved] = p_input;	
 	m_fn_recieved++;
 }
 
@@ -176,7 +177,8 @@ void KeyFrames::resetFN(){
 }
 
 float KeyFrames::getFN(int p_which){
-	return m_fn[p_which];
+	return m_fn[m_fn_recieved];
+	m_fn_recieved++;
 }
 
 void KeyFrames::setDN(float* p_dn){
@@ -187,7 +189,7 @@ void KeyFrames::setDN(float* p_dn){
 
 void KeyFrames::setDN(float p_input){
 	if (!g_mem_allocted)
-		return;
+		return; 
 	m_dn[m_dn_recieved] = p_input;
 	m_dn_recieved++;
 }
