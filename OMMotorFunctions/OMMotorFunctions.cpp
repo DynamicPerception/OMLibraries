@@ -1977,7 +1977,7 @@ begins its move.
 
 */
 
-void OMMotorFunctions::planLeadIn(unsigned long p_leadIn){
+void OMMotorFunctions::planLeadIn(unsigned int p_leadIn){
 
     m_planLeadIn = p_leadIn;
 }
@@ -2005,7 +2005,7 @@ finishes its move.
 
 */
 
-void OMMotorFunctions::planLeadOut(unsigned long p_leadOut){
+void OMMotorFunctions::planLeadOut(unsigned int p_leadOut){
 
 	m_planLeadOut = p_leadOut;
 }

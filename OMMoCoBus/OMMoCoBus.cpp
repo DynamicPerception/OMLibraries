@@ -60,8 +60,8 @@ Author: C.A. Church
  */
 
 
-OMMoCoBus::OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr ) {
-
+OMMoCoBus::OMMoCoBus(Stream * c_serObj) {
+  unsigned int c_dAddr = 0;
   m_serObj = c_serObj;
   m_devAddr = c_dAddr;
   m_bufSize = 0;

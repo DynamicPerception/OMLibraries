@@ -37,7 +37,7 @@
 
  */
 
-OMMoCoNode::OMMoCoNode(Stream * c_serObj, unsigned int c_addr, unsigned int c_ver, char* c_id): OMMoCoBus(c_serObj, c_addr) {
+OMMoCoNode::OMMoCoNode(Stream * c_serObj, unsigned int c_addr, unsigned int c_ver, char* c_id): OMMoCoBus(c_serObj) {
 	f_cmdHandler = 0;
 
 	m_ver = c_ver;

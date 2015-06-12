@@ -184,8 +184,8 @@ OpenMoco MoCoBus Core Libraries
 class OMMoCoBus {
 
 public:
-    OMMoCoBus(Stream * c_serObj, unsigned int c_dAddr = 0);
-
+    OMMoCoBus(Stream * c_serObj);
+	unsigned int c_dAddr;
 	uint8_t addr;
 	uint8_t subaddr;
 
