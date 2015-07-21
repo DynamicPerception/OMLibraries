@@ -95,20 +95,19 @@ public:
 	float accel(float p_x);								// Returns the acceleration at the given x
 
 	// Validation functions
-	bool validateVel();								// Returns true if curve does not exceed max motor speed
-	bool validateAccel();							// Returns true if curve does not exceed max motor accel
-	static void setMaxVel(float p_max_vel);					// Sets the maximum velocity for validation checking
-	static void setMaxAccel(float p_max_accel);				// Sets the maximum acceleration for validation checking
+	bool validateVel();									// Returns true if curve does not exceed max motor speed
+	bool validateAccel();								// Returns true if curve does not exceed max motor accel
+	static void setMaxVel(float p_max_vel);				// Sets the maximum velocity for validation checking
+	static void setMaxAccel(float p_max_accel);			// Sets the maximum acceleration for validation checking
 	
 private:
 
 	// Communication vars
 	static int g_cur_axis;								// The current axis being managed
 	static bool g_receiving;							// Indicates whether key frame data is currently being sent to the NMX
-	static int g_xn_recieved;							// Number of abscissa values that have been received
-	int m_fn_recieved;									// Number of position values that have been received
-	int m_dn_recieved;									// Number of derivative values that have been received
-
+	static int g_xn_received;							// Number of abscissa values that have been received
+	int m_fn_received;									// Number of position values that have been received
+	int m_dn_received;									// Number of derivative values that have been received
 
 	static int g_update_rate;							// Spline update rate in ms
 	static int g_kf_count;								// Number of key frames

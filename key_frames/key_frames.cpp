@@ -13,8 +13,8 @@ namespace globalKF{
 KeyFrames::KeyFrames(){
 	m_fn = NULL;
 	m_dn = NULL;
-	m_fn_recieved = 0;
-	m_dn_recieved = 0;
+	m_fn_received = 0;
+	m_dn_received = 0;
 }
 
 // Default destructor
@@ -26,7 +26,7 @@ KeyFrames::~KeyFrames(){
 const int	KeyFrames::G_VALIDATION_PNT_COUNT = 1000;
 int			KeyFrames::g_cur_axis = 0;
 bool		KeyFrames::g_receiving = false;
-int			KeyFrames::g_xn_recieved = 0;
+int			KeyFrames::g_xn_received = 0;
 float*		KeyFrames::g_xn = NULL;
 int			KeyFrames::g_update_rate = 10;
 int			KeyFrames::g_kf_count = 0;
@@ -91,14 +91,14 @@ void KeyFrames::setKFCount(int p_kf_count){
 	// Allocate memory for key frame abscissas
 	g_xn = (float *)malloc(g_kf_count * sizeof(float));
 	// Reset the number of key frames abscissas assigned
-	g_xn_recieved = 0;
+	g_xn_received = 0;
 
 	// Allocate memory for the position of each of the axes and reset the received values for each object
 	for (byte i = 0; i < g_axis_count; i++){
 		g_axis_array[i].m_fn = (float *)malloc(g_kf_count * sizeof(float));
 		g_axis_array[i].m_dn = (float *)malloc(g_kf_count * sizeof(float));
-		g_axis_array[i].m_fn_recieved = 0;
-		g_axis_array[i].m_dn_recieved = 0;
+		g_axis_array[i].m_fn_received = 0;
+		g_axis_array[i].m_dn_received = 0;
 	}
 	g_mem_allocted = true;
 }
@@ -119,18 +119,20 @@ void KeyFrames::setXN(float* p_xn){
 
 // Assigns xn values one at a time	
 void KeyFrames::setXN(float p_input){
-	g_xn[g_xn_recieved] = p_input;
-	g_xn_recieved++;
+	if (!g_mem_allocted)
+		return;	
+	g_xn[g_xn_received] = p_input;
+	g_xn_received++;
 }
 
 // Returns the number of xn values that have been assigned. Accurate only when assigning values one at a time.
 int KeyFrames::countXN(){
-	return g_xn_recieved;
+	return g_xn_received;
 }
 
 // Resets the xn received count
 void KeyFrames::resetXN(){
-	g_xn_recieved = 0;
+	g_xn_received = 0;
 }
 
 // Returns the abscissa of the requested key frame
@@ -162,61 +164,76 @@ void KeyFrames::setFN(float* p_fn){
 
 void KeyFrames::setFN(float p_input){
 	if (!g_mem_allocted)
-		return;
-	m_fn[m_fn_recieved] = p_input;	
-	m_fn_recieved++;
+		return;	
+	m_fn[m_fn_received] = p_input;	
+	m_fn_received++;
 }
 
 int KeyFrames::countFN(){
-	return m_fn_recieved;
+	return m_fn_received;
 }
 
 // Resets the fn received count
 void KeyFrames::resetFN(){
-	m_fn_recieved= 0;
+	m_fn_received= 0;
 }
 
 float KeyFrames::getFN(int p_which){
-	return m_fn[m_fn_recieved];
-	m_fn_recieved++;
+	return m_fn[p_which];
 }
 
 void KeyFrames::setDN(float* p_dn){
 	if (!g_mem_allocted)
-		return;
+		return;	
 	m_dn = p_dn;
 }
 
 void KeyFrames::setDN(float p_input){
 	if (!g_mem_allocted)
-		return; 
-	m_dn[m_dn_recieved] = p_input;
-	m_dn_recieved++;
+		return;	
+	m_dn[m_dn_received] = p_input;
+	m_dn_received++;
 }
 
 int KeyFrames::countDN(){
-	return m_dn_recieved;
+	return m_dn_received;
 }
 
 // Resets the fn received count
 void KeyFrames::resetDN(){
-	m_dn_recieved = 0;
+	m_dn_received = 0;
 }
 
 float KeyFrames::getDN(int p_which){
 	return m_dn[p_which];
 }
 
+
+/*
+*
+* @param p_x - X position on the spline at which to calculate the motor's position
+*
+*/
 float KeyFrames::pos(float p_x){
 	updateVals(p_x);
 	return m_f[0];
 }
 
+/*
+*
+* @param p_x - X position on the spline at which to calculate the motor's velocity
+*
+*/
 float KeyFrames::vel(float p_x){
 	updateVals(p_x);
 	return m_d[0];
 }
 
+/*
+*
+* @param p_x - X position on the spline at which to calculate the motor's acceleration
+* 
+*/
 float KeyFrames::accel(float p_x){
 	updateVals(p_x);
 	return m_s[0];
