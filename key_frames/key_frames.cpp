@@ -11,10 +11,13 @@ namespace globalKF{
 
 // Default constructor
 KeyFrames::KeyFrames(){
+	m_xn = NULL;
 	m_fn = NULL;
 	m_dn = NULL;
-	m_fn_received = 0;
-	m_dn_received = 0;
+	m_xn_recieved = 0;
+	m_fn_recieved = 0;
+	m_dn_recieved = 0;
+	m_kf_count = 0;
 }
 
 // Default destructor
@@ -26,10 +29,7 @@ KeyFrames::~KeyFrames(){
 const int	KeyFrames::G_VALIDATION_PNT_COUNT = 1000;
 int			KeyFrames::g_cur_axis = 0;
 bool		KeyFrames::g_receiving = false;
-int			KeyFrames::g_xn_received = 0;
-float*		KeyFrames::g_xn = NULL;
 int			KeyFrames::g_update_rate = 10;
-int			KeyFrames::g_kf_count = 0;
 bool		KeyFrames::g_mem_allocted = false;
 KeyFrames*	KeyFrames::g_axis_array = NULL;
 int			KeyFrames::g_axis_count = 0;
@@ -81,31 +81,30 @@ void KeyFrames::setKFCount(int p_kf_count){
 	if (p_kf_count < 2)
 		return;
 
-	g_kf_count = p_kf_count;
+	m_kf_count = p_kf_count;
 
 	// Free any memory that may have been already allocated
 	for (byte i = 0; i < g_axis_count; i++){
 		g_axis_array[i].freeMemory();
 	}
-
-	// Allocate memory for key frame abscissas
-	g_xn = (float *)malloc(g_kf_count * sizeof(float));
+		
 	// Reset the number of key frames abscissas assigned
-	g_xn_received = 0;
+	m_xn_recieved = 0;
 
 	// Allocate memory for the position of each of the axes and reset the received values for each object
 	for (byte i = 0; i < g_axis_count; i++){
-		g_axis_array[i].m_fn = (float *)malloc(g_kf_count * sizeof(float));
-		g_axis_array[i].m_dn = (float *)malloc(g_kf_count * sizeof(float));
-		g_axis_array[i].m_fn_received = 0;
-		g_axis_array[i].m_dn_received = 0;
+		g_axis_array[i].m_xn = (float *)malloc(m_kf_count * sizeof(float));
+		g_axis_array[i].m_fn = (float *)malloc(m_kf_count * sizeof(float));
+		g_axis_array[i].m_dn = (float *)malloc(m_kf_count * sizeof(float));
+		g_axis_array[i].m_fn_recieved = 0;
+		g_axis_array[i].m_dn_recieved = 0;
 	}
 	g_mem_allocted = true;
 }
 
 // Returns the key frame count
 int KeyFrames::countKF(){
-	return g_kf_count;
+	return m_kf_count;
 }
 
 // Points xn to an existing array of values
@@ -114,40 +113,51 @@ void KeyFrames::setXN(float* p_xn){
 	if (!g_mem_allocted)
 		return;
 
-	g_xn = p_xn;
+	m_xn = p_xn;
 }
 
 // Assigns xn values one at a time	
 void KeyFrames::setXN(float p_input){
-	if (!g_mem_allocted)
-		return;	
-	g_xn[g_xn_received] = p_input;
-	g_xn_received++;
+	m_xn[m_xn_recieved] = p_input;
+	m_xn_recieved++;
 }
 
 // Returns the number of xn values that have been assigned. Accurate only when assigning values one at a time.
 int KeyFrames::countXN(){
-	return g_xn_received;
+	return m_xn_recieved;
 }
 
 // Resets the xn received count
 void KeyFrames::resetXN(){
-	g_xn_received = 0;
+	m_xn_recieved = 0;
 }
 
 // Returns the abscissa of the requested key frame
 float KeyFrames::getXN(int p_which){
-	return g_xn[p_which];
+	return m_xn[p_which];
 }
 
+// Returns the largest of the final xn values for all axes. This is useful for determining the length of a program.
+float KeyFrames::getMaxLastXN(){
 
-/*** Non-Static Functions ***/
+	float max_xn = 0;
+
+	for (byte i = 0; i < KeyFrames::g_axis_count; i++){
+				
+		int max_frame_num = KeyFrames::g_axis_array[i].m_kf_count;
+		float this_xn = KeyFrames::g_axis_array[i].m_xn[max_frame_num];
+		if (this_xn > max_xn)
+			max_xn = this_xn;
+	}
+		
+	return max_xn;
+}
 
 // Deallocates any memory assigned to input arrays
 void KeyFrames::freeMemory(){
 	// If the count has been previously set, deallocate the memory from last time
 	if (g_mem_allocted){
-		free(g_xn);
+		free(m_xn);
 		for (byte i = 0; i < g_axis_count; i++){
 			free(g_axis_array[i].m_fn);
 			free(g_axis_array[i].m_dn);
@@ -164,76 +174,61 @@ void KeyFrames::setFN(float* p_fn){
 
 void KeyFrames::setFN(float p_input){
 	if (!g_mem_allocted)
-		return;	
-	m_fn[m_fn_received] = p_input;	
-	m_fn_received++;
+		return;
+	m_fn[m_fn_recieved] = p_input;	
+	m_fn_recieved++;
 }
 
 int KeyFrames::countFN(){
-	return m_fn_received;
+	return m_fn_recieved;
 }
 
 // Resets the fn received count
 void KeyFrames::resetFN(){
-	m_fn_received= 0;
+	m_fn_recieved= 0;
 }
 
 float KeyFrames::getFN(int p_which){
-	return m_fn[p_which];
+	return m_fn[m_fn_recieved];
+	m_fn_recieved++;
 }
 
 void KeyFrames::setDN(float* p_dn){
 	if (!g_mem_allocted)
-		return;	
+		return;
 	m_dn = p_dn;
 }
 
 void KeyFrames::setDN(float p_input){
 	if (!g_mem_allocted)
-		return;	
-	m_dn[m_dn_received] = p_input;
-	m_dn_received++;
+		return; 
+	m_dn[m_dn_recieved] = p_input;
+	m_dn_recieved++;
 }
 
 int KeyFrames::countDN(){
-	return m_dn_received;
+	return m_dn_recieved;
 }
 
 // Resets the fn received count
 void KeyFrames::resetDN(){
-	m_dn_received = 0;
+	m_dn_recieved = 0;
 }
 
 float KeyFrames::getDN(int p_which){
 	return m_dn[p_which];
 }
 
-
-/*
-*
-* @param p_x - X position on the spline at which to calculate the motor's position
-*
-*/
 float KeyFrames::pos(float p_x){
 	updateVals(p_x);
 	return m_f[0];
 }
 
-/*
-*
-* @param p_x - X position on the spline at which to calculate the motor's velocity
-*
-*/
 float KeyFrames::vel(float p_x){
 	updateVals(p_x);
 	return m_d[0];
 }
 
-/*
-*
-* @param p_x - X position on the spline at which to calculate the motor's acceleration
-* 
-*/
 float KeyFrames::accel(float p_x){
 	updateVals(p_x);
 	return m_s[0];
@@ -241,7 +236,7 @@ float KeyFrames::accel(float p_x){
 
 bool KeyFrames::validateVel(){
 
-	float increment = g_xn[g_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;	
+	float increment = m_xn[m_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;	
 	
 	for (int i = 0; i < G_VALIDATION_PNT_COUNT; i++){
 		updateVals(i * increment);
@@ -253,7 +248,7 @@ bool KeyFrames::validateVel(){
 
 bool KeyFrames::validateAccel(){
 
-	float increment = g_xn[g_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;
+	float increment = m_xn[m_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;
 
 	for (int i = 0; i < G_VALIDATION_PNT_COUNT; i++){
 		updateVals(i * increment);
@@ -275,5 +270,5 @@ void KeyFrames::setMaxAccel(float p_max_accel){
 
 void KeyFrames::updateVals(float p_x){
 	float x_point[1] = { p_x };
-	HermiteSpline::cubic_spline_value(g_kf_count, g_xn, m_fn, m_dn, 1, x_point, m_f, m_d, m_s);
+	HermiteSpline::cubic_spline_value(m_kf_count, m_xn, m_fn, m_dn, 1, x_point, m_f, m_d, m_s);
 }

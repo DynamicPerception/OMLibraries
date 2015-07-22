@@ -65,15 +65,16 @@ public:
 	static bool receiveState();							// Returns whether the NMX is currently receiving key frame input data
 
 	// Key frame count functions
-	static void setKFCount(int p_kf_count);				// Sets the key frame count and allocates memory for input vars
-	static int countKF();								// Returns the key frame count
+	void setKFCount(int p_kf_count);					// Sets the key frame count and allocates memory for input vars
+	int countKF();										// Returns the key frame count
 	
 	// Key frame x location functions
-	static void setXN(float* p_xn);						// Points xn to an existing array of values
-	static void setXN(float p_input);					// Assigns xn values one at a time	
-	static int countXN();								// Returns the number of xn values that have been assigned. Accurate only when assigning values one at a time.
-	static void resetXN();								// Resets the xn received count
-	static float getXN(int p_which);					// Returns the abscissa of the requested key frame
+	void setXN(float* p_xn);							// Points xn to an existing array of values
+	void setXN(float p_input);							// Assigns xn values one at a time	
+	int countXN();										// Returns the number of xn values that have been assigned. Accurate only when assigning values one at a time.
+	void resetXN();										// Resets the xn received count
+	float getXN(int p_which);							// Returns the abscissa of the requested key frame
+	static float getMaxLastXN();						// Returns the largest of the final xn values for all axes. This is useful for determining the length of a program.
 
 	// Key frame motor position functions
 	void setFN(float* p_fn);							// Points fn to an existing array of values
@@ -105,18 +106,18 @@ private:
 	// Communication vars
 	static int g_cur_axis;								// The current axis being managed
 	static bool g_receiving;							// Indicates whether key frame data is currently being sent to the NMX
-	static int g_xn_received;							// Number of abscissa values that have been received
-	int m_fn_received;									// Number of position values that have been received
-	int m_dn_received;									// Number of derivative values that have been received
+	int m_xn_recieved;									// Number of abscissa values that have been received
+	int m_fn_recieved;									// Number of position values that have been received
+	int m_dn_recieved;									// Number of derivative values that have been received
 
 	static int g_update_rate;							// Spline update rate in ms
-	static int g_kf_count;								// Number of key frames
+	int m_kf_count;										// Number of key frames
 	static bool g_mem_allocted;							// Indicates whether memory for the input vars has been set
 	static KeyFrames* g_axis_array;						// The array of key frame objects. Allow cycling through each object when allocating memory
 	static int g_axis_count;							// Number of axes to be managed
 
 	// Input / output vars
-	static float* g_xn;									// Abscissas of key frame locations
+	float* m_xn;										// Abscissas of key frame locations
 	float* m_fn;										// Ordinate of current axis key frame location
 	float* m_dn;										// Derivatives at key frame locations
 	float m_f[1];										// Current axis curve's location at calculated point
