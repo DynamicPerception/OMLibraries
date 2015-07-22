@@ -199,7 +199,7 @@ public:
 	void setHandler(void(*)(uint8_t));
 
 	unsigned long maxShots;
-	unsigned long interval;
+	unsigned long interval;						// Camera interval in milliseconds
 	bool repeat;
 	bool enable;
 
