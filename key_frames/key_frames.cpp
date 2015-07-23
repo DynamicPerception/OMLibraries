@@ -189,8 +189,7 @@ void KeyFrames::resetFN(){
 }
 
 float KeyFrames::getFN(int p_which){
-	return m_fn[m_fn_recieved];
-	m_fn_recieved++;
+	return m_fn[p_which];
 }
 
 void KeyFrames::setDN(float* p_dn){
