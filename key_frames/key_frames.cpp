@@ -46,13 +46,18 @@ void KeyFrames::setAxisArray(KeyFrames* p_axis_array, int p_axis_count){
 }
 
 // Selects the the current axis
-void KeyFrames::axis(int p_axis){
+void KeyFrames::setAxis(int p_axis){
 	g_cur_axis = p_axis;
 }
 
 // Returns the currently selected axis	
-int KeyFrames::axis(){
+int KeyFrames::getAxis(){
 	return g_cur_axis;
+}
+
+// Returns the number of axes being managed
+int KeyFrames::getAxisCount(){
+	return	g_axis_count;
 }
 
 // Sets the velocity update rate in ms used at run-time
@@ -78,32 +83,34 @@ bool KeyFrames::receiveState(){
 // Sets the key frame count and allocates memory for input vars
 void KeyFrames::setKFCount(int p_kf_count){
 
-	if (p_kf_count < 2)
+	// Don't allow negative counts or a single frame
+	if (p_kf_count < 0)
 		return;
 
 	m_kf_count = p_kf_count;
+	USBSerial.print("New KF count: ");
+	USBSerial.println(m_kf_count);
 
-	// Free any memory that may have been already allocated
-	for (byte i = 0; i < g_axis_count; i++){
-		g_axis_array[i].freeMemory();
-	}
+	// Only allocate memory for 2 or more frames. Frame counts of 0 or 1 are just used as indicators
+	if (p_kf_count >= 2){
+
+		// Free any memory that may have been already allocated
+		freeMemory();		
+
+		// Allocate memory for and reset the received values for each		
+		m_xn = (float *)malloc(m_kf_count * sizeof(float));
+		m_fn = (float *)malloc(m_kf_count * sizeof(float));
+		m_dn = (float *)malloc(m_kf_count * sizeof(float));
+		m_xn_recieved = 0;
+		m_fn_recieved = 0;
+		m_dn_recieved = 0;			
 		
-	// Reset the number of key frames abscissas assigned
-	m_xn_recieved = 0;
-
-	// Allocate memory for the position of each of the axes and reset the received values for each object
-	for (byte i = 0; i < g_axis_count; i++){
-		g_axis_array[i].m_xn = (float *)malloc(m_kf_count * sizeof(float));
-		g_axis_array[i].m_fn = (float *)malloc(m_kf_count * sizeof(float));
-		g_axis_array[i].m_dn = (float *)malloc(m_kf_count * sizeof(float));
-		g_axis_array[i].m_fn_recieved = 0;
-		g_axis_array[i].m_dn_recieved = 0;
+		g_mem_allocted = true;
 	}
-	g_mem_allocted = true;
 }
 
 // Returns the key frame count
-int KeyFrames::countKF(){
+int KeyFrames::getKFCount(){
 	return m_kf_count;
 }
 
@@ -142,10 +149,9 @@ float KeyFrames::getMaxLastXN(){
 
 	float max_xn = 0;
 
-	for (byte i = 0; i < KeyFrames::g_axis_count; i++){
-				
-		int max_frame_num = KeyFrames::g_axis_array[i].m_kf_count;
-		float this_xn = KeyFrames::g_axis_array[i].m_xn[max_frame_num];
+	for (byte i = 0; i < KeyFrames::g_axis_count; i++){		
+		int max_frame_num = KeyFrames::g_axis_array[i].m_kf_count;		
+		float this_xn = KeyFrames::g_axis_array[i].m_xn[max_frame_num-1];		
 		if (this_xn > max_xn)
 			max_xn = this_xn;
 	}
@@ -157,11 +163,10 @@ float KeyFrames::getMaxLastXN(){
 void KeyFrames::freeMemory(){
 	// If the count has been previously set, deallocate the memory from last time
 	if (g_mem_allocted){
-		free(m_xn);
-		for (byte i = 0; i < g_axis_count; i++){
-			free(g_axis_array[i].m_fn);
-			free(g_axis_array[i].m_dn);
-		}
+		free(m_xn);		
+		free(m_fn);
+		free(m_dn);
+		
 		g_mem_allocted = false;
 	}
 }
@@ -232,6 +237,8 @@ float KeyFrames::accel(float p_x){
 	updateVals(p_x);
 	return m_s[0];
 }
+
+/*** Validation Functions ***/
 
 bool KeyFrames::validateVel(){
 

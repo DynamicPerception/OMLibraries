@@ -53,8 +53,9 @@ public:
 		int p_axis_count);
 
 	// Axis select functions
-	static void axis(int p_axis);						// Selects the the current axis
-	static int axis();									// Returns the currently selected axis	
+	static void setAxis(int p_axis);					// Selects the the current axis
+	static int getAxis();								// Returns the currently selected axis	
+	static int getAxisCount();							// Returns number of axes being managed
 	
 	// Run-time update functions
 	static void updateRate(int p_update_rate);			// Sets the velocity update rate in ms used at run-time
@@ -66,7 +67,7 @@ public:
 
 	// Key frame count functions
 	void setKFCount(int p_kf_count);					// Sets the key frame count and allocates memory for input vars
-	int countKF();										// Returns the key frame count
+	int getKFCount();									// Returns the key frame count
 	
 	// Key frame x location functions
 	void setXN(float* p_xn);							// Points xn to an existing array of values
@@ -153,19 +154,15 @@ private:
 	3. Set the key frame count using static function KeyFrames::count(int p_kf_count). This will allocate the necessary
 	   memory to the input variable arrays
 
-	4. Assign the key frame abscissas either one at a time or by passing an existing array using static function
-	   setXN(int p_which, float p_input) or KeyFrames::setXN(float* p_xn). These are assigned using a static function
-	   because the x locations for each key frame will be the same for all axes. You must ensure that the number of assigned
-	   values matches the key frame count, otherwise things may go horribly wrong. These values must be strictly sorted in
-	   asceending order.
+	5. Assign the key frame anscissas, positions, and velocities one at a time or by passing an existing array using functions
+	   setXN(int p_which, float p_input) or setXN(float* p_xn), setFN(int p_which, float p_input) or setFN(float* p_fn), 
+	   and setDN(int p_which, float p_input) or setDN(float* p_dn). This must be done for each object in the KeyFrame array 
+	   you've created, since each motor may have different times, positions and velocities. 
+	   
+	   *** IMPORTANT ***: You must ensure that the number of assigned values for each matches the key frame count, otherwise 
+	   things may go horribly wrong. Additionally, the abscissa values must be strictly sorted in ascending order for the same reason.
 
-	5. Assign the key frame positions and velocities one at a time or by passing an existing array using functions
-	   setFN(int p_which, float p_input) or setFN(float* p_fn), and setDN(int p_which, float p_input) or setDN(float* p_dn).
-	   This must be done for each object in the KeyFrame array you've created, since each motor may have different positions
-	   and velocities. You must ensure that the number of assigned values for each matches the key frame count, otherwise 
-	   things may go horribly wrong.
-
-	6. Once steps 1-5 have been completed, the position, velocity, or acceleration at any x location between the first and last
+	5. Once steps 1-4 have been completed, the position, velocity, or acceleration at any x location between the first and last
 	   key frame abscissa may be retrieved with the pos(float p_x), vel(float p_x), accel(float p_x) functions.
 
 */
