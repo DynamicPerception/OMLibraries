@@ -486,8 +486,8 @@ public:
 	uint8_t programDone();
 	void programDone(uint8_t);
 
-	void planType(uint8_t);
-	uint8_t planType();
+	static void planType(uint8_t);
+	static uint8_t planType();
 	void planTravelLength(unsigned long);
 	unsigned long planTravelLength();
 	void planAccelLength(unsigned long);
@@ -519,8 +519,7 @@ public:
     uint8_t       mtpc_dir;
     unsigned long mtpc_arrive;		// SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
     unsigned long mtpc_accel;		// SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
-    unsigned long mtpc_decel;		// SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds
-    uint8_t planMoveType;			// Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
+    unsigned long mtpc_decel;		// SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds	
 
     uint8_t mt_plan;
 
@@ -583,7 +582,7 @@ private:
 	};
 
 
-
+	static uint8_t g_plan_type;	// Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
 
     s_splineCal m_splineOne;
     s_splineCal m_splinePlanned;
@@ -643,8 +642,8 @@ private:
 
     volatile unsigned long m_curOffCycles;		//
 	volatile int m_curCycleErr;					//
-	static unsigned int m_curSampleRate;		//
-	static unsigned int m_cyclesPerSpline;		//
+	static unsigned int g_curSampleRate;		//
+	static unsigned int g_cyclesPerSpline;		//
 	volatile unsigned long m_curSpline;			//
 	unsigned long m_totalSplines;				// 
 
@@ -659,7 +658,7 @@ private:
 	float m_desiredContSpd;						// Motor's target continuous speed (steps/s)
 	float m_contAccelRate;						// Motors continuous acceleration rate (steps/s^2)
 
-	volatile long m_homePos;					// Distance in current microsteps of present location from home position
+	volatile long m_curPos;					// Distance in current microsteps of present location from home position
 	long m_endPos;								// Distance in current microsteps of end limit from home position
 	long m_startPos;							// Distance in current microsteps of program start from home position
 	long m_stopPos;								// Distance in current microsteps of program stop from home position
@@ -692,7 +691,7 @@ private:
 
 	key_frame key_frame;
 
-	static bool m_debug;
+	static bool g_debug;
 
 };
 

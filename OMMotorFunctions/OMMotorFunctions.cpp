@@ -31,9 +31,11 @@ See www.openmoco.org for more information
 
 // initialize static members
 
-unsigned int OMMotorFunctions::m_curSampleRate = 200;	// How often to run the motor ISR in microseconds
-unsigned int OMMotorFunctions::m_cyclesPerSpline = 100;
-bool		 OMMotorFunctions::m_debug = false;
+unsigned int OMMotorFunctions::g_curSampleRate = 200;	// How often to run the motor ISR in microseconds
+unsigned int OMMotorFunctions::g_cyclesPerSpline = 100;
+bool		 OMMotorFunctions::g_debug = false;
+uint8_t		 OMMotorFunctions::g_plan_type = 0;
+
 
 /** Constructor
 
@@ -56,7 +58,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     m_totalSplines = 0;
     m_curOffCycles = 0;
     m_curCycleErr = 0;
-    m_homePos = 0;
+    m_curPos = 0;
     m_endPos = 0;
     m_startPos = 0;
     m_stopPos = 0;
@@ -125,7 +127,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
 	mtpc_arrive       = 0;
 	mtpc_accel        = 0;
 	mtpc_decel        = 0;
-	planMoveType 		  = 0;
+	g_plan_type 		  = 0;
 	mtpc_start	  = false;
 	m_planLeadIn      = 0;
 	m_planLeadOut     = 0;
@@ -229,13 +231,13 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
     // adjust marker for home!
     if( wasMs != m_curMs ) {
         if( wasMs > m_curMs ){
-            m_homePos /= (wasMs / m_curMs);
+            m_curPos /= (wasMs / m_curMs);
             m_startPos /= (wasMs / m_curMs);
             m_stopPos /= (wasMs / m_curMs);
             m_endPos /= (wasMs / m_curMs);
             m_backAdj /= (wasMs / m_curMs);
         } else {
-            m_homePos *= (m_curMs / wasMs);
+            m_curPos *= (m_curMs / wasMs);
             m_startPos *= (m_curMs / wasMs);
             m_stopPos *= (m_curMs / wasMs);
             m_endPos *= (m_curMs / wasMs);
@@ -692,7 +694,7 @@ void OMMotorFunctions::_updateContSpeed(){
         float curSpd = abs(m_contSpd) / (1000.0 / MS_PER_SPLINE);  //steps per spline
 
         // figure out how many cycles we delay after each step
-        float off_time = m_cyclesPerSpline / (curSpd);
+        float off_time = g_cyclesPerSpline / (curSpd);
 
         m_nextOffCycles = (unsigned long) off_time;
         //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
@@ -705,9 +707,9 @@ void OMMotorFunctions::_updateContSpeed(){
     //compensate for any backlash
     if( m_backCheck == true ) {
    	   if (dir() == 0)
-            m_homePos +=backlash();
+            m_curPos +=backlash();
        else
-            m_homePos -=backlash();
+            m_curPos -=backlash();
    	   m_backCheck = false;
     }
 
@@ -741,7 +743,7 @@ void OMMotorFunctions::_updateContSpeed(){
     float curSpd = abs(m_contSpd) / (1000.0 / MS_PER_SPLINE);  //steps per spline
 
          // figure out how many cycles we delay after each step
-    float off_time = m_cyclesPerSpline / (curSpd);
+    float off_time = g_cyclesPerSpline / (curSpd);
 
     m_nextOffCycles = (unsigned long) off_time;
     //multiple the error by the FLOAT_TOLERANCE to get rid of the float variable
@@ -920,12 +922,12 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 		return;
 
 		// convert from steps per second, to uSecond periods
-	m_curSampleRate = 1000000 / (unsigned long) p_Rate;
+	g_curSampleRate = 1000000 / (unsigned long) p_Rate;
 
 		// timeslices are in MS_PER_SPLINE mS, so how many
 		// stepping samples are there for one MS_PER_SPLINE?
 
-	m_cyclesPerSpline = (MS_PER_SPLINE * 1000) / m_curSampleRate;
+	g_cyclesPerSpline = (MS_PER_SPLINE * 1000) / g_curSampleRate;
 
 }
 
@@ -938,7 +940,7 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
  */
 
 unsigned int OMMotorFunctions::curSamplePeriod() {
-    return( m_curSampleRate );
+    return( g_curSampleRate );
 }
 
 /** Get Maximum Stepping Rate
@@ -950,7 +952,7 @@ unsigned int OMMotorFunctions::curSamplePeriod() {
  */
 
 unsigned int OMMotorFunctions::maxStepRate() {
-	return((unsigned int)( (long) 1000000 / (long) m_curSampleRate ));
+	return((unsigned int)( (long) 1000000 / (long) g_curSampleRate ));
 }
 
 
@@ -1237,9 +1239,9 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Dist, unsigned long p
     if( m_backCheck == true ) {
        p_Dist += backlash();
        if (dir() == 0)
-            m_homePos +=backlash();
+            m_curPos +=backlash();
        else
-            m_homePos -=backlash();
+            m_curPos -=backlash();
        m_backCheck = false;
     }
 
@@ -1272,8 +1274,8 @@ to resume movement after the program was paused while in contiuous move.
 void OMMotorFunctions::resumeMove(){
 
     m_calcMove = true;
-	if (m_homePos-m_stopPos != 0)
-		move(dir(),abs(m_homePos-m_stopPos));
+	if (m_curPos-m_stopPos != 0)
+		move(dir(),abs(m_curPos-m_stopPos));
 
 }
 
@@ -1382,9 +1384,9 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
         if( m_backCheck == true ) {
            p_Steps += backlash();
            if (dir() == 0)
-                m_homePos +=backlash();
+                m_curPos +=backlash();
            else
-                m_homePos -=backlash();
+                m_curPos -=backlash();
            m_backCheck = false;
         }
 
@@ -1413,7 +1415,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         //calculated cruise time
         float cruise_fraction = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
-		if (m_debug) {
+		if (g_debug) {
 			USBSerial.print("OMMotorFunctions::move() - Cruise time: ");
 			USBSerial.print(cruise_fraction);
 			USBSerial.print("ms ");
@@ -1421,7 +1423,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         //calculate acceleration and deceleration time
 		float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.easing_coeff;
-		if(m_debug) {
+		if(g_debug) {
 			USBSerial.print("Accel/decel time: ");
 			USBSerial.print(cruise_fraction);
 			USBSerial.print("ms ");
@@ -1429,7 +1431,7 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
 		//calculated total move time
         float mvMS = (cruise_fraction + adTm);
-		if (m_debug) {
+		if (g_debug) {
 			USBSerial.print("Total move time: ");
 			USBSerial.print(cruise_fraction);
 			USBSerial.println("ms");
@@ -1624,7 +1626,7 @@ void OMMotorFunctions::_updateMotorHome(int p_Steps) {
   if( m_curDir == 0 )
   	  p_Steps *= -1;
 
-  m_homePos += p_Steps;
+  m_curPos += p_Steps;
 
 }
 
@@ -1636,10 +1638,10 @@ void OMMotorFunctions::_updateMotorHome(int p_Steps) {
 
 void OMMotorFunctions::homeSet() {
     if (m_endPos != 0)
-        m_endPos -= m_homePos;
-    m_startPos -= m_homePos;
-    m_stopPos -= m_homePos;
-	m_homePos = 0;
+        m_endPos -= m_curPos;
+    m_startPos -= m_curPos;
+    m_stopPos -= m_curPos;
+	m_curPos = 0;
 }
 
 /** Set End Position
@@ -1655,7 +1657,7 @@ void OMMotorFunctions::endPos(long p_steps) {
 /** Get End Position
 
  Gets the limit position. The motor cannnot move past m_limitPos steps
- away from the m_homePos.
+ away from the m_curPos.
 
  @return
  A signed long, steps away from the home position that the limit of the travel is.
@@ -1725,7 +1727,7 @@ long OMMotorFunctions::stopPos() {
 */
 
 void OMMotorFunctions::currentPos(long p_steps) {
-	m_homePos = p_steps;
+	m_curPos = p_steps;
 }
 
 /** Current Position
@@ -1735,11 +1737,11 @@ void OMMotorFunctions::currentPos(long p_steps) {
  @return
  A signed long, representing the distance and direction from home.  A negative
  number represents the motor is that many steps in the false direction from home,
- whereas positive represents that many steps in the true ddirection from home.
+ whereas positive represents that many steps in the true direction from home.
 */
 
 long OMMotorFunctions::currentPos() {
-	return(m_homePos);
+	return(m_curPos);
 }
 
 
@@ -1862,34 +1864,34 @@ void OMMotorFunctions::moveTo(long p_pos, bool p_send) {
 /** Set Plan Type
 
 Variable to identify if a plan move is set and what type it is.
-planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
+g_plan_type  = 0 (SMS), g_plan_type  = 1 (time lapse continuous), g_plan_type  = 2 (video continuous).
 
 */
 
 void OMMotorFunctions::planType(uint8_t p_type){
 
-    planMoveType  = p_type;
+	g_plan_type = p_type;
 }
 
 /** Get Plan Type
 
 Variable to identify if a plan move is set and what type it is.
-planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
+g_plan_type  = 0 (SMS), g_plan_type  = 1 (time lapse continuous), g_plan_type  = 2 (video continuous).
 
  @return
- A byte, representing the plan move type. planMoveType  = 0 (SMS), planMoveType  = 1 (time lapse continuous), planMoveType  = 2 (video continuous).
+ A byte, representing the plan move type. g_plan_type  = 0 (SMS), g_plan_type  = 1 (time lapse continuous), g_plan_type  = 2 (video continuous).
 
 */
 
 uint8_t OMMotorFunctions::planType(){
 
-    return(planMoveType );
+	return(OMMotorFunctions::g_plan_type);
 }
 
 /** Set Plan Travel Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
 */
 
@@ -1901,11 +1903,11 @@ void OMMotorFunctions::planTravelLength(unsigned long p_length){
 /** Get Plan Travel Lenth (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the movement. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
  @return
- An unsigned long, representing the plan travel length in time (ms) or shots. If planMoveType  = 0
- then it's shots, if planMoveType  = 1 then it's time (ms).
+ An unsigned long, representing the plan travel length in time (ms) or shots. If g_plan_type  = 0
+ then it's shots, if g_plan_type  = 1 then it's time (ms).
 
 */
 
@@ -1917,7 +1919,7 @@ unsigned long OMMotorFunctions::planTravelLength(){
 /** Set Plan Acceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
 */
 
@@ -1929,11 +1931,11 @@ void OMMotorFunctions::planAccelLength(unsigned long p_accel){
 /** Get Plan Acceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the acceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
  @return
  An unsigned long, representing the plan interval acceleration in time (ms) or shots.
- If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+ If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
 */
 
@@ -1945,7 +1947,7 @@ unsigned long OMMotorFunctions::planAccelLength(){
 /** Set Plan Deceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
 */
 
@@ -1957,11 +1959,11 @@ void OMMotorFunctions::planDecelLength(unsigned long p_decel){
 /** Get Plan Deceleration Length (either shots or time depending on plan mode)
 
 Sets the planned number of shots or the time of the deceleration. Depends on mt_plan and mtpc
-to determine if it's the number of shots or time. If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+to determine if it's the number of shots or time. If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
  @return
  An unsigned long, representing the plan interval deceleration in time (ms) or shots.
- If planMoveType  = 0 then shots, planMoveType  = 1 then time.
+ If g_plan_type  = 0 then shots, g_plan_type  = 1 then time.
 
 */
 
@@ -1989,7 +1991,7 @@ begins its move.
 
  @return
  An unsigned int, representing the lead-in in shots or time (ms).
- If planMoveType  = 0 or planMoveType  = 1 then shots, if planMoveType  = 2 then time.
+ If g_plan_type  = 0 or g_plan_type  = 1 then shots, if g_plan_type  = 2 then time.
 
 */
 
@@ -2017,7 +2019,7 @@ finishes its move.
 
 @return
 An unsigned int, representing the lead-out in shots or time (ms).
-If planMoveType  = 0 or planMoveType  = 1 then shots, if planMoveType  = 2 then time.
+If g_plan_type  = 0 or g_plan_type  = 1 then shots, if g_plan_type  = 2 then time.
 
 */
 
@@ -2066,13 +2068,13 @@ Move from the current position to stopPos using the planned moved parameters.
 void OMMotorFunctions::programMove(){
 
 
-    if( m_homePos == m_stopPos ){    //already at stop point
+    if( m_curPos == m_stopPos ){    //already at stop point
         programDone(true);
         return;
     }
 
     uint8_t thsDir  = false;
-    long goToPos = m_homePos - m_stopPos;  //detemine how many steps needed
+    long goToPos = m_curPos - m_stopPos;  //detemine how many steps needed
 
 	// negative value means move in
 	// positive direction
@@ -2082,7 +2084,7 @@ void OMMotorFunctions::programMove(){
      }
 
 
-    if (planMoveType  == 0){
+	 if (OMMotorFunctions::g_plan_type == 0){
         if( mtpc_start == false){
             plan(mtpc_arrive, thsDir, goToPos, mtpc_accel, mtpc_decel);
             mtpc_start = true;
@@ -2237,7 +2239,7 @@ void OMMotorFunctions::_contErrorCalc(const float& p_move_percent, float& p_cur_
 	}
 	// Otherwise, figure out how many cycles to delay after each step
 	else {
-		off_time = theFunctions->m_cyclesPerSpline / p_cur_spd;
+		off_time = theFunctions->g_cyclesPerSpline / p_cur_spd;
 	}
 
 	// we can't track fractional off-cycles, so we need to have an error rate
@@ -2315,7 +2317,7 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	}
 
-	if (m_debug){
+	if (g_debug){
 		USBSerial.print("Move steps before adjustment: ");
 		USBSerial.println(p_cur_move_steps);
 	}
@@ -2330,7 +2332,7 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 		theFunctions->m_curPlanSpd++;
 	}
 
-	if (m_debug){
+	if (g_debug){
 		USBSerial.print("Move steps after adjustment: ");
 		USBSerial.println(theFunctions->m_curPlanSpd);
 	}
@@ -2340,7 +2342,7 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	case ACCEL:
 		thisSpline->accel_steps -= theFunctions->m_curPlanSpd;
-		if (m_debug){
+		if (g_debug){
 			USBSerial.print("Accel remaining: ");
 			USBSerial.println(thisSpline->accel_steps);
 		}
@@ -2348,7 +2350,7 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	case CRUISE:
 		thisSpline->cruise_steps -= theFunctions->m_curPlanSpd;
-		if (m_debug){
+		if (g_debug){
 			USBSerial.print("Cruise remaining: ");
 			USBSerial.println(thisSpline->cruise_steps);
 		}
@@ -2356,14 +2358,14 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	case DECEL:
 		thisSpline->decel_steps -= theFunctions->m_curPlanSpd;
-		if (m_debug){
+		if (g_debug){
 			USBSerial.print("Decel remaining: ");
 			USBSerial.println(thisSpline->decel_steps);
 		}
 		break;
 	}
 
-	if (m_debug){
+	if (g_debug){
 		USBSerial.println("");
 	}
 
@@ -2650,7 +2652,7 @@ float OMMotorFunctions::getTopSpeed() {
 		dist =abs(m_stopPos - m_startPos);
 
 	// For time lapse SMS mode
-	if (planMoveType == 0) {
+	if (OMMotorFunctions::g_plan_type == 0) {
 
 		// Determine the total splines based upon the travel time
 		m_curPlanSplines = (unsigned long)mtpc_arrive;
@@ -2661,10 +2663,10 @@ float OMMotorFunctions::getTopSpeed() {
 	}
 
 	// For time lapse continuous and video continuous modes
-	else if ( planMoveType == 1 || planMoveType == 2 ) {
+	else if (OMMotorFunctions::g_plan_type == 1 || OMMotorFunctions::g_plan_type == 2) {
 
 		// Determine the total splines based upon the travel time
-		if (m_debug){
+		if (g_debug){
 			m_totalSplines = (unsigned long)(mtpc_arrive) / (MS_PER_SPLINE);
 			USBSerial.print("mtpc_arrive: ");
 			USBSerial.println(mtpc_arrive);
@@ -2769,7 +2771,7 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
 
 
 
-    if( m_totalCyclesTaken >= m_cyclesPerSpline) {
+    if( m_totalCyclesTaken >= g_cyclesPerSpline) {
         if(splineReady == false && !continuous()){
             updateSpline();
         }
@@ -2856,8 +2858,8 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
             // or if we have hit the maximum stepping point,
             // stop now - don't overshoot
 
-          if( (m_endPos < 0 && ((m_homePos <= m_endPos && m_curDir == 0) || (m_homePos >= 0 && m_curDir == 1)))
-             || (m_endPos > 0 && ((m_homePos >= m_endPos  && m_curDir == 1) || (m_homePos <= 0 && m_curDir == 0)))
+          if( (m_endPos < 0 && ((m_curPos <= m_endPos && m_curDir == 0) || (m_curPos >= 0 && m_curDir == 1)))
+             || (m_endPos > 0 && ((m_curPos >= m_endPos  && m_curDir == 1) || (m_curPos <= 0 && m_curDir == 0)))
              || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
 
               m_stepsTaken = 0;
@@ -2982,7 +2984,7 @@ p_switch = (true, false)
 
 void OMMotorFunctions::debugOutput(bool p_state) {
 
-	m_debug = p_state;
+	g_debug = p_state;
 }
 
 /** bool debugOutput()
@@ -2993,5 +2995,5 @@ This method handles retuning the state of the USB debug output flag.
 
 bool OMMotorFunctions::debugOutput() {
 
-	return m_debug;
+	return g_debug;
 }
