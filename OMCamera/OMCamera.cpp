@@ -90,7 +90,7 @@ void OMCamera::_init() {
 
 	m_focusShut = true;
 
-	interval = 1;
+	m_interval = 1;
 	enable = false;
 	maxShots = 0;
 	repeat = 0;
@@ -303,16 +303,12 @@ unsigned long OMCamera::interval() {
 	return this->m_interval;
 }
 
-/** Trigger Focus
+/** Trigger Exposure
 
- This method triggers a focus for the amount of time as set via focusTime().
- Sends a focus begin signal.
+This method triggers an exposure for the amount of time as set via triggerTime().
+Sends an expose begin signal.
 
-*/
-
-void OMCamera::focus() {
-	this->focus(m_timeFoc);
-}
+**/
 
 void OMCamera::expose() {
 	this->expose(m_timeExp);
