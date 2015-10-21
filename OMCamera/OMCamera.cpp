@@ -283,13 +283,36 @@ void OMCamera::stop() {
 
 }
 
+/** Set Interval
 
-/** Trigger Exposure
-
- This method triggers an exposure for the amount of time as set via triggerTime().
- Sends an expose begin signal.
+This method sets the camera's interval setting
 
 */
+
+void OMCamera::interval(unsigned long p_interval) {
+	this->m_interval = p_interval;
+}
+
+/** Get Interval
+
+This method returns the camera's current interval setting
+
+*/
+
+unsigned long OMCamera::interval() {
+	return this->m_interval;
+}
+
+/** Trigger Focus
+
+ This method triggers a focus for the amount of time as set via focusTime().
+ Sends a focus begin signal.
+
+*/
+
+void OMCamera::focus() {
+	this->focus(m_timeFoc);
+}
 
 void OMCamera::expose() {
 	this->expose(m_timeExp);

@@ -174,6 +174,7 @@ private:
 	static uint8_t m_focus1;
 	static uint8_t m_focus2;
 
+	unsigned long m_interval;						// Camera interval in milliseconds
 	unsigned long m_timeExp;
 	unsigned int m_timeFoc;
 	unsigned int m_timeWait;
@@ -199,10 +200,12 @@ public:
 	void setHandler(void(*)(uint8_t));
 
 	unsigned long maxShots;
-	unsigned long interval;						// Camera interval in milliseconds
+	
 	bool repeat;
 	bool enable;
 
+	void interval(unsigned long p_interval);
+	unsigned long interval();
 	void expose();
 	void expose(unsigned long p_time);
 	void triggerTime(unsigned long p_tm);
@@ -210,7 +213,7 @@ public:
 
 	void exposureFocus(bool);
 	uint8_t exposureFocus();
-
+		
 	void focus();
 	void focus(unsigned int p_time);
 	void focusTime(unsigned int p_tm);
