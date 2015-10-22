@@ -204,8 +204,8 @@ public:
 	bool repeat;
 	bool enable;
 
-	void interval(unsigned long p_interval);
-	unsigned long interval();
+	void intervalTime(unsigned long p_interval);
+	unsigned long intervalTime();	
 	void expose();
 	void expose(unsigned long p_time);
 	void triggerTime(unsigned long p_tm);

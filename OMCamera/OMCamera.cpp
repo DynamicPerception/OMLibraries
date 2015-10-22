@@ -289,7 +289,7 @@ This method sets the camera's interval setting
 
 */
 
-void OMCamera::interval(unsigned long p_interval) {
+void OMCamera::intervalTime(unsigned long p_interval) {
 	this->m_interval = p_interval;
 }
 
@@ -299,7 +299,7 @@ This method returns the camera's current interval setting
 
 */
 
-unsigned long OMCamera::interval() {
+unsigned long OMCamera::intervalTime() {
 	return this->m_interval;
 }
 
