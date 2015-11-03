@@ -275,6 +275,15 @@ void KeyFrames::setMaxAccel(float p_max_accel){
 /*** Non-Static Private Functions ***/
 
 void KeyFrames::updateVals(float p_x){
-	float x_point[1] = { p_x };
+	float x_point[1];
+	
+	// Don't allow requests for x values less than the first point and greater than the last point
+	if (p_x < m_xn[0])
+		x_point[0] = m_xn[0];
+	else if (p_x > m_xn[m_xn_recieved - 1])
+		x_point[0] = m_xn[m_xn_recieved - 1];
+	else
+		x_point[0] = p_x;
+
 	HermiteSpline::cubic_spline_value(m_kf_count, m_xn, m_fn, m_dn, 1, x_point, m_f, m_d, m_s);
 }
