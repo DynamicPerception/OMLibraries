@@ -52,6 +52,10 @@ public:
 	static void setAxisArray(KeyFrames* p_axis_array,	// Points the axis_array var to an existing array of key frames objects that represent the axes to be managed
 		int p_axis_count);
 
+	// Timing getters and setters
+	static void setContVidTime(unsigned long p_time);	// Sets the current continuous video length in milliseconds
+	static unsigned long getContVidTime();				// Gets the current continuous video length in milliseconds
+
 	// Axis select functions
 	static void setAxis(int p_axis);					// Selects the the current axis
 	static int getAxis();								// Returns the currently selected axis	
@@ -111,6 +115,7 @@ private:
 	int m_fn_recieved;									// Number of position values that have been received
 	int m_dn_recieved;									// Number of derivative values that have been received
 
+	static unsigned long g_cont_vid_time;				// Continuous video move time in ms
 	static int g_update_rate;							// Spline update rate in ms
 	int m_kf_count;										// Number of key frames
 	static bool g_mem_allocted;							// Indicates whether memory for the input vars has been set

@@ -35,9 +35,19 @@ KeyFrames*	KeyFrames::g_axis_array = NULL;
 int			KeyFrames::g_axis_count = 0;
 float		KeyFrames::g_max_accel = 20000;
 float		KeyFrames::g_max_vel = 4000;
-
+unsigned long KeyFrames::g_cont_vid_time = 0;
 
 /*** Static Functions ***/
+
+// Selects the the current axis
+void KeyFrames::setContVidTime(unsigned long p_time){
+	g_cont_vid_time = p_time;
+}
+
+// Returns the currently selected axis	
+unsigned long KeyFrames::getContVidTime(){
+	return g_cont_vid_time;
+}
 
 // Points the axis_array var to an existing array of key frames objects that represent the axes to be managed
 void KeyFrames::setAxisArray(KeyFrames* p_axis_array, int p_axis_count){
@@ -255,7 +265,7 @@ bool KeyFrames::validateVel(){
 bool KeyFrames::validateAccel(){
 
 	float increment = m_xn[m_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;
-
+	
 	for (int i = 0; i < G_VALIDATION_PNT_COUNT; i++){
 		updateVals(i * increment);
 		if (abs(m_s[0]) > g_max_accel)
