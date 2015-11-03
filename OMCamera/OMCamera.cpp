@@ -92,7 +92,7 @@ void OMCamera::_init() {
 
 	m_interval = 1;
 	enable = false;
-	maxShots = 0;
+	setMaxShots(0);
 	repeat = 0;
 
 	m_timeExp  = 100;
@@ -577,6 +577,14 @@ This method handles retuning the state of the USB debug output flag.
 bool OMCamera::debugOutput() {
 
 	return m_debug;
+}
+
+void OMCamera::setMaxShots(unsigned int shots){
+	m_maxShots = shots;
+}
+
+unsigned int OMCamera::getMaxShots(){
+	return m_maxShots;
 }
 
 

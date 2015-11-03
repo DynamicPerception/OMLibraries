@@ -178,6 +178,7 @@ private:
 	unsigned long m_timeExp;
 	unsigned int m_timeFoc;
 	unsigned int m_timeWait;
+	unsigned int m_maxShots;
 
 	bool m_focusShut;
 
@@ -199,7 +200,8 @@ public:
 
 	void setHandler(void(*)(uint8_t));
 
-	unsigned long maxShots;
+	void setMaxShots(unsigned int shots);
+	unsigned int getMaxShots();
 	
 	bool repeat;
 	bool enable;
