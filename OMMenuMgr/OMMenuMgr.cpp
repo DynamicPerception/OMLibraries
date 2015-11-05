@@ -48,11 +48,11 @@
 
  */
 
-OMMenuMgr::OMMenuMgr(OMMenuItem* c_first, uint8_t c_type) {
+OMMenuMgr::OMMenuMgr(const OMMenuItem* c_first, uint8_t c_type) {
 
     m_inputType  = c_type;
-    m_curParent  = c_first;
-    m_rootItem   = c_first;
+    m_curParent  = const_cast<OMMenuItem*>(c_first);
+    m_rootItem   = const_cast<OMMenuItem*>(c_first);
     m_inEdit     = false;
     m_enable     = true;
     m_menuActive = false;
