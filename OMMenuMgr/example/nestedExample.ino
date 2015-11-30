@@ -10,7 +10,7 @@
 
 
  // ui setup
- 
+
  // ui setup
 
     // lcd pins
@@ -150,7 +150,7 @@ MENU_LIST digitalW_list[]= { &item_d0w, &item_d1w, &item_d2w, &item_d3w, /*&item
 MENU_ITEM menu_digitalW = { {"Digital Write"},ITEM_MENU,   MENU_SIZE(digitalW_list),  MENU_TARGET(&digitalW_list) };
 
 // Root menu
-MENU_LIST root_list[]   = { &menu_param, &item_testme, &menu_analog, &menu_digital };
+MENU_LIST root_list[]   = { &menu_param, &item_testme, &menu_analog, &menu_digital, &menu_digitalW };
 MENU_ITEM menu_root     = { {"Root"},         ITEM_MENU,   MENU_SIZE(root_list),    MENU_TARGET(&root_list) };
 
 
@@ -171,13 +171,13 @@ void setup() {
   Menu.setExitHandler(uiClear);
   Menu.setAnalogButtonPin(BUT_PIN, BUT_MAP, BUT_THRESH);
   Menu.enable(true);
-  
+
   
 }
 
 void loop() {
  Menu.checkInput();
- 
+
 }
 
 
@@ -348,6 +348,9 @@ void digitalW18() { digitalW(18);}
 void digitalW19() { digitalW(19);}
 
 void digitalW( uint8_t pin) {
+  uint8_t button;
+  uint8_t value;
+
   lcd.clear();
   Menu.enable(false);
 
@@ -359,14 +362,29 @@ void digitalW( uint8_t pin) {
   lcd.setCursor(0, 1);
   lcd.print("Enter to return");
 
-  pinMode(pin, OUTPUT);          // set pin to input
+  pinMode(pin, OUTPUT);          // set pin to output
+  value = digitalRead(pin);
 
-  while( Menu.checkInput() != BUTTON_SELECT) {
   lcd.setCursor(12,0);
-    if(digitalRead(pin)) {
-      lcd.print("HIGH");
-    } else {
-      lcd.print(" LOW");
+  if(value) {
+    lcd.print("HIGH");
+  } else {
+    lcd.print(" LOW");
+  }
+
+  while( (button = Menu.checkInput()) != BUTTON_SELECT) {
+
+    //Toggle if any key press
+    if (button != BUTTON_NONE) {
+      value = !value;
+      digitalWrite(pin, value);
+
+      lcd.setCursor(12,0);
+      if(value) {
+        lcd.print("HIGH");
+      } else {
+        lcd.print(" LOW");
+      }
     }
   }
 
