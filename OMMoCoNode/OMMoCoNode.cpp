@@ -257,8 +257,7 @@ void OMMoCoNode::setHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t*) ) {
 
  */
 
-void OMMoCoNode::setBCastHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t*) ) {
-	//USBSerial.println("Setting broadcast handler");
+void OMMoCoNode::setBCastHandler( void(*p_Func)(uint8_t, uint8_t, uint8_t*) ) {	
 	f_bcastHandler = p_Func;
 }
 

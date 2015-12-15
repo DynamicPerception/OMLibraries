@@ -2535,18 +2535,6 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
    // Step count that equals continuous speed * travel time (CONT_VID OR CONT_TL) OR cruise phase movement length * SMS movements (SMS)
    float length_at_cruise = p_Steps / (thisSpline->accel_fraction / thisSpline->easing_coeff + thisSpline->cruise_fraction + thisSpline->decel_fraction / thisSpline->easing_coeff);
 
-   	   //USBSerial.print("velocity: ");
-	   //USBSerial.println(length_at_cruise);
-	   //USBSerial.print("accel_fraction: ");
-	   //USBSerial.println(thisSpline->accel_fraction);
-	   //USBSerial.print("decel_fraction: ");
-	   //USBSerial.println(thisSpline->decel_fraction);
-	   //USBSerial.print("p_Steps: ");
-	   //USBSerial.println(p_Steps);
-	   //USBSerial.print("travel: ");
-	   //USBSerial.println(thisSpline->easing_coeff);
-	   //USBSerial.println("");
-
 	// SMS mode
     if (p_SMS == true){
 
@@ -2593,14 +2581,6 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
         //calculate desired travel length for the cruise section
 		thisSpline->cruise_steps = (unsigned long)(p_Steps - thisSpline->accel_steps - thisSpline->decel_steps);
 		thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);
-
-		//USBSerial.print("Total accel steps: ");
-		//USBSerial.println(thisSpline->accel_steps);
-		//USBSerial.print("Accel Movement units: ");
-		//USBSerial.println(ac_movement_units);
-		//USBSerial.print("Accel unit size: ");
-		//USBSerial.println(thisSpline->accel_coeff);
-
     }
 
 	// Continuous mode
