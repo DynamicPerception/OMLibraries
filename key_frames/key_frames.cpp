@@ -35,17 +35,17 @@ KeyFrames*	KeyFrames::g_axis_array = NULL;
 int			KeyFrames::g_axis_count = 0;
 float		KeyFrames::g_max_accel = 20000;
 float		KeyFrames::g_max_vel = 4000;
-unsigned long KeyFrames::g_cont_vid_time = 0;
+long		KeyFrames::g_cont_vid_time = -1;
 
 /*** Static Functions ***/
 
 // Selects the the current axis
-void KeyFrames::setContVidTime(unsigned long p_time){
+void KeyFrames::setContVidTime(long p_time){
 	g_cont_vid_time = p_time;
 }
 
 // Returns the currently selected axis	
-unsigned long KeyFrames::getContVidTime(){
+long KeyFrames::getContVidTime(){
 	return g_cont_vid_time;
 }
 
@@ -98,8 +98,6 @@ void KeyFrames::setKFCount(int p_kf_count){
 		return;
 
 	m_kf_count = p_kf_count;
-	USBSerial.print("New KF count: ");
-	USBSerial.println(m_kf_count);
 
 	// Only allocate memory for 2 or more frames. Frame counts of 0 or 1 are just used as indicators
 	if (p_kf_count >= 2){
