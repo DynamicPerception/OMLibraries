@@ -1415,27 +1415,12 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
 
         //calculated cruise time
         float cruise_fraction = ((p_Steps - rampSteps) / mSpeed) * 1000.0;
-		if (g_debug) {
-			USBSerial.print("OMMotorFunctions::move() - Cruise time: ");
-			USBSerial.print(cruise_fraction);
-			USBSerial.print("ms ");
-		}
 
         //calculate acceleration and deceleration time
 		float adTm = ((rampSteps / mSpeed) * 1000.0) * m_splineOne.easing_coeff;
-		if(g_debug) {
-			USBSerial.print("Accel/decel time: ");
-			USBSerial.print(cruise_fraction);
-			USBSerial.print("ms ");
-		}
 
 		//calculated total move time
         float mvMS = (cruise_fraction + adTm);
-		if (g_debug) {
-			USBSerial.print("Total move time: ");
-			USBSerial.print(cruise_fraction);
-			USBSerial.println("ms");
-		}
 
             // take a minimum of 50ms to make the move - to prevent over-speeding
             // and getting goofy.
@@ -2317,11 +2302,6 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 
 	}
 
-	if (g_debug){
-		USBSerial.print("Move steps before adjustment: ");
-		USBSerial.println(p_cur_move_steps);
-	}
-
 	// Drop the floating point from the calculated steps...
 	theFunctions->m_curPlanSpd = (unsigned long)p_cur_move_steps;
 	// ...then add the dropped decimal places to the error variable..
@@ -2332,43 +2312,24 @@ void OMMotorFunctions::_SMSErrorCalc(const float& p_move_percent, float& p_cur_m
 		theFunctions->m_curPlanSpd++;
 	}
 
-	if (g_debug){
-		USBSerial.print("Move steps after adjustment: ");
-		USBSerial.println(theFunctions->m_curPlanSpd);
-	}
-
 	// Adjust the remaining steps in the current phase
 	switch (phase){
 
 	case ACCEL:
 		thisSpline->accel_steps -= theFunctions->m_curPlanSpd;
-		if (g_debug){
-			USBSerial.print("Accel remaining: ");
-			USBSerial.println(thisSpline->accel_steps);
-		}
+
 		break;
 
 	case CRUISE:
 		thisSpline->cruise_steps -= theFunctions->m_curPlanSpd;
-		if (g_debug){
-			USBSerial.print("Cruise remaining: ");
-			USBSerial.println(thisSpline->cruise_steps);
-		}
+
 		break;
 
 	case DECEL:
 		thisSpline->decel_steps -= theFunctions->m_curPlanSpd;
-		if (g_debug){
-			USBSerial.print("Decel remaining: ");
-			USBSerial.println(thisSpline->decel_steps);
-		}
+
 		break;
 	}
-
-	if (g_debug){
-		USBSerial.println("");
-	}
-
 }
 
 
@@ -2645,19 +2606,6 @@ float OMMotorFunctions::getTopSpeed() {
 	// For time lapse continuous and video continuous modes
 	else if (OMMotorFunctions::g_plan_type == 1 || OMMotorFunctions::g_plan_type == 2) {
 
-		// Determine the total splines based upon the travel time
-		if (g_debug){
-			m_totalSplines = (unsigned long)(mtpc_arrive) / (MS_PER_SPLINE);
-			USBSerial.print("mtpc_arrive: ");
-			USBSerial.println(mtpc_arrive);
-			USBSerial.print("mtpc_accel: ");
-			USBSerial.println(mtpc_accel);
-			USBSerial.print("mtpc_decel: ");
-			USBSerial.println(mtpc_decel);
-			USBSerial.print("total splines: ");
-			USBSerial.println(m_totalSplines);
-		}
-
 		// Initialize the planned move variables to calculate the m_top_speed variable
 		_initSpline(false, dist, mtpc_arrive, mtpc_accel, mtpc_decel);
 
@@ -2838,9 +2786,25 @@ uint8_t OMMotorFunctions::checkStep(){//uint8_t p_endOfMove){
             // or if we have hit the maximum stepping point,
             // stop now - don't overshoot
 
-          if( (m_endPos < 0 && ((m_curPos <= m_endPos && m_curDir == 0) || (m_curPos >= 0 && m_curDir == 1)))
-             || (m_endPos > 0 && ((m_curPos >= m_endPos  && m_curDir == 1) || (m_curPos <= 0 && m_curDir == 0)))
-             || (m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps) ) {
+		boolean limitViolation = false;
+          
+		  if ((m_endPos < 0 && ((m_curPos <= m_endPos && m_curDir == 0) || (m_curPos >= 0 && m_curDir == 1)))){
+			  if (g_debug)
+				USBSerial.println("Limit violation 0");
+			  limitViolation = true;
+		  }
+		  else if ((m_endPos > 0 && ((m_curPos >= m_endPos  && m_curDir == 1) || (m_curPos <= 0 && m_curDir == 0)) )){
+			  if (g_debug)
+				USBSerial.println("Limit violation 1");
+			  limitViolation = true;
+		  }
+		  else if ((m_asyncSteps > 0 && m_stepsTaken >= m_asyncSteps)){
+			  if (g_debug)
+				USBSerial.println("Limit violation 2");
+			  limitViolation = true;
+		  }
+
+		  if (limitViolation){
 
               m_stepsTaken = 0;
               m_cycleErrAccumulated = 0;
@@ -2976,4 +2940,40 @@ This method handles retuning the state of the USB debug output flag.
 bool OMMotorFunctions::debugOutput() {
 
 	return g_debug;
+}
+
+/** void units(int p_unitCode)
+
+The unit code indicates the units in which the motion of the platform
+to which the motor is connected will be measured int. This value is not
+used in the firmware and is simply a reference value for master devices
+for computing travel distances.
+
+0 == inch
+1 == centimeter
+2 == deg
+3 == steps
+
+*/
+void OMMotorFunctions::units(int p_unitCode){
+	m_unitCode = p_unitCode;
+}
+
+/** void units()
+
+Returns the unit code for this motor. 
+
+The unit code indicates the units in which the motion of the platform
+to which the motor is connected will be measured int. This value is not
+used in the firmware and is simply a reference value for master devices
+for computing travel distances.
+
+0 == inch
+1 == centimeter
+2 == deg
+3 == steps
+
+*/
+int OMMotorFunctions::units(){
+	return m_unitCode;
 }

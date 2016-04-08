@@ -54,6 +54,11 @@ See www.openmoco.org for more information
 #define CRUISE 1
 #define DECEL 2
 
+#define INCH 0
+#define CM 1
+#define DEG 2
+#define STEPS 3
+
 
 /**
   @page ommotion Motion Capabilities
@@ -529,6 +534,10 @@ public:
 
 	float getTopSpeed();
 
+	// Setting and retrieving of motor units code
+	void units(int);
+	int units();
+
 	uint8_t programBackCheck();
 	void programBackCheck(uint8_t p_setFlag);
 
@@ -629,9 +638,9 @@ private:
     volatile unsigned long m_stepsTaken;
     volatile unsigned long m_totalCyclesTaken;
 
-	unsigned long m_asyncSteps;
+	unsigned long m_asyncSteps;					// Number of steps in a specified move
 	unsigned long m_asyncDo;
-	volatile unsigned long m_stepsMoved;
+	volatile unsigned long m_stepsMoved;		
 	unsigned long m_totalSteps;
 
 
@@ -671,6 +680,11 @@ private:
 	uint8_t m_easeType;							// Easing mode: linear, quadratic, or inv. quadratic
 
 	float m_top_speed;
+
+	/* Code indicating the units of measurement used for this motor. This only a reference value for master devices and is not use in firmware.
+		0 == inches, 1 == centimeters, 2 == degrees, 3 == steps
+	*/
+	int m_unitCode;								
 
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
