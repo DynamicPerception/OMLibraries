@@ -537,6 +537,10 @@ public:
 	// Setting and retrieving of motor units code
 	void units(int);
 	int units();
+	void gboxRatio(float);
+	float gboxRatio();
+	void platRatio(float);
+	float platRatio();
 
 	uint8_t programBackCheck();
 	void programBackCheck(uint8_t p_setFlag);
@@ -685,6 +689,8 @@ private:
 		0 == inches, 1 == centimeters, 2 == degrees, 3 == steps
 	*/
 	int m_unitCode;								
+	float m_gbox_ratio;
+	float m_plat_ratio;
 
 	void(*f_motSignal)(uint8_t);
 	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);

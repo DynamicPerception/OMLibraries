@@ -2942,6 +2942,34 @@ bool OMMotorFunctions::debugOutput() {
 	return g_debug;
 }
 
+/**
+	Sets the motor's gearbox ratio.
+*/
+void OMMotorFunctions::gboxRatio(float p_ratio){
+	m_gbox_ratio = p_ratio;
+}
+
+/**
+	Returns the motor't gearbox ratio.
+*/
+float OMMotorFunctions::gboxRatio(){
+	return m_gbox_ratio;
+}
+
+/**
+	Sets the gear ratio of the motor's platform.
+*/
+void OMMotorFunctions::platRatio(float p_ratio){
+	m_plat_ratio = p_ratio;
+}
+
+/**
+	Returns the gear ratio of the motor's platform.
+*/
+float OMMotorFunctions::platRatio(){
+	return m_plat_ratio;
+}
+
 /** void units(int p_unitCode)
 
 The unit code indicates the units in which the motion of the platform
