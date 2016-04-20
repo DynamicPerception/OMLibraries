@@ -219,7 +219,7 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
             break;
     }
 
-  uint8_t wasMs = m_curMs;
+  m_lastMs = m_curMs;  
   m_curMs       = p_Div;
 
 
@@ -229,22 +229,26 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
   digitalWrite(m_ms3, s3);
 
     // adjust marker for home!
-    if( wasMs != m_curMs ) {
-        if( wasMs > m_curMs ){
-            m_curPos /= (wasMs / m_curMs);
-            m_startPos /= (wasMs / m_curMs);
-            m_stopPos /= (wasMs / m_curMs);
-            m_endPos /= (wasMs / m_curMs);
-            m_backAdj /= (wasMs / m_curMs);
+  if (m_lastMs != m_curMs) {
+	  if (m_lastMs > m_curMs){
+		  m_curPos /= (m_lastMs / m_curMs);
+		  m_startPos /= (m_lastMs / m_curMs);
+		  m_stopPos /= (m_lastMs / m_curMs);
+		  m_endPos /= (m_lastMs / m_curMs);
+		  m_backAdj /= (m_lastMs / m_curMs);
         } else {
-            m_curPos *= (m_curMs / wasMs);
-            m_startPos *= (m_curMs / wasMs);
-            m_stopPos *= (m_curMs / wasMs);
-            m_endPos *= (m_curMs / wasMs);
-            m_backAdj *= (m_curMs / wasMs);
+		  m_curPos *= (m_curMs / m_lastMs);
+		  m_startPos *= (m_curMs / m_lastMs);
+		  m_stopPos *= (m_curMs / m_lastMs);
+		  m_endPos *= (m_curMs / m_lastMs);
+		  m_backAdj *= (m_curMs / m_lastMs);
         }
     }
 
+}
+
+void OMMotorFunctions::restoreLastMs(){
+	this->ms(m_lastMs);
 }
 
 
@@ -3004,4 +3008,12 @@ for computing travel distances.
 */
 int OMMotorFunctions::units(){
 	return m_unitCode;
+}
+
+void OMMotorFunctions::setSending(boolean sending){
+	m_isSending = sending;
+}
+
+boolean OMMotorFunctions::isSending(){
+	return m_isSending;
 }

@@ -562,6 +562,10 @@ public:
 	static void debugOutput(bool p_state);
 	static bool debugOutput();
 
+	void restoreLastMs();
+	void setSending(boolean);
+	boolean isSending();
+
 
 private:
 		// variables for pre-calculated
@@ -712,6 +716,10 @@ private:
 	key_frame key_frame;
 
 	static bool g_debug;
+
+	// "Send to" vars
+	int m_lastMs;
+	boolean m_isSending;
 
 };
 
