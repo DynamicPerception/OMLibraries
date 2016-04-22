@@ -251,6 +251,10 @@ void OMMotorFunctions::restoreLastMs(){
 	this->ms(m_lastMs);
 }
 
+int OMMotorFunctions::lastMs(){
+	return m_lastMs;
+}
+
 
 /** Get Current Direction
 

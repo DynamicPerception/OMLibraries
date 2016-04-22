@@ -563,6 +563,7 @@ public:
 	static bool debugOutput();
 
 	void restoreLastMs();
+	int lastMs();
 	void setSending(boolean);
 	boolean isSending();
 
