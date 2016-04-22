@@ -740,7 +740,7 @@ void OMMotorFunctions::_updateContSpeed(){
 
     //check to see if you need to reverse directions
     if(m_contSpd <= m_contAccelRate/2.0 && m_contSpd >= m_contAccelRate/-2.0){
-        if(m_desiredContSpd >=0.0)
+		if (m_desiredContSpd > 0.0)
             dir(1);
 		else if (m_desiredContSpd < 0.0)
             dir(0);
