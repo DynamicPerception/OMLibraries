@@ -742,8 +742,9 @@ void OMMotorFunctions::_updateContSpeed(){
     if(m_contSpd <= m_contAccelRate/2.0 && m_contSpd >= m_contAccelRate/-2.0){
         if(m_desiredContSpd >=0.0)
             dir(1);
-        else
+		else if (m_desiredContSpd < 0.0)
             dir(0);
+		// If the desired speed is 0, don't set a new direction
     }
 
 
