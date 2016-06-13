@@ -126,7 +126,11 @@ enum BroadCastType {
 		/** Set Graffik Mode Using USB Connection */
 	OM_GRAFFIK_MODE_USB = 5,
 		/** Set Graffik Mode Using BLE Connection*/
-	OM_GRAFFIK_MODE_BLE = 6
+	OM_GRAFFIK_MODE_BLE = 6,
+	OM_BCAST_KF_START = 7,
+	OM_BCAST_KF_STOP = 8,
+	OM_BCAST_KF_PAUSE = 9,
+	OM_BCAST_GET_ADDRESS = 10
 };
 
 
