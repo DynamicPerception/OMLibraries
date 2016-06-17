@@ -209,6 +209,7 @@ public:
 	float ntof(uint8_t* p_dat);
 
 	uint8_t getPacket();
+	void write(uint8_t p_dat);
 
 protected:
 
@@ -220,8 +221,7 @@ protected:
 	void sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen);
 	void sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen);
 
-	// writing raw data (command or response contents)
-	void write(uint8_t p_dat);
+	// writing raw data (command or response contents)	
 	void write(unsigned int p_dat);
 	void write(int p_dat);
 	void write(unsigned long p_dat);
