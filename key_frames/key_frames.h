@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	#include "WProgram.h"
 #endif
 
+#include <CubicBezier.h>
+
 class KeyFrames{
 
 public:
@@ -106,6 +108,13 @@ public:
 	static void setMaxVel(float p_max_vel);				// Sets the maximum velocity for validation checking
 	static void setMaxAccel(float p_max_accel);			// Sets the maximum acceleration for validation checking
 	
+	// Bezier functions
+    static void usingBezier(bool p_bezier);
+	static bool usingBezier();
+
+    // Memory management
+    void freeMemory();									// Deallocates any memory assigned to input arrays
+
 private:
 
 	// Communication vars
@@ -133,12 +142,13 @@ private:
 	void updateVals(float p_x);							// Updates the output vars for the given locations
 
 	// Validation vars
-	static const int G_VALIDATION_PNT_COUNT;			// Number of points to check on spline for validation purposes
+    static const int g_VALIDATION_PNT_COUNT;			// Number of points to check on spline for validation purposes
 	static float g_max_vel;								// Absolute maximum velocity
 	static float g_max_accel;							// Absolute maximum acceleration
 
-	// Memory management
-	void freeMemory();									// Deallocates any memory assigned to input arrays
+	// Cubic Bezier vars
+	CubicBezier m_bezier;
+	static bool g_using_bezier;							// If true, will use Bezier instead of Hermite spline computation
 };
 
 #endif
@@ -159,7 +169,7 @@ private:
 	3. Set the key frame count using static function KeyFrames::count(int p_kf_count). This will allocate the necessary
 	   memory to the input variable arrays
 
-	5. Assign the key frame anscissas, positions, and velocities one at a time or by passing an existing array using functions
+	5. Assign the key frame abscissas, positions, and velocities one at a time or by passing an existing array using functions
 	   setXN(int p_which, float p_input) or setXN(float* p_xn), setFN(int p_which, float p_input) or setFN(float* p_fn), 
 	   and setDN(int p_which, float p_input) or setDN(float* p_dn). This must be done for each object in the KeyFrame array 
 	   you've created, since each motor may have different times, positions and velocities. 

@@ -5,10 +5,6 @@
 #include "key_frames.h"
 #include "hermite_spline.h"
 
-namespace globalKF{
-	int something = 3;
-}
-
 // Default constructor
 KeyFrames::KeyFrames(){
 	m_xn = NULL;
@@ -26,7 +22,7 @@ KeyFrames::~KeyFrames(){
 }
 
 // Initialize static class variables
-const int	KeyFrames::G_VALIDATION_PNT_COUNT = 1000;
+const int	KeyFrames::g_VALIDATION_PNT_COUNT = 1000;
 int			KeyFrames::g_cur_axis = 0;
 bool		KeyFrames::g_receiving = false;
 int			KeyFrames::g_update_rate = 10;
@@ -36,8 +32,18 @@ int			KeyFrames::g_axis_count = 0;
 float		KeyFrames::g_max_accel = 20000;
 float		KeyFrames::g_max_vel = 4000;
 long		KeyFrames::g_cont_vid_time = -1;
+bool        KeyFrames::g_using_bezier = false;
+
 
 /*** Static Functions ***/
+
+void KeyFrames::usingBezier(bool p_bez){
+    g_using_bezier = p_bez;
+}
+
+bool KeyFrames::usingBezier(){
+    return g_using_bezier;
+}
 
 // Selects the the current axis
 void KeyFrames::setContVidTime(long p_time){
@@ -97,23 +103,35 @@ void KeyFrames::setKFCount(int p_kf_count){
 	if (p_kf_count < 0)
 		return;
 
+	/*
+		Free any memory that may have been already allocated. Since
+		the Bezier object also dynamically allocates memory, free both
+		of them to to avoid heap fragmentation.
+	*/
+    // Make sure the bezier    
+	freeMemory();    
+
 	m_kf_count = p_kf_count;
-
-	// Only allocate memory for 2 or more frames. Frame counts of 0 or 1 are just used as indicators
-	if (p_kf_count >= 2){
-
-		// Free any memory that may have been already allocated
-		freeMemory();		
-
-		// Allocate memory for and reset the received values for each		
-		m_xn = (float *)malloc(m_kf_count * sizeof(float));
-		m_fn = (float *)malloc(m_kf_count * sizeof(float));
-		m_dn = (float *)malloc(m_kf_count * sizeof(float));
-		m_xn_recieved = 0;
-		m_fn_recieved = 0;
-		m_dn_recieved = 0;			
 		
-		g_mem_allocted = true;
+	if (!usingBezier()){       
+
+		// Only allocate memory for 2 or more frames. Frame counts of 0 or 1 are just used as indicators
+		if (p_kf_count >= 2){
+
+			// Allocate memory for and reset the received values for each		
+			m_xn = (float *)malloc(m_kf_count * sizeof(float));
+			m_fn = (float *)malloc(m_kf_count * sizeof(float));
+			m_dn = (float *)malloc(m_kf_count * sizeof(float));
+			m_xn_recieved = 0;
+			m_fn_recieved = 0;
+			m_dn_recieved = 0;
+
+			g_mem_allocted = true;
+		}
+	}
+	// Bezier object handles its own memory allocation.
+	else{
+		m_bezier.knotCount(p_kf_count);
 	}
 }
 
@@ -133,7 +151,13 @@ void KeyFrames::setXN(float* p_xn){
 
 // Assigns xn values one at a time	
 void KeyFrames::setXN(float p_input){
-	m_xn[m_xn_recieved] = p_input;
+	if (g_using_bezier)
+		m_bezier.setNextX(p_input);
+	else{
+		if (!g_mem_allocted)
+			return;
+		m_xn[m_xn_recieved] = p_input;	
+	}
 	m_xn_recieved++;
 }
 
@@ -148,8 +172,13 @@ void KeyFrames::resetXN(){
 }
 
 // Returns the abscissa of the requested key frame
-float KeyFrames::getXN(int p_which){
-	return m_xn[p_which];
+float KeyFrames::getXN(int p_which){	
+    if (usingBezier()){
+        return m_bezier.getXN(p_which);
+    }
+    else{
+        return m_xn[p_which];
+    }	
 }
 
 // Returns the largest of the final xn values for all axes. This is useful for determining the length of a program.
@@ -177,6 +206,7 @@ void KeyFrames::freeMemory(){
 		
 		g_mem_allocted = false;
 	}
+    m_bezier.releaseMemory();
 }
 
 void KeyFrames::setFN(float* p_fn){
@@ -186,10 +216,15 @@ void KeyFrames::setFN(float* p_fn){
 }
 
 void KeyFrames::setFN(float p_input){
-	if (!g_mem_allocted)
-		return;
-	m_fn[m_fn_recieved] = p_input;	
-	m_fn_recieved++;
+	if (g_using_bezier){
+		m_bezier.setNextY(p_input);
+	}
+	else{
+		if (!g_mem_allocted)
+			return;
+		m_fn[m_fn_recieved] = p_input;
+	}
+	m_fn_recieved++;	
 }
 
 int KeyFrames::countFN(){
@@ -202,7 +237,12 @@ void KeyFrames::resetFN(){
 }
 
 float KeyFrames::getFN(int p_which){
-	return m_fn[p_which];
+    if (usingBezier()){
+        return m_bezier.getFN(p_which);
+    }
+    else{
+        return m_fn[p_which];
+    }
 }
 
 void KeyFrames::setDN(float* p_dn){
@@ -231,28 +271,43 @@ float KeyFrames::getDN(int p_which){
 	return m_dn[p_which];
 }
 
-float KeyFrames::pos(float p_x){
-	updateVals(p_x);
-	return m_f[0];
+float KeyFrames::pos(float p_x){	
+    if (usingBezier()){
+        return m_bezier.positionAtX(p_x);
+    }
+    else{
+        updateVals(p_x);
+        return m_f[0];
+    }
 }
 
 float KeyFrames::vel(float p_x){
-	updateVals(p_x);
-	return m_d[0];
+    if (usingBezier()){
+        return m_bezier.velocityAtX(p_x);
+    }
+    else{
+        updateVals(p_x);
+        return m_d[0];
+    }
 }
 
 float KeyFrames::accel(float p_x){
-	updateVals(p_x);
-	return m_s[0];
+    if (usingBezier()){
+        return m_bezier.accelAtX(p_x);
+    }
+    else{
+        updateVals(p_x);
+        return m_s[0];
+    }
 }
 
 /*** Validation Functions ***/
 
 bool KeyFrames::validateVel(){
 
-	float increment = m_xn[m_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;	
+	float increment = m_xn[m_kf_count - 1] / g_VALIDATION_PNT_COUNT - 1;	
 	
-	for (int i = 0; i < G_VALIDATION_PNT_COUNT; i++){
+	for (int i = 0; i < g_VALIDATION_PNT_COUNT; i++){
 		updateVals(i * increment);
 		if (abs(m_d[0]) > g_max_vel)
 			return false;
@@ -262,9 +317,9 @@ bool KeyFrames::validateVel(){
 
 bool KeyFrames::validateAccel(){
 
-	float increment = m_xn[m_kf_count - 1] / G_VALIDATION_PNT_COUNT - 1;
+	float increment = m_xn[m_kf_count - 1] / g_VALIDATION_PNT_COUNT - 1;
 	
-	for (int i = 0; i < G_VALIDATION_PNT_COUNT; i++){
+	for (int i = 0; i < g_VALIDATION_PNT_COUNT; i++){
 		updateVals(i * increment);
 		if (abs(m_s[0]) > g_max_accel)
 			return false;
