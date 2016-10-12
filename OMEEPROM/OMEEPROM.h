@@ -25,7 +25,7 @@
  */
 
 
-#ifndef	OM_EEPROM_H
+#ifndef OM_EEPROM_H
 #define OM_EEPROM_H
 
 #include "Arduino.h"

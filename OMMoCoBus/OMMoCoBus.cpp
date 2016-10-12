@@ -112,11 +112,11 @@ unsigned int OMMoCoBus::address() {
 void OMMoCoBus::address(unsigned int p_addr) {
   m_devAddr = p_addr;
 
-  	// an address change occurred, call address change
-  	// callback if defined
+    // an address change occurred, call address change
+    // callback if defined
 
   if( f_newAddr != 0 )
-  	  f_newAddr(m_devAddr);
+      f_newAddr(m_devAddr);
 
 }
 
@@ -137,7 +137,7 @@ void OMMoCoBus::address(unsigned int p_addr) {
 */
 
 void OMMoCoBus::addressCallback(void(*p_Func)(uint8_t)) {
-	f_newAddr = p_Func;
+    f_newAddr = p_Func;
 }
 
 
@@ -182,8 +182,8 @@ uint8_t OMMoCoBus::bufferLen() {
  */
 
 int OMMoCoBus::ntoi(uint8_t* p_dat) {
-	int ret = ((int) p_dat[0] << 8) + (int) p_dat[1];
-	return(ret);
+    int ret = ((int) p_dat[0] << 8) + (int) p_dat[1];
+    return(ret);
 }
 
 /** Convert Network-order Bytes to Unsigned Integer
@@ -196,8 +196,8 @@ int OMMoCoBus::ntoi(uint8_t* p_dat) {
  */
 
 unsigned int OMMoCoBus::ntoui(uint8_t* p_dat) {
-	unsigned int ret = ((unsigned int) p_dat[0] << 8) + (unsigned int) p_dat[1];
-	return(ret);
+    unsigned int ret = ((unsigned int) p_dat[0] << 8) + (unsigned int) p_dat[1];
+    return(ret);
 }
 
 /** Convert Network-order Bytes to Unsigned Long
@@ -210,9 +210,9 @@ unsigned int OMMoCoBus::ntoui(uint8_t* p_dat) {
  */
 
 unsigned long OMMoCoBus::ntoul(uint8_t* p_dat) {
-	unsigned long ret  = (unsigned long) ( ((unsigned long) p_dat[0] << 24) + (unsigned long) p_dat[1] ) << 16;
+    unsigned long ret  = (unsigned long) ( ((unsigned long) p_dat[0] << 24) + (unsigned long) p_dat[1] ) << 16;
     ret |= (unsigned long) ( ( (unsigned long) p_dat[2] << 8 ) + ( (unsigned long) p_dat[3] ) );
-	return(ret);
+    return(ret);
 }
 
 /** Convert Network-order Bytes to Long
@@ -225,9 +225,9 @@ unsigned long OMMoCoBus::ntoul(uint8_t* p_dat) {
  */
 
 long OMMoCoBus::ntol(uint8_t* p_dat) {
-	unsigned long ret  = (long)  (((long) p_dat[0] << 24) + ((long) p_dat[1]  << 16));
+    unsigned long ret  = (long)  (((long) p_dat[0] << 24) + ((long) p_dat[1]  << 16));
     ret |= (long) ( ( (long) p_dat[2] << 8 ) + ( (long) p_dat[3] ) );
-	return(ret);
+    return(ret);
 }
 
 /** Convert Network-order Bytes to Float
@@ -240,11 +240,11 @@ long OMMoCoBus::ntol(uint8_t* p_dat) {
  */
 
 float OMMoCoBus::ntof(uint8_t* p_dat) {
-	float ret;
-	unsigned long * _fl = (unsigned long *) (&ret);
-	*_fl  = (unsigned long) ( ((unsigned long) p_dat[0] << 8) + (unsigned long) p_dat[1] ) << 16;
-	*_fl |= (unsigned long) ( ( (unsigned long) p_dat[2] << 8 ) + ( (unsigned long) p_dat[3] ) );
-	return(ret);
+    float ret;
+    unsigned long * _fl = (unsigned long *) (&ret);
+    *_fl  = (unsigned long) ( ((unsigned long) p_dat[0] << 8) + (unsigned long) p_dat[1] ) << 16;
+    *_fl |= (unsigned long) ( ( (unsigned long) p_dat[2] << 8 ) + ( (unsigned long) p_dat[3] ) );
+    return(ret);
 }
 
 /** Retrieve Packet Data Buffer
@@ -303,13 +303,13 @@ uint8_t OMMoCoBus::getPacket() {
     uint8_t command_val    = 0;
     uint8_t com_byte_count = 0;
     uint8_t ret            = 0;
-	uint8_t len			   = 0; // Length of the data section of the packet
+    uint8_t len            = 0; // Length of the data section of the packet
 
     m_isBCast = false;
 
     m_notUs = false;
 
-	// we check serial.available() here even
+    // we check serial.available() here even
     // though this->_getNextByte() does, because
     // a timeout is applied waiting for next command
     // in this->_getNextByte() - since this is called
@@ -323,39 +323,39 @@ uint8_t OMMoCoBus::getPacket() {
     if( avail <= 0 )
         return(0);
 
-	// clear out any previous data in the packet array
-	memset(m_incomingPacket, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
+    // clear out any previous data in the packet array
+    memset(m_incomingPacket, 0, sizeof(uint8_t)* (OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN));
 
-	// Get the first section of the packet, including header, subaddress,
-	// address, packet code, and data packet data length
-	for (byte i = 0; i < OM_SER_PKT_PREAMBLE; i++)
-	{
-		ret = this->_getNextByte(m_incomingPacket[i]);
+    // Get the first section of the packet, including header, subaddress,
+    // address, packet code, and data packet data length
+    for (byte i = 0; i < OM_SER_PKT_PREAMBLE; i++)
+    {
+        ret = this->_getNextByte(m_incomingPacket[i]);
 
-		if (ret != OM_SER_OK) {
-			// well, this is just embarassing
-			this->_flushSerial();
-			return(0);
-		}
-	}
+        if (ret != OM_SER_OK) {
+            // well, this is just embarassing
+            this->_flushSerial();
+            return(0);
+        }
+    }
 
     // Check the data length and then save the rest of the packet
     len = m_incomingPacket[LEN_POS];
 
 
-	// Get the rest of the packet data
-	for (byte i = DATA_POS; i < (DATA_POS + len); i++)
-	{
-		ret = this->_getNextByte(m_incomingPacket[i]);
+    // Get the rest of the packet data
+    for (byte i = DATA_POS; i < (DATA_POS + len); i++)
+    {
+        ret = this->_getNextByte(m_incomingPacket[i]);
 
-		if (ret != OM_SER_OK) {
-			// well, this is just embarassing
-			this->_flushSerial();
-			return(0);
-		}
-	}
+        if (ret != OM_SER_OK) {
+            // well, this is just embarassing
+            this->_flushSerial();
+            return(0);
+        }
+    }
 
-	// is this packet intended for us?
+    // is this packet intended for us?
     uint8_t stat = this->_targetUs();
 
     if(stat == OM_SER_ERR || stat == OM_SER_TIMEOUT) {
@@ -373,12 +373,12 @@ uint8_t OMMoCoBus::getPacket() {
         // off the line to make sure we don't keep part of it
         // in the buffer)
         m_notUs = true;
-	}
+    }
 
-	this->_flushSerial();
+    this->_flushSerial();
 
-	// Save the command byte from the packet array
-	command_val = m_incomingPacket[COM_POS];
+    // Save the command byte from the packet array
+    command_val = m_incomingPacket[COM_POS];
 
 
     // check for overflow
@@ -401,7 +401,7 @@ uint8_t OMMoCoBus::getPacket() {
     for( int i = 0; i < len; i++ ) {
         // get com_byte_count character values from the serial
         // buffer
-		m_serBuffer[i] = m_incomingPacket[DATA_POS + i];
+        m_serBuffer[i] = m_incomingPacket[DATA_POS + i];
         m_bufSize++;
     }
 /*
@@ -504,60 +504,60 @@ uint8_t OMMoCoBus::getPacket() {
 
 void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen) {
 
-	if( p_addr == OM_SER_BCAST_ADDR )
-		m_isBCast = true;
-	else
-		m_isBCast = false;
+    if( p_addr == OM_SER_BCAST_ADDR )
+        m_isBCast = true;
+    else
+        m_isBCast = false;
 
     // start sequence of five nulls
-	for( uint8_t i = 0; i <= 4; i++ ) {
-		this->write((uint8_t) 0);
-	}
+    for( uint8_t i = 0; i <= 4; i++ ) {
+        this->write((uint8_t) 0);
+    }
 
     // start sequence termination
-	this->write((uint8_t) 255);
+    this->write((uint8_t) 255);
 
     // target address
-	this->write(p_addr);
+    this->write(p_addr);
 
-	// sub address
-	this->write(p_subaddr);
+    // sub address
+    this->write(p_subaddr);
 
     // command code or response code
-	this->write(p_code);
+    this->write(p_code);
 
     // data length
-	this->write(p_dlen);
+    this->write(p_dlen);
 }
 
 
 
 void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen) {
 
-	if( p_addr == OM_SER_BCAST_ADDR )
-		m_isBCast = true;
-	else
-		m_isBCast = false;
+    if( p_addr == OM_SER_BCAST_ADDR )
+        m_isBCast = true;
+    else
+        m_isBCast = false;
 
     // start sequence of five nulls
-	for( uint8_t i = 0; i <= 4; i++ ) {
-		this->write((uint8_t) 0);
-	}
+    for( uint8_t i = 0; i <= 4; i++ ) {
+        this->write((uint8_t) 0);
+    }
 
     // start sequence termination
-	this->write((uint8_t) 255);
+    this->write((uint8_t) 255);
 
-	// target address
-	this->write(p_addr);
+    // target address
+    this->write(p_addr);
 
-	// sub address (defualt 0)
-	this->write((uint8_t)0);
+    // sub address (defualt 0)
+    this->write((uint8_t)0);
 
     // command code or response code
-	this->write(p_code);
+    this->write(p_code);
 
     // data length
-	this->write(p_dlen);
+    this->write(p_dlen);
 }
 
 /** Received Packet was Broadcast
@@ -588,7 +588,7 @@ void OMMoCoBus::sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen)
 
 bool OMMoCoBus::isBroadcast() {
 
-	return( m_isBCast );
+    return( m_isBCast );
 }
 
 
@@ -620,7 +620,7 @@ bool OMMoCoBus::isBroadcast() {
 
 bool OMMoCoBus::notUs() {
 
-	return( m_notUs );
+    return( m_notUs );
 }
 
 
@@ -756,18 +756,18 @@ uint8_t OMMoCoBus::_targetUs() {
    // Verify that the packet header is 00 00 00 00 00 FF
    for (uint8_t i = 0; i <= HEADER_LEN; i++)
    {
-	   if (i < HEADER_LEN )
-	   {
-		   // If one of the first five bytes is not zero, there's a header error
-		   if (m_incomingPacket[i] != 0)
-			   return(OM_SER_ERR);
-	   }
-	   if (i == HEADER_LEN )
-	   {
-		   // If the sixth byte is not 255, there's a header error
-		   if (m_incomingPacket[i] != 255)
-			   return(OM_SER_ERR);
-	   }
+       if (i < HEADER_LEN )
+       {
+           // If one of the first five bytes is not zero, there's a header error
+           if (m_incomingPacket[i] != 0)
+               return(OM_SER_ERR);
+       }
+       if (i == HEADER_LEN )
+       {
+           // If the sixth byte is not 255, there's a header error
+           if (m_incomingPacket[i] != 255)
+               return(OM_SER_ERR);
+       }
    }
 
    // Get the address
@@ -776,9 +776,9 @@ uint8_t OMMoCoBus::_targetUs() {
 
 
    if (addr == OM_SER_BCAST_ADDR)
-	   return(OM_SER_IS_BCAST);
+       return(OM_SER_IS_BCAST);
    else if( addr != m_devAddr )
-	   return(OM_SER_NOT_US);
+       return(OM_SER_NOT_US);
 
   return(OM_SER_OK);
 

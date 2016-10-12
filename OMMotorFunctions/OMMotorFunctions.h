@@ -25,7 +25,7 @@ See www.openmoco.org for more information
 */
 
 
-#ifndef	OM_MOTOR_FUNCTIONS_H
+#ifndef OM_MOTOR_FUNCTIONS_H
 #define OM_MOTOR_FUNCTIONS_H
 
 #include <inttypes.h>
@@ -33,16 +33,16 @@ See www.openmoco.org for more information
 #include <math.h>
 #include "Arduino.h"
 
-#define OM_MOT_SSTATE	HIGH
-#define OM_MOT_SAFE	10
+#define OM_MOT_SSTATE   HIGH
+#define OM_MOT_SAFE 10
 
-#define OM_MOT_DONE 	 1
-#define OM_MOT_MOVING 	 2
-#define OM_MOT_BEGIN	 3
+#define OM_MOT_DONE      1
+#define OM_MOT_MOVING    2
+#define OM_MOT_BEGIN     3
 
-#define OM_MOT_LINEAR 	 4
-#define OM_MOT_QUAD	     5
-#define OM_MOT_QUADINV	 6
+#define OM_MOT_LINEAR    4
+#define OM_MOT_QUAD      5
+#define OM_MOT_QUADINV   6
 
 #define OM_MOT_DONE_PLAN 7
 
@@ -73,10 +73,10 @@ See www.openmoco.org for more information
   one which has five attributes specified:
 
    <ul>
-   	<li>Distance to move</li>
-   	<li>Time to arrive at final point</li>
-   	<li>Time to accelerate to full speed</li>
-   	<li>Time to decelerate to a stop</li>
+    <li>Distance to move</li>
+    <li>Time to arrive at final point</li>
+    <li>Time to accelerate to full speed</li>
+    <li>Time to decelerate to a stop</li>
    </ul>
 
   Moves such as these allow you to map out complex motions without having to
@@ -249,7 +249,7 @@ See www.openmoco.org for more information
 
  <table border=1 width=60%>
  <tr bgcolor="#CCCCFF">
- 	<td colspan=5>1 mS</td><td colspan=5>2 mS</td>
+    <td colspan=5>1 mS</td><td colspan=5>2 mS</td>
  </tr>
  <tr bgcolor="#CACACA">
    <td>200uS</td><td>400uS</td><td>600uS</td><td>800uS</td><td>1000uS</td><td>1200uS</td><td>1400uS</td><td>1600uS</td>
@@ -410,99 +410,99 @@ class OMMotorFunctions {
 public:
 
 
-	OMMotorFunctions(int, int, int, int, int, int, int, int);
-	~OMMotorFunctions();
+    OMMotorFunctions(int, int, int, int, int, int, int, int);
+    ~OMMotorFunctions();
 
-	void ms(uint8_t);
-	uint8_t ms();
+    void ms(uint8_t);
+    uint8_t ms();
 
-	void dir(uint8_t);
-	uint8_t dir();
+    void dir(uint8_t);
+    uint8_t dir();
 
-	void backlash(unsigned int);
-	unsigned int backlash();
+    void backlash(unsigned int);
+    unsigned int backlash();
 
-	void setHandler(void(*)(uint8_t));
+    void setHandler(void(*)(uint8_t));
 
-	unsigned int curSamplePeriod();
+    unsigned int curSamplePeriod();
 
-	void maxStepRate(unsigned int);
-	unsigned int maxStepRate();
+    void maxStepRate(unsigned int);
+    unsigned int maxStepRate();
 
-	void maxSpeed(unsigned int);
-	unsigned int maxSpeed();
+    void maxSpeed(unsigned int);
+    unsigned int maxSpeed();
 
-	void enable(uint8_t);
-	uint8_t enable();
+    void enable(uint8_t);
+    uint8_t enable();
 
-	void continuous(uint8_t);
-	uint8_t continuous();
+    void continuous(uint8_t);
+    uint8_t continuous();
 
-	void contAccel(float);
-	float contAccel();
+    void contAccel(float);
+    float contAccel();
 
-	void contSpeed(float);
-	float contSpeed();
-	float desiredSpeed();
+    void contSpeed(float);
+    float contSpeed();
+    float desiredSpeed();
 
-	uint8_t running();
+    uint8_t running();
 
-	void sleep(uint8_t);
-	uint8_t sleep();
+    void sleep(uint8_t);
+    uint8_t sleep();
 
-	void steps(unsigned long);
-	unsigned long steps();
+    void steps(unsigned long);
+    unsigned long steps();
 
-	void maxSteps(long);
-	long maxSteps();
+    void maxSteps(long);
+    long maxSteps();
 
-	unsigned long stepsMoved();
+    unsigned long stepsMoved();
 
     void stop();
     void clear();
 
-	void move();
-	void move(uint8_t, unsigned long);
-	void move(uint8_t, unsigned long, bool);
-	void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
-	void resumeMove();
+    void move();
+    void move(uint8_t, unsigned long);
+    void move(uint8_t, unsigned long, bool);
+    void move(uint8_t, unsigned long, unsigned long, unsigned long, unsigned long);
+    void resumeMove();
 
-	void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
-	void planRun();		//used move
+    void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
+    void planRun();     //used move
     void planReverse(); //used move
 
-	void homeSet();
-	void endPos(long);
-	long endPos();
-	void startPos(long);
-	long startPos();
-	void stopPos(long);
-	long stopPos();
-	void currentPos(long);
-	long currentPos();
+    void homeSet();
+    void endPos(long);
+    long endPos();
+    void startPos(long);
+    long startPos();
+    void stopPos(long);
+    long stopPos();
+    void currentPos(long);
+    long currentPos();
 
-	void moveTo(long);
-	void moveTo(long, bool);
-	void moveToStart();
-	void moveToStop();
-	void moveToEnd();
-	void home();
+    void moveTo(long);
+    void moveTo(long, bool);
+    void moveToStart();
+    void moveToStop();
+    void moveToEnd();
+    void home();
 
-	uint8_t programDone();
-	void programDone(uint8_t);
+    uint8_t programDone();
+    void programDone(uint8_t);
 
-	static void planType(uint8_t);
-	static uint8_t planType();
-	void planTravelLength(unsigned long);
-	unsigned long planTravelLength();
-	void planAccelLength(unsigned long);
-	unsigned long planAccelLength();
-	void planDecelLength(unsigned long);
-	unsigned long planDecelLength();
-	void programMove();
+    static void planType(uint8_t);
+    static uint8_t planType();
+    void planTravelLength(unsigned long);
+    unsigned long planTravelLength();
+    void planAccelLength(unsigned long);
+    unsigned long planAccelLength();
+    void planDecelLength(unsigned long);
+    unsigned long planDecelLength();
+    void programMove();
 
-	void easing(uint8_t);
-	uint8_t easing();
+    void easing(uint8_t);
+    uint8_t easing();
 
     void resetProgramMove();
 
@@ -510,9 +510,9 @@ public:
     uint8_t checkStep();
 
     void planLeadIn(unsigned int);
-	void planLeadOut(unsigned int);
+    void planLeadOut(unsigned int);
     unsigned long planLeadIn();
-	unsigned long planLeadOut();
+    unsigned long planLeadOut();
 
     int stpreg;
     int stpflg;
@@ -522,9 +522,9 @@ public:
     unsigned long motor_steps_max;
     unsigned long mtpc_steps;
     uint8_t       mtpc_dir;
-    unsigned long mtpc_arrive;		// SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
-    unsigned long mtpc_accel;		// SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
-    unsigned long mtpc_decel;		// SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds	
+    unsigned long mtpc_arrive;      // SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
+    unsigned long mtpc_accel;       // SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
+    unsigned long mtpc_decel;       // SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds    
 
     uint8_t mt_plan;
 
@@ -532,50 +532,50 @@ public:
     volatile uint8_t splineReady;
     uint8_t endOfMove;
 
-	float getTopSpeed();
+    float getTopSpeed();
 
-	// Setting and retrieving of motor units code
-	void units(int);
-	int units();
-	void gboxRatio(float);
-	float gboxRatio();
-	void platRatio(float);
-	float platRatio();
+    // Setting and retrieving of motor units code
+    void units(int);
+    int units();
+    void gboxRatio(float);
+    float gboxRatio();
+    void platRatio(float);
+    float platRatio();
 
-	uint8_t programBackCheck();
-	void programBackCheck(uint8_t p_setFlag);
+    uint8_t programBackCheck();
+    void programBackCheck(uint8_t p_setFlag);
 
-	// Key frame assignment functions
-	void keyDest(uint8_t, long);
-	void keyTime(uint8_t, unsigned long);
-	void keyAccel(uint8_t, unsigned long);
-	void keyDecel(uint8_t, unsigned long);
-	void keyLead(uint8_t, unsigned long);
+    // Key frame assignment functions
+    void keyDest(uint8_t, long);
+    void keyTime(uint8_t, unsigned long);
+    void keyAccel(uint8_t, unsigned long);
+    void keyDecel(uint8_t, unsigned long);
+    void keyLead(uint8_t, unsigned long);
 
-	// Key frame queries
-	long keyDest(uint8_t);
-	unsigned long keyTime(uint8_t);
-	unsigned long keyAccel(uint8_t);
-	unsigned long keyDecel(uint8_t);
-	unsigned long keyLead(uint8_t);
+    // Key frame queries
+    long keyDest(uint8_t);
+    unsigned long keyTime(uint8_t);
+    unsigned long keyAccel(uint8_t);
+    unsigned long keyDecel(uint8_t);
+    unsigned long keyLead(uint8_t);
 
-	static void debugOutput(bool p_state);
-	static bool debugOutput();
+    static void debugOutput(bool p_state);
+    static bool debugOutput();
 
-	void restoreLastMs();
-	int lastMs();
-	void setSending(boolean);
-	boolean isSending();
+    void restoreLastMs();
+    int lastMs();
+    void setSending(boolean);
+    boolean isSending();
 
 
 private:
-		// variables for pre-calculated
-		// spline formula values
+        // variables for pre-calculated
+        // spline formula values
 
 
-	int m_stp;
-	int m_slp;
-	int m_dir;
+    int m_stp;
+    int m_slp;
+    int m_dir;
     int m_ms1;
     int m_ms2;
     int m_ms3;
@@ -583,74 +583,74 @@ private:
     uint8_t m_programDone;
 
     struct s_splineCal {
-		float accel_fraction;			// Acceleration percentage of total move
-		float decel_fraction;			// Deceleration percentage of total move
-		float cruise_fraction;			// Constant speed percentage of toal move
-		float top_speed;				// SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
-		float decel_start;				// Percentage of total move when deceleration begins
-		float easing_coeff;				// 1/travel = distance covered during accel/decel compared to same time at continuous speed
-		float accel_coeff;				// Steps (SMS) or steps/s (CONT) per acceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
-		float decel_coeff;				// Steps (SMS) or steps/s (CONT) per deceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
-		unsigned long accel_steps;		// Number of acceleration steps remaining
-		unsigned long decel_steps;		// Number of deceleration steps remaining
-		unsigned long cruise_steps;		// Number of cruising steps remaining
-		unsigned long accel_moves;		// Number of SMS acceleration moves
-		unsigned long cruise_moves;		// Number of SMS cruise moves
-		unsigned long decel_moves;		// Number of SMS deceleration moves
-	};
+        float accel_fraction;           // Acceleration percentage of total move
+        float decel_fraction;           // Deceleration percentage of total move
+        float cruise_fraction;          // Constant speed percentage of toal move
+        float top_speed;                // SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
+        float decel_start;              // Percentage of total move when deceleration begins
+        float easing_coeff;             // 1/travel = distance covered during accel/decel compared to same time at continuous speed
+        float accel_coeff;              // Steps (SMS) or steps/s (CONT) per acceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+        float decel_coeff;              // Steps (SMS) or steps/s (CONT) per deceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+        unsigned long accel_steps;      // Number of acceleration steps remaining
+        unsigned long decel_steps;      // Number of deceleration steps remaining
+        unsigned long cruise_steps;     // Number of cruising steps remaining
+        unsigned long accel_moves;      // Number of SMS acceleration moves
+        unsigned long cruise_moves;     // Number of SMS cruise moves
+        unsigned long decel_moves;      // Number of SMS deceleration moves
+    };
 
 
-	static uint8_t g_plan_type;	// Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
+    static uint8_t g_plan_type; // Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
 
     s_splineCal m_splineOne;
     s_splineCal m_splinePlanned;
 
-	void _stepsAsync(uint8_t, unsigned long);
+    void _stepsAsync(uint8_t, unsigned long);
 
-	void _updateMotorHome(int);
-	void _fireCallback(uint8_t);
+    void _updateMotorHome(int);
+    void _fireCallback(uint8_t);
 
-	void _initSpline(uint8_t, float, unsigned long, unsigned long, unsigned long);
-	static void _linearEasing(uint8_t, float, OMMotorFunctions*);
-	static void _quadEasing(uint8_t, float, OMMotorFunctions*);
-	static void _SMSErrorCalc(const float&, float&, s_splineCal*, OMMotorFunctions*);
-	static void _contErrorCalc(const float&, float&, OMMotorFunctions*);
-	static unsigned long _partialSum(unsigned long);
-	static unsigned long _partialSumOfSquares(unsigned long);
+    void _initSpline(uint8_t, float, unsigned long, unsigned long, unsigned long);
+    static void _linearEasing(uint8_t, float, OMMotorFunctions*);
+    static void _quadEasing(uint8_t, float, OMMotorFunctions*);
+    static void _SMSErrorCalc(const float&, float&, s_splineCal*, OMMotorFunctions*);
+    static void _contErrorCalc(const float&, float&, OMMotorFunctions*);
+    static unsigned long _partialSum(unsigned long);
+    static unsigned long _partialSumOfSquares(unsigned long);
 
 
-	void _setEasingCoeff(OMMotorFunctions::s_splineCal*);
+    void _setEasingCoeff(OMMotorFunctions::s_splineCal*);
 
-	static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
-	static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+    static float _qEaseCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+    static float _qInvCalc(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
 
     void _updateContSpeed();
 
-	unsigned int m_maxSpeed;
+    unsigned int m_maxSpeed;
 
-	uint8_t m_backCheck;
-	uint8_t m_motEn;
-	uint8_t m_motSleep;
-	uint8_t m_isRun;
-	uint8_t m_asyncWasdir;
-	uint8_t m_curDir;
-	uint8_t m_switchDir;
+    uint8_t m_backCheck;
+    uint8_t m_motEn;
+    uint8_t m_motSleep;
+    uint8_t m_isRun;
+    uint8_t m_asyncWasdir;
+    uint8_t m_curDir;
+    uint8_t m_switchDir;
     uint8_t m_refresh;
     uint8_t m_motCont;
     uint8_t mtpc_start;
     uint8_t m_firstRun;
 
 
-	//movement variables
-	volatile int m_cycleErrAccumulated;
+    //movement variables
+    volatile int m_cycleErrAccumulated;
     volatile unsigned long m_cyclesLow;
     volatile unsigned long m_stepsTaken;
     volatile unsigned long m_totalCyclesTaken;
 
-	unsigned long m_asyncSteps;					// Number of steps in a specified move
-	unsigned long m_asyncDo;
-	volatile unsigned long m_stepsMoved;		
-	unsigned long m_totalSteps;
+    unsigned long m_asyncSteps;                 // Number of steps in a specified move
+    unsigned long m_asyncDo;
+    volatile unsigned long m_stepsMoved;        
+    unsigned long m_totalSteps;
 
 
     unsigned long m_nextOffCycles;
@@ -658,69 +658,69 @@ private:
 
 
 
-    volatile unsigned long m_curOffCycles;		//
-	volatile int m_curCycleErr;					//
-	static unsigned int g_curSampleRate;		//
-	static unsigned int g_cyclesPerSpline;		//
-	volatile unsigned long m_curSpline;			//
-	unsigned long m_totalSplines;				// 
+    volatile unsigned long m_curOffCycles;      //
+    volatile int m_curCycleErr;                 //
+    static unsigned int g_curSampleRate;        //
+    static unsigned int g_cyclesPerSpline;      //
+    volatile unsigned long m_curSpline;         //
+    unsigned long m_totalSplines;               // 
 
-	volatile unsigned long m_curPlanSpd;
-	unsigned long m_curPlanSplines;				// SMS mode: number of movement intervals -- Continuous: number of arbitrary time increments (?)
-	unsigned long m_curPlanSpline;
-	volatile float m_curPlanErr;
-	uint8_t m_planDir;							// Planned move direction
+    volatile unsigned long m_curPlanSpd;
+    unsigned long m_curPlanSplines;             // SMS mode: number of movement intervals -- Continuous: number of arbitrary time increments (?)
+    unsigned long m_curPlanSpline;
+    volatile float m_curPlanErr;
+    uint8_t m_planDir;                          // Planned move direction
 
-	unsigned long m_Steps;						// Number of steps since start of programmed move. This is not used in the NMX firmware, could be depreciated
-	float m_contSpd;							// Motor's current continuous speed (steps/s)
-	float m_desiredContSpd;						// Motor's target continuous speed (steps/s)
-	float m_contAccelRate;						// Motors continuous acceleration rate (steps/s^2)
+    unsigned long m_Steps;                      // Number of steps since start of programmed move. This is not used in the NMX firmware, could be depreciated
+    float m_contSpd;                            // Motor's current continuous speed (steps/s)
+    float m_desiredContSpd;                     // Motor's target continuous speed (steps/s)
+    float m_contAccelRate;                      // Motors continuous acceleration rate (steps/s^2)
 
-	volatile long m_curPos;					// Distance in current microsteps of present location from home position
-	long m_endPos;								// Distance in current microsteps of end limit from home position
-	long m_startPos;							// Distance in current microsteps of program start from home position
-	long m_stopPos;								// Distance in current microsteps of program stop from home position
+    volatile long m_curPos;                 // Distance in current microsteps of present location from home position
+    long m_endPos;                              // Distance in current microsteps of end limit from home position
+    long m_startPos;                            // Distance in current microsteps of program start from home position
+    long m_stopPos;                             // Distance in current microsteps of program stop from home position
 
-	unsigned long m_planLeadIn;					// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
-	unsigned long m_planLeadOut;				// Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
+    unsigned long m_planLeadIn;                 // Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
+    unsigned long m_planLeadOut;                // Motor's lead-in, in shots (SMS, time lapse continuous modes) or milliseconds (video continuous)
 
-	uint8_t m_curMs;							// Current microstepping value
-	unsigned int m_backAdj;						// Backlash adjustment steps (must be adjusted when microstepping changes)
-	uint8_t m_easeType;							// Easing mode: linear, quadratic, or inv. quadratic
+    uint8_t m_curMs;                            // Current microstepping value
+    unsigned int m_backAdj;                     // Backlash adjustment steps (must be adjusted when microstepping changes)
+    uint8_t m_easeType;                         // Easing mode: linear, quadratic, or inv. quadratic
 
-	float m_top_speed;
+    float m_top_speed;
 
-	/* Code indicating the units of measurement used for this motor. This only a reference value for master devices and is not use in firmware.
-		0 == inches, 1 == centimeters, 2 == degrees, 3 == steps
-	*/
-	int m_unitCode;								
-	float m_gbox_ratio;
-	float m_plat_ratio;
+    /* Code indicating the units of measurement used for this motor. This only a reference value for master devices and is not use in firmware.
+        0 == inches, 1 == centimeters, 2 == degrees, 3 == steps
+    */
+    int m_unitCode;                             
+    float m_gbox_ratio;
+    float m_plat_ratio;
 
-	void(*f_motSignal)(uint8_t);
-	void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
-	float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
+    void(*f_motSignal)(uint8_t);
+    void(*f_easeFunc)(uint8_t, float, OMMotorFunctions*);
+    float(*f_easeCal)(OMMotorFunctions::s_splineCal*, float, OMMotorFunctions*, uint8_t);
 
-	uint8_t m_programBackCheck;
+    uint8_t m_programBackCheck;
 
-	uint8_t m_calcMove;
+    uint8_t m_calcMove;
 
-	// Key Frame variables
-	struct key_frame {
-		long dest[10];
-		unsigned long time[10];
-		unsigned long accel[10];
-		unsigned long decel[10];
-		unsigned long lead_in[10];
-	};
+    // Key Frame variables
+    struct key_frame {
+        long dest[10];
+        unsigned long time[10];
+        unsigned long accel[10];
+        unsigned long decel[10];
+        unsigned long lead_in[10];
+    };
 
-	key_frame key_frame;
+    key_frame key_frame;
 
-	static bool g_debug;
+    static bool g_debug;
 
-	// "Send to" vars
-	int m_lastMs;
-	boolean m_isSending;
+    // "Send to" vars
+    int m_lastMs;
+    boolean m_isSending;
 
 };
 

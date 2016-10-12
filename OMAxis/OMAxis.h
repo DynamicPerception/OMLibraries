@@ -151,42 +151,42 @@ class OMAxis: public OMMoCoMaster {
 
 
 public:
-	OMAxis(HardwareSerial& c_serObj);
+    OMAxis(HardwareSerial& c_serObj);
 
-	//supported commands
-	bool interval(unsigned long p_ms);
-	bool exposure(unsigned long p_ms);
-	bool focus(unsigned int p_ms);
-	bool maxShots(unsigned int p_count);
-	bool exposureDelay(unsigned int p_ms);
-	bool tie(bool p_en);
-	bool repeat(uint8_t p_count);
-	bool steps(unsigned int p_steps);
-	bool dir(bool p_dir);
-	bool maxSteps(unsigned long p_steps);
-	bool enableMotor(bool p_en);
-	bool setHome(void);
-	bool backlash(uint8_t p_steps);
-	bool easing(EasingMode p_mode);
-	bool continuous(bool p_en);
+    //supported commands
+    bool interval(unsigned long p_ms);
+    bool exposure(unsigned long p_ms);
+    bool focus(unsigned int p_ms);
+    bool maxShots(unsigned int p_count);
+    bool exposureDelay(unsigned int p_ms);
+    bool tie(bool p_en);
+    bool repeat(uint8_t p_count);
+    bool steps(unsigned int p_steps);
+    bool dir(bool p_dir);
+    bool maxSteps(unsigned long p_steps);
+    bool enableMotor(bool p_en);
+    bool setHome(void);
+    bool backlash(uint8_t p_steps);
+    bool easing(EasingMode p_mode);
+    bool continuous(bool p_en);
     bool continuousSpeed(float p_speed);
-	bool start();
-	bool pause();
+    bool start();
+    bool pause();
     bool stop();
-	bool enableCamera(bool p_en);
-	bool move(bool p_dir, unsigned long p_steps);
+    bool enableCamera(bool p_en);
+    bool move(bool p_dir, unsigned long p_steps);
     bool move(bool p_dir, unsigned long p_steps, unsigned long p_travel, unsigned long p_accel, unsigned long p_decel);
-	bool home();
-	bool expose(unsigned long p_ms);
-	bool sleep(bool p_en);
-	bool maxStepRate(StepRateValue p_cycles);
-	bool maxSpeed(unsigned int p_steps);
-	bool led(bool p_en);
-	bool stopMotor();
-	bool ms(MicroSteps p_micros);
-	bool master(bool p_en);
-	bool plan(PlanType p_type, bool p_dir, unsigned long p_steps, unsigned long p_travel, unsigned long p_accel, unsigned long p_decel);
-	bool clearPlan();
+    bool home();
+    bool expose(unsigned long p_ms);
+    bool sleep(bool p_en);
+    bool maxStepRate(StepRateValue p_cycles);
+    bool maxSpeed(unsigned int p_steps);
+    bool led(bool p_en);
+    bool stopMotor();
+    bool ms(MicroSteps p_micros);
+    bool master(bool p_en);
+    bool plan(PlanType p_type, bool p_dir, unsigned long p_steps, unsigned long p_travel, unsigned long p_accel, unsigned long p_decel);
+    bool clearPlan();
     bool delayMoveStart(unsigned long p_ms);
     bool maxRunTime(unsigned long p_ms);
     bool comLinePulse(ComLine p_com);

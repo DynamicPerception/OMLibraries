@@ -25,7 +25,7 @@ See www.openmoco.org for more information
 */
 
 
-#ifndef	OM_COMSTATE_H
+#ifndef OM_COMSTATE_H
 #define OM_COMSTATE_H
 
 
@@ -52,39 +52,39 @@ See www.openmoco.org for more information
   
    @code
   
-	#include "OMState.h"
-	
-	 // three possible states: 0, 1, and 2
-	OMState State = OMState(3);
-	
-	void setup() {
-	  
-	  State.setHandler(1, state1);
-	  State.setHandler(2, state2);
-	  State.state(1);
-	  
-	  Serial.begin(19200);
-	}
-	
-	void loop() {
-	  State.checkCycle();
-	}
-	
-	void state1() {
-	  
-	  Serial.println("I'm in state 1!");
-	  State.state(2);
-	}
-	
-	void state2() {
-	  
-	  Serial.println("I'm in state 2!");
-	  
-	  	// put state machine into "idle" by setting a state
-	  	// with no callback associated
-	  	
-	  State.state(0);
-	}
+    #include "OMState.h"
+    
+     // three possible states: 0, 1, and 2
+    OMState State = OMState(3);
+    
+    void setup() {
+      
+      State.setHandler(1, state1);
+      State.setHandler(2, state2);
+      State.state(1);
+      
+      Serial.begin(19200);
+    }
+    
+    void loop() {
+      State.checkCycle();
+    }
+    
+    void state1() {
+      
+      Serial.println("I'm in state 1!");
+      State.state(2);
+    }
+    
+    void state2() {
+      
+      Serial.println("I'm in state 2!");
+      
+        // put state machine into "idle" by setting a state
+        // with no callback associated
+        
+      State.state(0);
+    }
   
   @endcode
   
@@ -127,22 +127,22 @@ class OMState {
 
 private:
 
-	uint8_t m_curState;
-	uint8_t m_maxStates;
-	typedef void (*stateCB)(void);
-	stateCB m_transit[OM_STATE_MAX];	
-	
+    uint8_t m_curState;
+    uint8_t m_maxStates;
+    typedef void (*stateCB)(void);
+    stateCB m_transit[OM_STATE_MAX];    
+    
 public:
 
-	OMState(uint8_t);
-	
-	void state(uint8_t);
-	uint8_t state();
-	
-	void checkCycle();
-	
-	void setHandler(uint8_t, void (*) (void));
-	void clearHandler(uint8_t);
+    OMState(uint8_t);
+    
+    void state(uint8_t);
+    uint8_t state();
+    
+    void checkCycle();
+    
+    void setHandler(uint8_t, void (*) (void));
+    void clearHandler(uint8_t);
 };
 
 #endif

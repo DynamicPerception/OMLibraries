@@ -38,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /*
-	Forward differencing reference:
-	http://www.drdobbs.com/forward-difference-calculation-of-bezier/184403417
+    Forward differencing reference:
+    http://www.drdobbs.com/forward-difference-calculation-of-bezier/184403417
 */
 
 #ifndef _BEZIER_h
@@ -47,138 +47,138 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
+    #include "Arduino.h"
 #else
-	#include "WProgram.h"
+    #include "WProgram.h"
 #endif
 
 class OrderedPair {
 
-		public:
-			OrderedPair();
-			OrderedPair(float p_a, float p_b);
-			//~OrderedPair();
-			float val(int p_which);
-			void val(int p_which, float p_val);		
-			void x(int p_x);
-			float x();
-			void y(int p_y);
-			float y();			
+        public:
+            OrderedPair();
+            OrderedPair(float p_a, float p_b);
+            //~OrderedPair();
+            float val(int p_which);
+            void val(int p_which, float p_val);     
+            void x(int p_x);
+            float x();
+            void y(int p_y);
+            float y();          
 
-			friend OrderedPair operator *(int val, const OrderedPair &op);
-			friend OrderedPair operator *(const OrderedPair &op, int val);
-			friend OrderedPair operator *(float val, const OrderedPair &op);
-			friend OrderedPair operator *(const OrderedPair &op, float val);
-			friend OrderedPair operator *(double val, const OrderedPair &op);
-			friend OrderedPair operator *(const OrderedPair &op, double val);
-			friend OrderedPair operator +(int val, const OrderedPair &op);
-			friend OrderedPair operator +(const OrderedPair &op, int val);
-			friend OrderedPair operator +(float val, const OrderedPair &op);
-			friend OrderedPair operator +(const OrderedPair &op, float val);
-			friend OrderedPair operator + (const OrderedPair& p_op1, const OrderedPair& p_op2);
-			friend OrderedPair operator -(int val, const OrderedPair &op);
-			friend OrderedPair operator -(const OrderedPair &op);
+            friend OrderedPair operator *(int val, const OrderedPair &op);
+            friend OrderedPair operator *(const OrderedPair &op, int val);
+            friend OrderedPair operator *(float val, const OrderedPair &op);
+            friend OrderedPair operator *(const OrderedPair &op, float val);
+            friend OrderedPair operator *(double val, const OrderedPair &op);
+            friend OrderedPair operator *(const OrderedPair &op, double val);
+            friend OrderedPair operator +(int val, const OrderedPair &op);
+            friend OrderedPair operator +(const OrderedPair &op, int val);
+            friend OrderedPair operator +(float val, const OrderedPair &op);
+            friend OrderedPair operator +(const OrderedPair &op, float val);
+            friend OrderedPair operator + (const OrderedPair& p_op1, const OrderedPair& p_op2);
+            friend OrderedPair operator -(int val, const OrderedPair &op);
+            friend OrderedPair operator -(const OrderedPair &op);
 
-		private:
-			float m_vals[2];	// The (a, b) values
+        private:
+            float m_vals[2];    // The (a, b) values
 };
 
 class Span {
 
-	public:
+    public:
 
-		// Constructors
-		Span();
-		Span(OrderedPair *p_ctrl_pts, Span* p_prev_span);								
-		
-		// Meta functions
-		int id();
-		void prevSpan(Span* p_span);
-		Span* prevSpan();
-		void nextSpan(Span* p_span);
-		Span* nextSpan();
+        // Constructors
+        Span();
+        Span(OrderedPair *p_ctrl_pts, Span* p_prev_span);                               
+        
+        // Meta functions
+        int id();
+        void prevSpan(Span* p_span);
+        Span* prevSpan();
+        void nextSpan(Span* p_span);
+        Span* nextSpan();
 
-		// Control points getter
-		OrderedPair *ctrlPts();
-		
-		// Standard Bezier evaluation
-		void incrementSize(float p_h);
-		float incrementSize();
-		int stepsRemaining();
-		
-		// Evaluation w/r/t X
-		void incrementSizeX(float p_hx);
-		float positionAtX(float p_x);
-		float velocityAtX(float p_x);
+        // Control points getter
+        OrderedPair *ctrlPts();
+        
+        // Standard Bezier evaluation
+        void incrementSize(float p_h);
+        float incrementSize();
+        int stepsRemaining();
+        
+        // Evaluation w/r/t X
+        void incrementSizeX(float p_hx);
+        float positionAtX(float p_x);
+        float velocityAtX(float p_x);
         float accelAtX(float p_x);
-		
-		// Helper functions
-		bool containsX(float p_x);
-		bool containsY(float p_y);
+        
+        // Helper functions
+        bool containsX(float p_x);
+        bool containsY(float p_y);
         float startX();
         float stopX();
         float startY();
-        float stopY();		
-		float rangeX();
-		float rangeY();
-		
-		
-	private:			
-		// Static vars
-		static const int g_MAX_CTRL_PTS = 4;
-		static int g_id_gen; 
+        float stopY();      
+        float rangeX();
+        float rangeY();
+        
+        
+    private:            
+        // Static vars
+        static const int g_MAX_CTRL_PTS = 4;
+        static int g_id_gen; 
 
-		// Meta vars
-		int m_id;
-		Span *m_next_span;
-		Span *m_prev_span;
+        // Meta vars
+        int m_id;
+        Span *m_next_span;
+        Span *m_prev_span;
 
-		// Defining functions / vals
-		void setCoeffs();
-		OrderedPair m_ctrl_pts[g_MAX_CTRL_PTS];		
-		OrderedPair m_coeff_A;
-		OrderedPair m_coeff_B;
-		OrderedPair m_coeff_C;
-		OrderedPair m_coeff_D;
-		
-		// Evaluation w/r/t X		
-		float tOfX(float x, float guess, int recursion_limit);
+        // Defining functions / vals
+        void setCoeffs();
+        OrderedPair m_ctrl_pts[g_MAX_CTRL_PTS];     
+        OrderedPair m_coeff_A;
+        OrderedPair m_coeff_B;
+        OrderedPair m_coeff_C;
+        OrderedPair m_coeff_D;
+        
+        // Evaluation w/r/t X       
+        float tOfX(float x, float guess, int recursion_limit);
 
-		// Cubic solvers
-		float solveCubic(float p_T, bool p_is_x, float p_offset);
-		float solveCubic(float p_T, bool p_is_x);		
-		float solveCubicPrime(float p_T, bool p_is_x);
+        // Cubic solvers
+        float solveCubic(float p_T, bool p_is_x, float p_offset);
+        float solveCubic(float p_T, bool p_is_x);       
+        float solveCubicPrime(float p_T, bool p_is_x);
         float solveCubicDoublePrime(float p_T, bool p_is_x);
         
-};	
+};  
 
 class CubicBezier
 {
-	public:
+    public:
 
-		/********** Public Variables **********/
+        /********** Public Variables **********/
 
-		int m_knot_count;
-		Span *m_spans;
-		int m_span_count;
-		
-		/********** Public Functions **********/
+        int m_knot_count;
+        Span *m_spans;
+        int m_span_count;
+        
+        /********** Public Functions **********/
 
-		CubicBezier();
-		CubicBezier(OrderedPair *p_ctrl_pts, int p_knot_count);
-		~CubicBezier();
+        CubicBezier();
+        CubicBezier(OrderedPair *p_ctrl_pts, int p_knot_count);
+        ~CubicBezier();
 
-		void init(OrderedPair *p_ctrl_pts, int p_knot_count);
+        void init(OrderedPair *p_ctrl_pts, int p_knot_count);
 
-		int knotCount(int p_count);
-		int knotCount();
+        int knotCount(int p_count);
+        int knotCount();
 
         int controlPointCount();
 
-		void setNextX(float p_x);
-		void setNextY(float p_y);
+        void setNextX(float p_x);
+        void setNextY(float p_y);
 
-		float positionAtX(float p_x);
+        float positionAtX(float p_x);
         float velocityAtX(float p_x);
         float accelAtX(float p_x);
 
@@ -187,11 +187,11 @@ class CubicBezier
         float startY();
         float stopY();
 
-		float incrementSize();
-		int stepsRemaining();
-		Span *getSpan(int p_which);
-		void initSpans();
-		void releaseMemory();
+        float incrementSize();
+        int stepsRemaining();
+        Span *getSpan(int p_which);
+        void initSpans();
+        void releaseMemory();
 
         /*
             These functions fetch the X and Y (F - function) values
@@ -201,24 +201,24 @@ class CubicBezier
         float getXN(int p_kf);
         float getFN(int p_kf);
 
-	private:
+    private:
 
-		/********** Private Variables **********/
+        /********** Private Variables **********/
 
         static const long g_ERROR = -987654321;
-		bool m_span_mem_allocated;
-		bool m_ctrl_mem_allocated;
-		OrderedPair *m_ctrl_pts;		
-		Span* m_cur_span;		
-		int m_next_x;
-		int m_next_y;
+        bool m_span_mem_allocated;
+        bool m_ctrl_mem_allocated;
+        OrderedPair *m_ctrl_pts;        
+        Span* m_cur_span;       
+        int m_next_x;
+        int m_next_y;
         int m_ctrl_pt_count;
 
         static const int g_PTS_PER_SPAN = 4;
 
 
-		/********** Private Functions **********/		
-		
+        /********** Private Functions **********/       
+        
         Span* spanContainingX(float p_x);
 };
 

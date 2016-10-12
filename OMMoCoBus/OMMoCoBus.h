@@ -185,68 +185,68 @@ class OMMoCoBus {
 
 public:
     OMMoCoBus(Stream * c_serObj);
-	unsigned int c_dAddr;
-	uint8_t addr;
-	uint8_t subaddr;
+    unsigned int c_dAddr;
+    uint8_t addr;
+    uint8_t subaddr;
 
-	unsigned int address();
-	void address(unsigned int p_addr);
+    unsigned int address();
+    void address(unsigned int p_addr);
 
-	unsigned int subaddress();
+    unsigned int subaddress();
 
-	uint8_t* buffer();
-	uint8_t bufferLen();
+    uint8_t* buffer();
+    uint8_t bufferLen();
 
-	void addressCallback(void(*)(uint8_t));
+    void addressCallback(void(*)(uint8_t));
 
-		//sets the flag for software serial
-	void setSoftSerial(bool c_softSerial = 0);
+        //sets the flag for software serial
+    void setSoftSerial(bool c_softSerial = 0);
 
-	int ntoi(uint8_t* p_dat);
-	unsigned int ntoui(uint8_t* p_dat);
-	long ntol(uint8_t* p_dat);
-	unsigned long ntoul(uint8_t* p_dat);
-	float ntof(uint8_t* p_dat);
+    int ntoi(uint8_t* p_dat);
+    unsigned int ntoui(uint8_t* p_dat);
+    long ntol(uint8_t* p_dat);
+    unsigned long ntoul(uint8_t* p_dat);
+    float ntof(uint8_t* p_dat);
 
-	uint8_t getPacket();
-	void write(uint8_t p_dat);
+    uint8_t getPacket();
+    void write(uint8_t p_dat);
 
 protected:
 
 
-	bool isBroadcast();
-	bool notUs();
+    bool isBroadcast();
+    bool notUs();
 
-	// send to address, response code, data length
-	void sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen);
-	void sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen);
+    // send to address, response code, data length
+    void sendPacketHeader(uint8_t p_addr, uint8_t p_subaddr, uint8_t p_code, uint8_t p_dlen);
+    void sendPacketHeader(uint8_t p_addr, uint8_t p_code, uint8_t p_dlen);
 
-	// writing raw data (command or response contents)	
-	void write(unsigned int p_dat);
-	void write(int p_dat);
-	void write(unsigned long p_dat);
-	void write(float p_dat);
-	void write(long p_dat);
-	
+    // writing raw data (command or response contents)  
+    void write(unsigned int p_dat);
+    void write(int p_dat);
+    void write(unsigned long p_dat);
+    void write(float p_dat);
+    void write(long p_dat);
+    
 
 private:
 
-	void(*f_newAddr)(uint8_t);
+    void(*f_newAddr)(uint8_t);
 
-	uint8_t _getNextByte(uint8_t&);
-	uint8_t _targetUs();
-	void _flushSerial();
+    uint8_t _getNextByte(uint8_t&);
+    uint8_t _targetUs();
+    void _flushSerial();
 
-	Stream * m_serObj;
+    Stream * m_serObj;
 
-	uint8_t m_serBuffer[OM_SER_BUFLEN];
-	uint8_t m_incomingPacket[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
-	unsigned int m_devAddr;
-	uint8_t m_bufSize;
+    uint8_t m_serBuffer[OM_SER_BUFLEN];
+    uint8_t m_incomingPacket[OM_SER_PKT_PREAMBLE + OM_SER_BUFLEN];
+    unsigned int m_devAddr;
+    uint8_t m_bufSize;
 
-	bool m_isBCast;
-	bool m_notUs;
-	bool m_softSerial;
+    bool m_isBCast;
+    bool m_notUs;
+    bool m_softSerial;
 
 };
 
@@ -373,7 +373,7 @@ private:
  code</i>, allowed: 0 for error, and 1 for success.  All node devices must begin
  transmitting their response to the master within 100mS, and each additional byte
  in the response must come within 100mS of a previous byte, otherwise the node
- will be timed out.
+ will be timed ou.t
 
  All response packets must be addressed to the address 0, which is reserved for
  responses back to the master.

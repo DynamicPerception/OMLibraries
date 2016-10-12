@@ -24,7 +24,7 @@ See www.dynamicperception.com for more information
 
 */
 
-#ifndef	OM_COMHANDLER_H
+#ifndef OM_COMHANDLER_H
 #define OM_COMHANDLER_H
 
 
@@ -116,7 +116,7 @@ See www.dynamicperception.com for more information
 
   void setup() {
     ComMgr = OMComHandler();
-    	// configure line handler as master
+        // configure line handler as master
     ComMgr.master(true);
   }
 
@@ -143,7 +143,7 @@ See www.dynamicperception.com for more information
 
   void setup() {
     ComMgr = OMComHandler();
-    	// configure line handler as slave
+        // configure line handler as slave
     ComMgr.master(false);
   }
 
@@ -273,26 +273,26 @@ class OMComHandler
 {
 private:
 
-	bool m_isMaster;
+    bool m_isMaster;
 
     static bool m_which;
     volatile static unsigned long m_isrUs;
 
-	void _masterFollow();
-	void _masterLead();
-	static void _interrupt();
+    void _masterFollow();
+    void _masterLead();
+    static void _interrupt();
 
     static void _isrFire();
     static void(*f_isrCB)(uint16_t);
 
 public:
 
-	OMComHandler(); // constructor
+    OMComHandler(); // constructor
 
-	bool master();
-	void master(bool p_mast);
-	void masterSignal();
-	static bool slaveClear();
+    bool master();
+    void master(bool p_mast);
+    void masterSignal();
+    static bool slaveClear();
 
     static void watch(uint8_t p_which);
     static void watchHandler(void(*p_func)(uint16_t));
