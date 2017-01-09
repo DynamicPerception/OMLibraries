@@ -15,13 +15,13 @@ OMByteBuffer::OMByteBuffer() {
  *
  * */
 void OMByteBuffer::assign(uint8_t* in_buf, uint16_t in_size) {
-	buf = in_buf;
-	rpos = 0;
-	wpos = 0;
-	max_size = in_size;
+    buf = in_buf;
+    rpos = 0;
+    wpos = 0;
+    max_size = in_size;
 }
 
 OMByteBuffer::~OMByteBuffer() {
-	// TODO Auto-generated destructor stub
+    // TODO Auto-generated destructor stub
 }
 

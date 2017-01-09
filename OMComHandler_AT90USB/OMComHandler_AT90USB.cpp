@@ -50,7 +50,7 @@ volatile unsigned long OMComHandler_AT90USB::m_isrUs = 0;
   */
 
 OMComHandler_AT90USB::OMComHandler_AT90USB() {
-	m_isMaster = false;
+    m_isMaster = false;
 
     pinMode(OMC_COM1, INPUT);
     pinMode(OMC_COM2, INPUT);
@@ -153,7 +153,7 @@ void OMComHandler_AT90USB::stopWatch() {
 
 
 bool OMComHandler_AT90USB::master() {
-	return(this->m_isMaster);
+    return(this->m_isMaster);
 }
 
 /** Set Master Parameter
@@ -165,14 +165,14 @@ bool OMComHandler_AT90USB::master() {
   */
 
 void OMComHandler_AT90USB::master(bool p_mast) {
-	this->m_isMaster = p_mast;
+    this->m_isMaster = p_mast;
 
-	if( this->m_isMaster) {
-		this->_masterLead();
-	}
-	else {
-		this->_masterFollow();
-	}
+    if( this->m_isMaster) {
+        this->_masterLead();
+    }
+    else {
+        this->_masterFollow();
+    }
 }
 
 /** Send Signal as Master
@@ -186,20 +186,20 @@ void OMComHandler_AT90USB::master(bool p_mast) {
 
   Example:
   @code
-  	ComMgr.masterSignal();
-  	Serial.println("Sent Signal as Master!");
+    ComMgr.masterSignal();
+    Serial.println("Sent Signal as Master!");
   @endcode
 
   */
 
 void OMComHandler_AT90USB::masterSignal() {
-	if( this->m_isMaster ) {
-	      // we're the master, send a 5mS low pulse on
-	      // common line
-	    digitalWrite(OMC_COM3, LOW);
-	    delay(5);
-	    digitalWrite(OMC_COM3, HIGH);
-    	}
+    if( this->m_isMaster ) {
+          // we're the master, send a 5mS low pulse on
+          // common line
+        digitalWrite(OMC_COM3, LOW);
+        delay(5);
+        digitalWrite(OMC_COM3, HIGH);
+        }
 }
 
 /** Slave Clear to Go
@@ -215,7 +215,7 @@ void OMComHandler_AT90USB::masterSignal() {
   @code
   if( ComMgr.master() == false PCVECT) {
     if( ComMgr.slaveClear() == true ) {
-    	Serial.println("Received Signal From Master!");
+        Serial.println("Received Signal From Master!");
     }
   }
   @endcode
@@ -225,9 +225,9 @@ void OMComHandler_AT90USB::masterSignal() {
   */
 
 bool OMComHandler_AT90USB::slaveClear() {
-	bool ret = omc_slavetrip;
-	omc_slavetrip = 0;
-	return(ret);
+    bool ret = omc_slavetrip;
+    omc_slavetrip = 0;
+    return(ret);
 }
 
 void OMComHandler_AT90USB::_isrFire() {

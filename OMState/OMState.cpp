@@ -44,12 +44,12 @@ See www.openmoco.org for more information
  
 OMState::OMState(uint8_t states) {
 
-	memset(m_transit, 0, sizeof(stateCB) * OM_STATE_MAX);
-	m_curState = 0;
-	
-	states = states > OM_STATE_MAX ? OM_STATE_MAX : states;
-	
-	m_maxStates = states;
+    memset(m_transit, 0, sizeof(stateCB) * OM_STATE_MAX);
+    m_curState = 0;
+    
+    states = states > OM_STATE_MAX ? OM_STATE_MAX : states;
+    
+    m_maxStates = states;
 }
 
 
@@ -62,7 +62,7 @@ OMState::OMState(uint8_t states) {
  */
  
 uint8_t OMState::state() {
-	return(m_curState);
+    return(m_curState);
 }
 
 /** Set Current State
@@ -73,7 +73,7 @@ uint8_t OMState::state() {
  */
  
 void OMState::state(uint8_t p_State) {
-	m_curState = p_State;
+    m_curState = p_State;
 }
 
 /** Run Check Cycle
@@ -85,13 +85,13 @@ void OMState::state(uint8_t p_State) {
  */
  
 void OMState::checkCycle() {
-	if( m_curState >= m_maxStates )
-		return;
-	
-	if( m_transit[m_curState] != 0 ) {
-		stateCB ptr = m_transit[m_curState];
-		ptr();
-	}
+    if( m_curState >= m_maxStates )
+        return;
+    
+    if( m_transit[m_curState] != 0 ) {
+        stateCB ptr = m_transit[m_curState];
+        ptr();
+    }
 }
 
 /** Set State Handler
@@ -134,10 +134,10 @@ void OMState::checkCycle() {
  
  
 void OMState::setHandler(uint8_t p_State, stateCB p_cb) {
-	if( p_State >= m_maxStates )
-		return;
-	
-	m_transit[p_State] = p_cb;
+    if( p_State >= m_maxStates )
+        return;
+    
+    m_transit[p_State] = p_cb;
 }
 
 /** Clear State Handler
@@ -149,9 +149,9 @@ void OMState::setHandler(uint8_t p_State, stateCB p_cb) {
  */
 
 void OMState::clearHandler(uint8_t p_State) {
-	if( p_State >= m_maxStates )
-		return;
-	
-	m_transit[p_State] = 0;
+    if( p_State >= m_maxStates )
+        return;
+    
+    m_transit[p_State] = 0;
 }
 

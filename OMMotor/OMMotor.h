@@ -25,7 +25,7 @@ See www.openmoco.org for more information
 */
 
 
-#ifndef	OM_MOTOR_H
+#ifndef OM_MOTOR_H
 #define OM_MOTOR_H
 
 #include <inttypes.h>
@@ -37,22 +37,22 @@ See www.openmoco.org for more information
  // DEFAULT PIN ASSIGNMENTS
 
 #ifndef OM_MOT_DSTEP
-    #define OM_MOT_DSTEP	46
+    #define OM_MOT_DSTEP    46
 #endif
 #ifndef OM_MOT_DDIR
-    #define OM_MOT_DDIR	  21//34 //- mot3 21 //- mot2//16 - mot1
+    #define OM_MOT_DDIR   21//34 //- mot3 21 //- mot2//16 - mot1
 #endif
 #ifndef OM_MOT_DSLP
-    #define OM_MOT_DSLP	20 //33 //- mot3 20 //- mot2//32 - mot1
+    #define OM_MOT_DSLP 20 //33 //- mot3 20 //- mot2//32 - mot1
 #endif
 #ifndef OM_MOT_DMS1
-    #define OM_MOT_DMS1	29//15 //- mot3 29 //- mot2//17 - mot1
+    #define OM_MOT_DMS1 29//15 //- mot3 29 //- mot2//17 - mot1
 #endif
 #ifndef OM_MOT_DMS2
-    #define OM_MOT_DMS2	30//43 //- mot3 30 //- mot2//18 - mot1
+    #define OM_MOT_DMS2 30//43 //- mot3 30 //- mot2//18 - mot1
 #endif
 #ifndef OM_MOT_DMS3
-    #define OM_MOT_DMS3	31//44 //- mot3 31 //- mot2//19 - mot1
+    #define OM_MOT_DMS3 31//44 //- mot3 31 //- mot2//19 - mot1
 #endif
 #ifndef OM_MOT_STPREG
     #define OM_MOT_STPREG     PORTF
@@ -61,16 +61,16 @@ See www.openmoco.org for more information
     #define OM_MOT_STPFLAG      PORTF6//PORTF7 //- mot3 PORTF6 //- mot2//PORTF5 - mot1
 #endif
 
-#define OM_MOT_SSTATE	HIGH
-#define OM_MOT_SAFE	10
+#define OM_MOT_SSTATE   HIGH
+#define OM_MOT_SAFE 10
 
-#define OM_MOT_DONE 	1
-#define OM_MOT_MOVING 	2
-#define OM_MOT_BEGIN	3
+#define OM_MOT_DONE     1
+#define OM_MOT_MOVING   2
+#define OM_MOT_BEGIN    3
 
-#define OM_MOT_LINEAR 	4
-#define OM_MOT_QUAD	5
-#define OM_MOT_QUADINV	6
+#define OM_MOT_LINEAR   4
+#define OM_MOT_QUAD 5
+#define OM_MOT_QUADINV  6
 
 
 /**
@@ -86,10 +86,10 @@ See www.openmoco.org for more information
   one which has five attributes specified:
 
    <ul>
-   	<li>Distance to move</li>
-   	<li>Time to arrive at final point</li>
-   	<li>Time to accelerate to full speed</li>
-   	<li>Time to decelerate to a stop</li>
+    <li>Distance to move</li>
+    <li>Time to arrive at final point</li>
+    <li>Time to accelerate to full speed</li>
+    <li>Time to decelerate to a stop</li>
    </ul>
 
   Moves such as these allow you to map out complex motions without having to
@@ -262,7 +262,7 @@ See www.openmoco.org for more information
 
  <table border=1 width=60%>
  <tr bgcolor="#CCCCFF">
- 	<td colspan=5>1 mS</td><td colspan=5>2 mS</td>
+    <td colspan=5>1 mS</td><td colspan=5>2 mS</td>
  </tr>
  <tr bgcolor="#CACACA">
    <td>200uS</td><td>400uS</td><td>600uS</td><td>800uS</td><td>1000uS</td><td>1200uS</td><td>1400uS</td><td>1600uS</td>
@@ -423,147 +423,147 @@ class OMMotor {
 public:
 
 
-	OMMotor();
+    OMMotor();
 
-	static void ms(uint8_t);
-	static uint8_t ms();
+    static void ms(uint8_t);
+    static uint8_t ms();
 
-	static void dir(bool);
-	static bool dir();
+    static void dir(bool);
+    static bool dir();
 
-	void backlash(uint8_t);
-	uint8_t backlash();
+    void backlash(uint8_t);
+    uint8_t backlash();
 
-	void setHandler(void(*)(uint8_t));
+    void setHandler(void(*)(uint8_t));
 
-	void maxStepRate(unsigned int);
-	unsigned int maxStepRate();
+    void maxStepRate(unsigned int);
+    unsigned int maxStepRate();
 
-	void maxSpeed(unsigned int);
-	unsigned int maxSpeed();
+    void maxSpeed(unsigned int);
+    unsigned int maxSpeed();
 
-	void enable(bool);
-	bool enable();
+    void enable(bool);
+    bool enable();
 
-	void continuous(bool);
-	bool continuous();
+    void continuous(bool);
+    bool continuous();
 
-	void contSpeed(float);
-	unsigned int contSpeed();
+    void contSpeed(float);
+    unsigned int contSpeed();
 
-	static bool running();
+    static bool running();
 
-	static void sleep(bool);
-	static bool sleep();
+    static void sleep(bool);
+    static bool sleep();
 
-	static void steps(unsigned long);
-	static unsigned long steps();
+    static void steps(unsigned long);
+    static unsigned long steps();
 
-	static void maxSteps(unsigned long);
-	static unsigned long maxSteps();
+    static void maxSteps(unsigned long);
+    static unsigned long maxSteps();
 
-	static unsigned long stepsMoved();
+    static unsigned long stepsMoved();
 
-	static void stop();
-	static void clear();
+    static void stop();
+    static void clear();
 
-	void move();
-	void move(bool, unsigned long);
-	void move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
+    void move();
+    void move(bool, unsigned long);
+    void move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
 
-	void plan(unsigned long, bool, unsigned long, unsigned long, unsigned long);
-	void planRun();
+    void plan(unsigned long, bool, unsigned long, unsigned long, unsigned long);
+    void planRun();
     void planReverse();
 
-	void home();
-	void homeSet();
+    void home();
+    void homeSet();
 
-	static void easing(uint8_t);
+    static void easing(uint8_t);
 
-	long homeDistance();
+    long homeDistance();
 
 
 private:
-		// variables for pre-calculated
-		// spline formula values
+        // variables for pre-calculated
+        // spline formula values
 
-	struct s_splineCal {
-		float acTm;
-		float dcTm;
-		float crTm;
-		float topSpeed;
-		float dcStart;
-		float travel;
-	};
+    struct s_splineCal {
+        float acTm;
+        float dcTm;
+        float crTm;
+        float topSpeed;
+        float dcStart;
+        float travel;
+    };
 
-	static s_splineCal m_splineOne;
-	static s_splineCal m_splinePlanned;
+    static s_splineCal m_splineOne;
+    static s_splineCal m_splinePlanned;
 
-	void _stepsAsync(bool, unsigned long);
+    void _stepsAsync(bool, unsigned long);
 
-	static void _runISR();
-	static void _updateMotorHome(int);
-	static void _fireCallback(uint8_t);
+    static void _runISR();
+    static void _updateMotorHome(int);
+    static void _fireCallback(uint8_t);
 
-	static void _initSpline(bool, float, unsigned long, unsigned long, unsigned long);
-	static void _linearEasing(bool, float);
-	static void _quadEasing(bool, float);
+    static void _initSpline(bool, float, unsigned long, unsigned long, unsigned long);
+    static void _linearEasing(bool, float);
+    static void _quadEasing(bool, float);
 
-	static void _setTravelConst(OMMotor::s_splineCal*);
+    static void _setTravelConst(OMMotor::s_splineCal*);
 
-	static float _qEaseCalc(OMMotor::s_splineCal*, float);
-	static float _qInvCalc(OMMotor::s_splineCal*, float);
+    static float _qEaseCalc(OMMotor::s_splineCal*, float);
+    static float _qInvCalc(OMMotor::s_splineCal*, float);
 
-	unsigned int m_maxSpeed;
+    unsigned int m_maxSpeed;
 
-	static bool m_backCheck;
-	static bool m_motEn;
-	static bool m_motCont;
-	static bool m_motSleep;
-	static bool m_isRun;
-	static bool m_asyncWasdir;
-	static bool m_curDir;
+    static bool m_backCheck;
+    static bool m_motEn;
+    static bool m_motCont;
+    static bool m_motSleep;
+    static bool m_isRun;
+    static bool m_asyncWasdir;
+    static bool m_curDir;
     static bool m_refresh;
 
-	static unsigned long m_asyncSteps;
-	static unsigned long m_asyncDo;
-	static volatile unsigned long m_stepsMoved;
-	static unsigned long m_totalSteps;
+    static unsigned long m_asyncSteps;
+    static unsigned long m_asyncDo;
+    static volatile unsigned long m_stepsMoved;
+    static unsigned long m_totalSteps;
 
 
 
-	static volatile unsigned long m_curOffCycles;
-	static float m_curCycleErr;
-	static unsigned int m_curSampleRate;
-	static unsigned int m_cyclesPerSpline;
-	static volatile unsigned long m_curSpline;
-	static unsigned long m_totalSplines;
+    static volatile unsigned long m_curOffCycles;
+    static float m_curCycleErr;
+    static unsigned int m_curSampleRate;
+    static unsigned int m_cyclesPerSpline;
+    static volatile unsigned long m_curSpline;
+    static unsigned long m_totalSplines;
 
-	static unsigned long m_curPlanSpd;
-	static unsigned long m_curPlanSplines;
-	static unsigned long m_curPlanSpline;
-	static float m_curPlanErr;
-	static bool m_planDir;
+    static unsigned long m_curPlanSpd;
+    static unsigned long m_curPlanSplines;
+    static unsigned long m_curPlanSpline;
+    static float m_curPlanErr;
+    static bool m_planDir;
 
-	static unsigned long m_Steps;
-	static unsigned int m_asyncCspd;
-	static float m_contSpd;
+    static unsigned long m_Steps;
+    static unsigned int m_asyncCspd;
+    static float m_contSpd;
 
-	static bool m_clearISR;
+    static bool m_clearISR;
 
-	static volatile long m_homePos;
+    static volatile long m_homePos;
 
-	static uint8_t m_curMs;
-	static uint8_t m_backAdj;
-	static uint8_t m_easeType;
+    static uint8_t m_curMs;
+    static uint8_t m_backAdj;
+    static uint8_t m_easeType;
 
-	static void(*f_motSignal)(uint8_t);
-	static void(*f_easeFunc)(bool, float);
-	static float(*f_easeCal)(OMMotor::s_splineCal*, float);
+    static void(*f_motSignal)(uint8_t);
+    static void(*f_easeFunc)(bool, float);
+    static float(*f_easeCal)(OMMotor::s_splineCal*, float);
 
 
 
-	bool m_calcMove;
+    bool m_calcMove;
 
 };
 

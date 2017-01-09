@@ -37,7 +37,7 @@ See www.openmoco.org for more information
 
 // types of data responses which can be sent back
 enum {
-	R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STR
+    R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STR
 };
 
 
@@ -51,9 +51,9 @@ enum {
 
 
 // bus 'master' address, for responses
-#define OM_SER_MASTER_ADDR	0
+#define OM_SER_MASTER_ADDR  0
 // bus 'broadcast' address
-#define OM_SER_BCAST_ADDR	1
+#define OM_SER_BCAST_ADDR   1
 
 
  // timeout in milliseconds
@@ -87,18 +87,18 @@ enum {
 #define OM_SER_CLEAR_TM 1000000.0 / OM_SER_BPS + 0.07
 
 // bus protocol core version
-#define OM_SER_VER	1
+#define OM_SER_VER  1
 
 // bus 'master' address, for responses
-#define OM_SER_MASTER	0
+#define OM_SER_MASTER   0
 
 // core bus protocol command values
-#define OM_SER_BASECOM		1
+#define OM_SER_BASECOM      1
 
-#define OM_SER_COREPROTO	1
-#define OM_SER_COREID		2
-#define OM_SER_COREVER		3
-#define OM_SER_COREADDR		4
+#define OM_SER_COREPROTO    1
+#define OM_SER_COREID       2
+#define OM_SER_COREVER      3
+#define OM_SER_COREADDR     4
 
 
 
@@ -116,21 +116,21 @@ enum {
  /** Common Broadcast Command Types */
 enum BroadCastType {
         /** Start Program Execution */
-	OM_BCAST_START = 1,
-		/** Stop Program Execution */
-	OM_BCAST_STOP = 2,
-		/** Pause Program Execution */
-	OM_BCAST_PAUSE = 3,
-		/** Set Default Address Execution */
-	OM_BCAST_SET_ADDRESS = 4,
-		/** Set Graffik Mode Using USB Connection */
-	OM_GRAFFIK_MODE_USB = 5,
-		/** Set Graffik Mode Using BLE Connection*/
-	OM_GRAFFIK_MODE_BLE = 6,
-	OM_BCAST_KF_START = 7,
-	OM_BCAST_KF_STOP = 8,
-	OM_BCAST_KF_PAUSE = 9,
-	OM_BCAST_GET_ADDRESS = 10
+    OM_BCAST_START = 1,
+        /** Stop Program Execution */
+    OM_BCAST_STOP = 2,
+        /** Pause Program Execution */
+    OM_BCAST_PAUSE = 3,
+        /** Set Default Address Execution */
+    OM_BCAST_SET_ADDRESS = 4,
+        /** Set Graffik Mode Using USB Connection */
+    OM_GRAFFIK_MODE_USB = 5,
+        /** Set Graffik Mode Using BLE Connection*/
+    OM_GRAFFIK_MODE_BLE = 6,
+    OM_BCAST_KF_START = 7,
+    OM_BCAST_KF_STOP = 8,
+    OM_BCAST_KF_PAUSE = 9,
+    OM_BCAST_GET_ADDRESS = 10
 };
 
 
