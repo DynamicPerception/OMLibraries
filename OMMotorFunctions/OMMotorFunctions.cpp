@@ -691,7 +691,7 @@ void OMMotorFunctions::_updateContSpeed(){
         else
             m_contSpd += m_contAccelRate;
 
-        if (m_contSpd <= (m_contAccelRate/2.0)){
+        if (abs(m_contSpd) <= ( m_contAccelRate / 2.0 )) {
             //don't want to set it zero as that will give us an infinite off_time
             m_contSpd = 0.01;
             m_switchDir = false;
