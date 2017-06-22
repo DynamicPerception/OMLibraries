@@ -140,13 +140,13 @@ void OMMotor::ms( uint8_t p_Div ) {
       s2 = true;
       break;
     case 8:
-      s1 = true;
-      s2 = true;
+      s1 = false;
+      s2 = false;
       break;
     case 16:
       s1 = true;
       s2 = true;
-      s3 = true;
+      s3 = false;
       break;
     default:
       break;

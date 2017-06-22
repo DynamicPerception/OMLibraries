@@ -206,13 +206,13 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
             s2 = true;
             break;
         case 8:
-            s1 = true;
-            s2 = true;
+            s1 = false;
+            s2 = false;
             break;
         case 16:
             s1 = true;
             s2 = true;
-            s3 = true;
+            s3 = false;
             break;
         default:
             return;
@@ -244,6 +244,8 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
           m_backAdj *= (m_curMs / m_lastMs);
         }
     }
+
+
 
 }
 
@@ -674,6 +676,9 @@ float OMMotorFunctions::contAccel() {
 }
 
 
+
+
+
 /** Update Continous Speed
 
 Updates the next spline for continous speed. This is a linear acceleration and deceleration.
@@ -930,6 +935,16 @@ void OMMotorFunctions::maxStepRate( unsigned int p_Rate ) {
 
     if(  p_Rate != 10000 && p_Rate != 5000 && p_Rate != 4000 && p_Rate != 2000 && p_Rate != 1000 )
         return;
+    if (maxStepRate() > 2000) {
+        for (int i = 0; i < MOTOR_COUNT; i++) {
+            if (i == 0) {
+                maxStepRate(2000);
+            }
+            else {
+                maxStepRate(5000);
+            }
+        }
+    }
 
         // convert from steps per second, to uSecond periods
     g_curSampleRate = 1000000 / (unsigned long) p_Rate;
@@ -962,7 +977,10 @@ unsigned int OMMotorFunctions::curSamplePeriod() {
  */
 
 unsigned int OMMotorFunctions::maxStepRate() {
+
+
     return((unsigned int)( (long) 1000000 / (long) g_curSampleRate ));
+
 }
 
 
@@ -1373,8 +1391,8 @@ void OMMotorFunctions::move(uint8_t p_Dir, unsigned long p_Steps, bool p_Send) {
     // so clamp back down if not doing a continuous
     // move
 
-    if( maxStepRate() > 5000 )
-       maxStepRate(5000);
+    if( maxStepRate() > 3500 )
+       maxStepRate(3500);
 
 
    if( ! m_calcMove ) {

@@ -51,7 +51,9 @@
  const int dataVersion = 100;
  
  byte  foo = 1;
- int   bar = 3500;
+ int   bar = 
+ 
+ ;
  float baz = 64.5;
  
  void setup() {
