@@ -410,8 +410,8 @@ class OMMotorFunctions {
 public:
 
 
-    OMMotorFunctions(int, int, int, int, int, int, int, int);
-    ~OMMotorFunctions();
+	OMMotorFunctions(int, int, int, int, int, int, int, int, int);
+	~OMMotorFunctions();
 
     void ms(uint8_t);
     uint8_t ms();
@@ -450,8 +450,8 @@ public:
     void sleep(uint8_t);
     uint8_t sleep();
 
-    void steps(unsigned long);
-    unsigned long steps();
+	void stealth(uint8_t);
+	uint8_t stealth();
 
     void maxSteps(long);
     long maxSteps();
@@ -566,6 +566,8 @@ public:
     int lastMs();
     void setSending(boolean);
     boolean isSending();
+	// For getting the motor number within the motor class
+	uint8_t id();
 
 
 private:
@@ -639,6 +641,7 @@ private:
     uint8_t m_motCont;
     uint8_t mtpc_start;
     uint8_t m_firstRun;
+	uint8_t m_id;
 
 
     //movement variables

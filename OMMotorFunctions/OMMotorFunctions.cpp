@@ -134,6 +134,7 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     autoPause     = false;
     m_firstRun     = true;
 
+	m_id = p_id;
 
     pinMode(m_stp, OUTPUT);
     pinMode(m_slp, OUTPUT);
@@ -180,9 +181,9 @@ uint8_t OMMotorFunctions::ms() {
 /** Set MicroSteps
 
   Sets the current microstep setting.  You may choose from the following
-  values:
+  values for the Trinamic motor driver:
 
-  1, 2, 4, 8, or 16
+  4, 8, 16, or 32
 
   @param p_Div
   Microstep setting value
@@ -194,26 +195,28 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
 
   uint8_t s1 = false;
   uint8_t s2 = false;
-  uint8_t s3 = false;
 
     switch( p_Div ) {
         case 1:
             break;
         case 2:
-            s1 = true;
             break;
         case 4:
-            s2 = true;
+			s1 = false;
+			s2 = false;
             break;
         case 8:
             s1 = true;
-            s2 = true;
+            s2 = false;
             break;
         case 16:
-            s1 = true;
+            s1 = false;
             s2 = true;
-            s3 = true;
             break;
+		case 32:
+			s1 = true;
+			s2 = true;
+			break;
         default:
             return;
             break;
@@ -226,7 +229,6 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
 
   digitalWrite(m_ms1, s1);
   digitalWrite(m_ms2, s2);
-  digitalWrite(m_ms3, s3);
 
     // adjust marker for home!
   if (m_lastMs != m_curMs) {
@@ -464,28 +466,49 @@ uint8_t OMMotorFunctions::enable() {
   */
 
 void OMMotorFunctions::sleep(uint8_t p_En) {
-    m_motSleep = p_En;
+	m_motSleep = p_En;	
+	// Stealth mode is active low, spread cycle
+	// is active high, so invert the parameter logic
+	stealth(p_En);
+}
 
-        // turn the sleep line off if sleep disabled, otherwise
-        // turn sleep line on
+uint8_t OMMotorFunctions::stealth() {
+	return(m_motStealth);
+}
 
-    uint8_t doSleep = p_En ? OM_MOT_SSTATE : ! OM_MOT_SSTATE;
-    digitalWrite(m_slp, doSleep);
+uint8_t OMMotorFunctions::id() {
+	return(m_id);
+}
+
+void OMMotorFunctions::stealth(uint8_t p_En) {
+	m_motStealth = p_En;
+
+	// Stealth mode is active low, spread cycle
+	// is active high, so invert the parameter logic.
+	// Also, don't allow stealth mode for channel one
+	// with 1/4 stepping.
+	if (!(p_En && m_id == 0 && m_curMs == 4)){
+		digitalWrite(m_ms3, !p_En);
+	}
+	
 }
 
 /** Get Sleep Flag Value
 
 
-  Returns the current value of the sleep between moves flag.
+Returns the current value of the sleep between moves flag.
 
-  @return
-  Enabled (true), Disabled (false()
+@return
+Enabled (true), Disabled (false()
 
-  */
+*/
 
 uint8_t OMMotorFunctions::sleep() {
-    return(m_motSleep);
+	return(m_motSleep);
 }
+
+
+
 
 /** Set Continuous Motion Speed
 
@@ -1495,6 +1518,7 @@ void OMMotorFunctions::_stepsAsync( uint8_t p_Dir, unsigned long p_Steps ) {
 
 
 
+		 digitalWrite(m_slp, LOW);
          m_asyncSteps = p_Steps;
          m_firstRun = true;
          //updateSpline();
@@ -1502,12 +1526,12 @@ void OMMotorFunctions::_stepsAsync( uint8_t p_Dir, unsigned long p_Steps ) {
           // bring sleep pin to non-sleeping state if
           // motor kill enabled
 
-        if( sleep() )   {
-          digitalWrite(m_slp, !OM_MOT_SSTATE);
-            // we don't want to start moving before its safe
-            // to do so
-          delay(OM_MOT_SAFE);
-        }
+        //if( sleep() )   {
+        //  digitalWrite(m_slp, !OM_MOT_SSTATE);
+        //    // we don't want to start moving before its safe
+        //    // to do so
+        //  delay(OM_MOT_SAFE);
+        //}
 
         // set motors moving
         m_isRun = true;
