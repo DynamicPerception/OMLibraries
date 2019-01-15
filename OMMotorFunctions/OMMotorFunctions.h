@@ -25,7 +25,7 @@ See www.openmoco.org for more information
 */
 
 
-#ifndef OM_MOTOR_FUNCTIONS_H
+#ifndef	OM_MOTOR_FUNCTIONS_H
 #define OM_MOTOR_FUNCTIONS_H
 
 #include <inttypes.h>
@@ -33,16 +33,16 @@ See www.openmoco.org for more information
 #include <math.h>
 #include "Arduino.h"
 
-#define OM_MOT_SSTATE   HIGH
-#define OM_MOT_SAFE 10
+#define OM_MOT_SSTATE	HIGH
+#define OM_MOT_SAFE	10
 
-#define OM_MOT_DONE      1
-#define OM_MOT_MOVING    2
-#define OM_MOT_BEGIN     3
+#define OM_MOT_DONE 	 1
+#define OM_MOT_MOVING 	 2
+#define OM_MOT_BEGIN	 3
 
-#define OM_MOT_LINEAR    1
-#define OM_MOT_QUAD      2
-#define OM_MOT_QUADINV   3
+#define OM_MOT_LINEAR 	 4
+#define OM_MOT_QUAD	     5
+#define OM_MOT_QUADINV	 6
 
 #define OM_MOT_DONE_PLAN 7
 
@@ -410,8 +410,8 @@ class OMMotorFunctions {
 public:
 
 
-	OMMotorFunctions(int, int, int, int, int, int, int, int, int);
-	~OMMotorFunctions();
+    OMMotorFunctions(int, int, int, int, int, int, int, int, int);
+    ~OMMotorFunctions();
 
     void ms(uint8_t);
     uint8_t ms();
@@ -429,7 +429,7 @@ public:
     void maxStepRate(unsigned int);
     unsigned int maxStepRate();
 
-    void maxSpeed(unsigned int);
+    unsigned int maxSpeed(unsigned int);
     unsigned int maxSpeed();
 
     void enable(uint8_t);
@@ -438,7 +438,7 @@ public:
     void continuous(uint8_t);
     uint8_t continuous();
 
-    void contAccel(float);
+    float contAccel(float);
     float contAccel();
 
     void contSpeed(float);
@@ -450,8 +450,11 @@ public:
     void sleep(uint8_t);
     uint8_t sleep();
 
-	void stealth(uint8_t);
-	uint8_t stealth();
+    void stealth(uint8_t);
+    uint8_t stealth();
+
+    void steps(unsigned long);
+    unsigned long steps();
 
     void maxSteps(long);
     long maxSteps();
@@ -468,7 +471,7 @@ public:
     void resumeMove();
 
     void plan(unsigned long, uint8_t, unsigned long, unsigned long, unsigned long);
-    void planRun();     //used move
+    void planRun();		//used move
     void planReverse(); //used move
 
     void homeSet();
@@ -522,9 +525,9 @@ public:
     unsigned long motor_steps_max;
     unsigned long mtpc_steps;
     uint8_t       mtpc_dir;
-    unsigned long mtpc_arrive;      // SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
-    unsigned long mtpc_accel;       // SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
-    unsigned long mtpc_decel;       // SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds    
+    unsigned long mtpc_arrive;		// SMS: Number of travel shots -- Continuous: Total movement time in milliseconds
+    unsigned long mtpc_accel;		// SMS: Number of accel shots -- Continuous: Accel movement time in milliseconds
+    unsigned long mtpc_decel;		// SMS: Number of accel shots -- Continuous: Decel movement time in milliseconds	
 
     uint8_t mt_plan;
 
@@ -566,8 +569,9 @@ public:
     int lastMs();
     void setSending(boolean);
     boolean isSending();
-	// For getting the motor number within the motor class
-	uint8_t id();
+
+    // For getting the motor number within the motor class
+    uint8_t id();
 
 
 private:
@@ -585,24 +589,24 @@ private:
     uint8_t m_programDone;
 
     struct s_splineCal {
-        float accel_fraction;           // Acceleration percentage of total move
-        float decel_fraction;           // Deceleration percentage of total move
-        float cruise_fraction;          // Constant speed percentage of toal move
-        float top_speed;                // SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
-        float decel_start;              // Percentage of total move when deceleration begins
-        float easing_coeff;             // 1/travel = distance covered during accel/decel compared to same time at continuous speed
-        float accel_coeff;              // Steps (SMS) or steps/s (CONT) per acceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
-        float decel_coeff;              // Steps (SMS) or steps/s (CONT) per deceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
-        unsigned long accel_steps;      // Number of acceleration steps remaining
-        unsigned long decel_steps;      // Number of deceleration steps remaining
-        unsigned long cruise_steps;     // Number of cruising steps remaining
-        unsigned long accel_moves;      // Number of SMS acceleration moves
-        unsigned long cruise_moves;     // Number of SMS cruise moves
-        unsigned long decel_moves;      // Number of SMS deceleration moves
+        float accel_fraction;			// Acceleration percentage of total move
+        float decel_fraction;			// Deceleration percentage of total move
+        float cruise_fraction;			// Constant speed percentage of toal move
+        float top_speed;				// SMS: max steps required during any single movement interval -- Continuous: top speed in steps / sec
+        float decel_start;				// Percentage of total move when deceleration begins
+        float easing_coeff;				// 1/travel = distance covered during accel/decel compared to same time at continuous speed
+        float accel_coeff;				// Steps (SMS) or steps/s (CONT) per acceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+        float decel_coeff;				// Steps (SMS) or steps/s (CONT) per deceleration calculation unit. This is actually the coefficient of the power function y = ax^2 or linear function y = mx
+        unsigned long accel_steps;		// Number of acceleration steps remaining
+        unsigned long decel_steps;		// Number of deceleration steps remaining
+        unsigned long cruise_steps;		// Number of cruising steps remaining
+        unsigned long accel_moves;		// Number of SMS acceleration moves
+        unsigned long cruise_moves;		// Number of SMS cruise moves
+        unsigned long decel_moves;		// Number of SMS deceleration moves
     };
 
 
-    static uint8_t g_plan_type; // Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
+    static uint8_t g_plan_type;	// Plan type: 0 = SMS, 1 = CONT_TL, 2 = CONT_VID
 
     s_splineCal m_splineOne;
     s_splineCal m_splinePlanned;
@@ -633,6 +637,7 @@ private:
     uint8_t m_backCheck;
     uint8_t m_motEn;
     uint8_t m_motSleep;
+    uint8_t m_motStealth;
     uint8_t m_isRun;
     uint8_t m_asyncWasdir;
     uint8_t m_curDir;
@@ -641,8 +646,7 @@ private:
     uint8_t m_motCont;
     uint8_t mtpc_start;
     uint8_t m_firstRun;
-	uint8_t m_id;
-
+    uint8_t m_id;
 
     //movement variables
     volatile int m_cycleErrAccumulated;
@@ -650,9 +654,9 @@ private:
     volatile unsigned long m_stepsTaken;
     volatile unsigned long m_totalCyclesTaken;
 
-    unsigned long m_asyncSteps;                 // Number of steps in a specified move
+    unsigned long m_asyncSteps;					// Number of steps in a specified move
     unsigned long m_asyncDo;
-    volatile unsigned long m_stepsMoved;        
+    volatile unsigned long m_stepsMoved;		
     unsigned long m_totalSteps;
 
 
@@ -679,7 +683,7 @@ private:
     float m_desiredContSpd;                     // Motor's target continuous speed (steps/s)
     float m_contAccelRate;                      // Motors continuous acceleration rate (steps/s^2)
 
-    volatile long m_curPos;                 // Distance in current microsteps of present location from home position
+    volatile long m_curPos;                     // Distance in current microsteps of present location from home position
     long m_endPos;                              // Distance in current microsteps of end limit from home position
     long m_startPos;                            // Distance in current microsteps of program start from home position
     long m_stopPos;                             // Distance in current microsteps of program stop from home position
@@ -696,7 +700,7 @@ private:
     /* Code indicating the units of measurement used for this motor. This only a reference value for master devices and is not use in firmware.
         0 == inches, 1 == centimeters, 2 == degrees, 3 == steps
     */
-    int m_unitCode;                             
+    int m_unitCode;
     float m_gbox_ratio;
     float m_plat_ratio;
 
@@ -721,10 +725,14 @@ private:
 
     static bool g_debug;
 
-	// We switch to 4th stepping for sending home, so stealth mode needs
-	// to be deactivated for this and reactivated when the sending is done,
-	// so this keeps track of the previous stealth state.
-	boolean m_wasStealth;  
+    // "Send to" vars
+    int m_lastMs;
+    boolean m_isSending;
+
+    // We switch to 4th stepping for sending home, so stealth mode needs
+    // to be deactivated for this and reactivated when the sending is done,
+    // so this keeps track of the previous stealth state.
+    boolean m_wasStealth;  
 
 };
 

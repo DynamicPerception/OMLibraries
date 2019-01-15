@@ -31,10 +31,10 @@ See www.openmoco.org for more information
 
 // initialize static members
 
-unsigned int OMMotorFunctions::g_curSampleRate = 200;   // How often to run the motor ISR in microseconds
+unsigned int OMMotorFunctions::g_curSampleRate = 200;	// How often to run the motor ISR in microseconds
 unsigned int OMMotorFunctions::g_cyclesPerSpline = 100;
-bool         OMMotorFunctions::g_debug = false;
-uint8_t      OMMotorFunctions::g_plan_type = 0;
+bool		 OMMotorFunctions::g_debug = false;
+uint8_t		 OMMotorFunctions::g_plan_type = 0;
 
 
 /** Constructor
@@ -44,7 +44,7 @@ uint8_t      OMMotorFunctions::g_plan_type = 0;
 
   */
 
-OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_ms1=0, int p_ms2=0, int p_ms3=0, int p_stpreg = 0, int p_stpflg = 0) {
+OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_ms1=0, int p_ms2=0, int p_ms3=0, int p_stpreg = 0, int p_stpflg = 0, int p_id = 0) {
         // set pin states
 
 
@@ -127,14 +127,14 @@ OMMotorFunctions::OMMotorFunctions(int p_stp=0, int p_dir=0, int p_slp=0, int p_
     mtpc_arrive       = 0;
     mtpc_accel        = 0;
     mtpc_decel        = 0;
-    g_plan_type           = 0;
-    mtpc_start    = false;
+    g_plan_type 		  = 0;
+    mtpc_start	  = false;
     m_planLeadIn      = 0;
     m_planLeadOut     = 0;
     autoPause     = false;
     m_firstRun     = true;
 
-	m_id = p_id;
+    m_id = p_id;
 
     pinMode(m_stp, OUTPUT);
     pinMode(m_slp, OUTPUT);
@@ -202,8 +202,8 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
         case 2:
             break;
         case 4:
-			s1 = false;
-			s2 = false;
+            s1 = false;
+            s2 = false;
             break;
         case 8:
             s1 = true;
@@ -213,10 +213,10 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
             s1 = false;
             s2 = true;
             break;
-		case 32:
-			s1 = true;
-			s2 = true;
-			break;
+        case 32:
+            s1 = true;
+            s2 = true;
+            break;
         default:
             return;
             break;
@@ -230,7 +230,7 @@ void OMMotorFunctions::ms( uint8_t p_Div ) {
   digitalWrite(m_ms1, s1);
   digitalWrite(m_ms2, s2);
 
-    // adjust marker for home!
+  // adjust marker for home!
   if (m_lastMs != m_curMs) {
       if (m_lastMs > m_curMs){
           m_curPos /= (m_lastMs / m_curMs);
@@ -451,7 +451,8 @@ uint8_t OMMotorFunctions::enable() {
     return(m_motEn);
 }
 
-/** Enable Sleep
+/** Enable Sleep ******** For NMX w/ Trinamic driver, this now controls
+    stealth mode.
 
   Sets the current sleep between move flag value and immediately changes
   the status off the motor driver sleep line.
@@ -466,31 +467,31 @@ uint8_t OMMotorFunctions::enable() {
   */
 
 void OMMotorFunctions::sleep(uint8_t p_En) {
-	m_motSleep = p_En;	
-	// Stealth mode is active low, spread cycle
-	// is active high, so invert the parameter logic
-	stealth(p_En);
+    m_motSleep = p_En;	
+    // Stealth mode is active low, spread cycle
+    // is active high, so invert the parameter logic
+    stealth(p_En);
 }
 
 uint8_t OMMotorFunctions::stealth() {
-	return(m_motStealth);
+    return(m_motStealth);
 }
 
 uint8_t OMMotorFunctions::id() {
-	return(m_id);
+    return(m_id);
 }
 
 void OMMotorFunctions::stealth(uint8_t p_En) {
-	m_motStealth = p_En;
+    m_motStealth = p_En;
 
-	// Stealth mode is active low, spread cycle
-	// is active high, so invert the parameter logic.
-	// Also, don't allow stealth mode for channel one
-	// with 1/4 stepping.
-	if (!(p_En && m_id == 0 && m_curMs == 4)){
-		digitalWrite(m_ms3, !p_En);
-	}
-	
+    // Stealth mode is active low, spread cycle
+    // is active high, so invert the parameter logic.
+    // Also, don't allow stealth mode for channel one
+    // with 1/4 stepping.
+    if (!(p_En && m_id == 0 && m_curMs == 4)){
+        digitalWrite(m_ms3, !p_En);
+    }
+    
 }
 
 /** Get Sleep Flag Value
@@ -504,7 +505,7 @@ Enabled (true), Disabled (false()
 */
 
 uint8_t OMMotorFunctions::sleep() {
-	return(m_motSleep);
+    return(m_motSleep);
 }
 
 
@@ -674,11 +675,12 @@ uint8_t OMMotorFunctions::continuous() {
  Steps per second^2
  */
 
-void OMMotorFunctions::contAccel(float p_Accel) {
+float OMMotorFunctions::contAccel(float p_Accel) {
 
-    if( p_Accel <= 0.0 )
-        return;
+    if (p_Accel <= 0.0)
+        p_Accel = 1;
     m_contAccelRate = p_Accel/(1000.0 / MS_PER_SPLINE);  //convert to steps/spline
+    return p_Accel;
 }
 
 /** Get Continuous Motion Speed Acceleration
@@ -705,17 +707,16 @@ Updates the next spline for continous speed. This is a linear acceleration and d
 
 
 void OMMotorFunctions::_updateContSpeed(){
+
     if (m_switchDir){
 
         //decelerate until you're within half of the m_contAccelRate step/sec of stop
-        if (m_contSpd >= 0.0) {            
+        if (m_contSpd >= 0.0)
             m_contSpd -= m_contAccelRate;
-        }
-        else {            
+        else
             m_contSpd += m_contAccelRate;
-        }
 
-        if (abs(m_contSpd) <= ( m_contAccelRate / 2.0 )) {
+        if (abs(m_contSpd) <= (m_contAccelRate / 2.0)){
             //don't want to set it zero as that will give us an infinite off_time
             m_contSpd = 0.01;
             m_switchDir = false;
@@ -904,11 +905,21 @@ long OMMotorFunctions::maxSteps() {
  Maximum speed, in steps per second
 */
 
-void OMMotorFunctions::maxSpeed(unsigned int p_Speed) {
-    if( p_Speed > maxStepRate() || p_Speed == 0 )
-        return;
-
+unsigned int OMMotorFunctions::maxSpeed(unsigned int p_Speed) {
+    if (p_Speed > maxStepRate()){
+        p_Speed = maxStepRate();
+    }
+    // Can't use 0 speed, otherwise we'll never get there
+    else if (p_Speed == 0) {
+        p_Speed = 1;
+    }
     m_maxSpeed = p_Speed;
+
+    // Return the new max speed. This is useful in case
+    // an out of bounds request was made and we need to
+    // inform an upstream function that the value set
+    // was different than the request.
+    return m_maxSpeed;
 }
 
 /** Get Maximum Stepping Speed
@@ -1500,8 +1511,8 @@ void OMMotorFunctions::stop() {
       m_contSpd = 0.0;
 
         // set sleep state for drivers if needed
-      if( sleep() )
-        digitalWrite(m_slp, OM_MOT_SSTATE);
+      //if( sleep() )
+        //digitalWrite(m_slp, OM_MOT_SSTATE);
 
 
         // signal completion
@@ -1517,8 +1528,7 @@ void OMMotorFunctions::_stepsAsync( uint8_t p_Dir, unsigned long p_Steps ) {
      if( ! running() ) {
 
 
-
-		 digitalWrite(m_slp, LOW);
+         digitalWrite(m_slp, LOW);
          m_asyncSteps = p_Steps;
          m_firstRun = true;
          //updateSpline();
@@ -2186,7 +2196,7 @@ void OMMotorFunctions::_linearEasing(uint8_t p_SMS, float p_move_percent, OMMoto
 
         // Calculate the error for continuous moves
         _contErrorCalc(p_move_percent, speed_steps, theFunctions);
-    }   
+    }	
 }
 
 /* 
@@ -2216,7 +2226,7 @@ void OMMotorFunctions::_quadEasing(uint8_t p_SMS, float p_move_percent, OMMotorF
   OMMotorFunctions::s_splineCal *thisSpline = p_SMS == true ? &theFunctions->m_splinePlanned : &theFunctions->m_splineOne;
   
   // Current continuous speed (steps/s) (CONT) or current SMS move steps (SMS)
-  float speed_steps = 0;    
+  float speed_steps = 0;	
 
   // use correct quad or inv. quad calculation
   speed_steps = (theFunctions->f_easeCal)(thisSpline, p_move_percent, theFunctions, p_SMS);
@@ -2250,7 +2260,7 @@ This function modifies a motor's error values for continuous moves.
 
 void OMMotorFunctions::_contErrorCalc(const float& p_move_percent, float& p_cur_spd, OMMotorFunctions *theFunctions){
     
-    float off_time = 1000000.0;     // 1 second worth of microseconds
+    float off_time = 1000000.0;		// 1 second worth of microseconds
 
     // If curSpd is very small, set to a small number to prevent dividing by 0
     if (p_cur_spd <= 0.000001){
@@ -2375,7 +2385,7 @@ float OMMotorFunctions::_qEaseCalc(OMMotorFunctions::s_splineCal* thisSpline, fl
         // Accel phase
         if (p_move_percent < thisSpline->accel_fraction) {
             p_move_percent = theFunctions->m_curPlanSpline;
-            curSpd = thisSpline->accel_coeff * p_move_percent * p_move_percent;     // y = ax^2, where y = curSpd, x = p_move_percent and a = steps per calculation unit
+            curSpd = thisSpline->accel_coeff * p_move_percent * p_move_percent;		// y = ax^2, where y = curSpd, x = p_move_percent and a = steps per calculation unit
         }
         // Constant phase
         else if (p_move_percent <= thisSpline->decel_start) {
@@ -2506,12 +2516,12 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
 
    OMMotorFunctions::s_splineCal *thisSpline = &m_splineOne;
    m_totalSplines = p_Travel / MS_PER_SPLINE;
-   unsigned long totSplines = m_totalSplines;   // Total number of SMS moves
+   unsigned long totSplines = m_totalSplines;	// Total number of SMS moves
    
    if( p_SMS == true ) {
         // work with plan parameters
        thisSpline = &m_splinePlanned;
-       totSplines = m_curPlanSplines;   
+       totSplines = m_curPlanSplines;	
 
        // Save the count of physical moves for each phase
        thisSpline->accel_moves = p_Accel;
@@ -2533,17 +2543,17 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
     // SMS mode
     if (p_SMS == true){
 
-        unsigned long ac_movement_units = 0;        // Total of step units required to accelerate
-        unsigned long dc_movement_units = 0;        // Total of step units required to decelerate
+        unsigned long ac_movement_units = 0;		// Total of step units required to accelerate
+        unsigned long dc_movement_units = 0;		// Total of step units required to decelerate
 
 
         if (m_easeType == OM_MOT_LINEAR){
-            ac_movement_units = _partialSum(p_Accel);   // Partial sum equation for 1 + 2 + 3 + ... n
+            ac_movement_units = _partialSum(p_Accel);	// Partial sum equation for 1 + 2 + 3 + ... n
             dc_movement_units = _partialSum(p_Decel);
         }
         else {
-            ac_movement_units = _partialSumOfSquares(p_Accel);  // Partial sum of squares equation for 1^2 + 2^2 + 3^2 + ... n^2
-            dc_movement_units = _partialSumOfSquares(p_Decel);  
+            ac_movement_units = _partialSumOfSquares(p_Accel);	// Partial sum of squares equation for 1^2 + 2^2 + 3^2 + ... n^2
+            dc_movement_units = _partialSumOfSquares(p_Decel);	
         }
 
         //calculate step interval
@@ -2580,7 +2590,7 @@ void OMMotorFunctions::_initSpline(uint8_t p_SMS, float p_Steps, unsigned long p
 
     // Continuous mode
     else {
-        thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);   // steps / spline (default 20ms)
+        thisSpline->top_speed = (length_at_cruise) / ((float)totSplines);	// steps / spline (default 20ms)
     }
 
     // This is referenced by the motor validation routine in the NMX firmware
@@ -3041,19 +3051,19 @@ int OMMotorFunctions::units(){
 }
 
 void OMMotorFunctions::setSending(boolean sending){
-	m_isSending = sending;
-	if (sending){
-		m_wasStealth = stealth();
-		if (m_wasStealth){
-			stealth(false);
-		}
-	}
-	else if (!sending){
-		if (m_wasStealth){
-			stealth(true);
-			m_wasStealth = false;
-		}		
-	}
+    m_isSending = sending;
+    if (sending){
+        m_wasStealth = stealth();
+        if (m_wasStealth){
+            stealth(false);
+        }
+    }
+    else if (!sending){
+        if (m_wasStealth){
+            stealth(true);
+            m_wasStealth = false;
+        }		
+    }
 }
 
 boolean OMMotorFunctions::isSending(){
