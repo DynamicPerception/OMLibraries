@@ -721,9 +721,10 @@ private:
 
     static bool g_debug;
 
-    // "Send to" vars
-    int m_lastMs;
-    boolean m_isSending;
+	// We switch to 4th stepping for sending home, so stealth mode needs
+	// to be deactivated for this and reactivated when the sending is done,
+	// so this keeps track of the previous stealth state.
+	boolean m_wasStealth;  
 
 };
 

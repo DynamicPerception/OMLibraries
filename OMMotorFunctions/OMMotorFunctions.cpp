@@ -3041,7 +3041,19 @@ int OMMotorFunctions::units(){
 }
 
 void OMMotorFunctions::setSending(boolean sending){
-    m_isSending = sending;
+	m_isSending = sending;
+	if (sending){
+		m_wasStealth = stealth();
+		if (m_wasStealth){
+			stealth(false);
+		}
+	}
+	else if (!sending){
+		if (m_wasStealth){
+			stealth(true);
+			m_wasStealth = false;
+		}		
+	}
 }
 
 boolean OMMotorFunctions::isSending(){
